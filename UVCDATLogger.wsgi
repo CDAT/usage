@@ -1,4 +1,8 @@
-import socket,hashlib,MySQLdb
+import os
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "live.settings")
+
+import socket,hashlib,pyodbc
 def initdb(cur):
   users="""CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -55,6 +59,7 @@ def initdb(cur):
   return 
 
 def application(environ,start_response):
+   print "Starting"
    start_response("200 OK",[("Content-type","text/html")])
    ip=environ["REMOTE_ADDR"]
    #return [ip,]
@@ -75,15 +80,19 @@ def application(environ,start_response):
    #return ["OKKK",]
    if len(sp)<2:
      return ["Thanks for your interest"]
+   print "SP:",sp
    usernm=sp[1]
    platform=sp[2]
    source=sp[3]
    action=sp[4]
    user = hashlib.md5("%s.%s" % (ip,usernm)).hexdigest()
+   passwd = open("passwd.txt").read().strip()
    domain=".".join(name[0].split(".")[-2:])
    #return [domain]
    # Now the mysql stuff
-   db=MySQLdb.connect("localhost","uvcdatlogs","uvcdat","uvcdatlogs")
+   print "Connecting to mysql"
+   db=pyodbc.connect('DRIVER={MySQL};SERVER=uvcdat.llnl.gov;DATABASE=uvcdatlogs;UID=uvcdat;PASSWORD=passwd;OPTION=3')
+   print "Done"
    #return ["db"]
    cur=db.cursor()
    def myexec(cmd):
