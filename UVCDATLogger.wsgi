@@ -1,7 +1,7 @@
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "live.settings")
-
+os.environ["LD_LIBRARY_PATH"]="/usr/local/mysql/lib/mysql"
 import socket,hashlib,MySQLdb
 def initdb(cur):
   users="""CREATE TABLE `users` (
@@ -77,6 +77,7 @@ def application(environ,start_response):
    except:
      sp=[]
    #return ["OKKK",]
+   print "SP is:",sp
    if len(sp)<2:
      return ["Thanks for your interest"]
    usernm=sp[1]
@@ -87,7 +88,7 @@ def application(environ,start_response):
    domain=".".join(name[0].split(".")[-2:])
    #return [domain]
    # Now the mysql stuff
-   passwd=open("passwd.txt").read().strip()
+   passwd=open("/git/usage/passwd.txt").read().strip()
    db=MySQLdb.connect("localhost","uvcdatlogs","uvcdat",passwd)
    #return ["db"]
    cur=db.cursor()
