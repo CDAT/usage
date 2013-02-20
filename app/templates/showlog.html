@@ -1,0 +1,33 @@
+<html>
+<body>
+<center>
+<table border=1>
+<caption>Domains</caption>
+<tr>
+<th>#</th><th>domain</th><th>ips</th>
+</tr>
+{% for domain in domain_list %}
+<tr>
+<td>{{domain.id}}</td>
+<td>{{domain.name}}</td>
+<td>{{domain.ip1}}.{{domain.ip2}}.x.x</td>
+</tr>
+{% endfor %}
+</table>
+<br>
+<table border=1>
+<caption>Log (latest 200 entries)</caption>
+<tr><th>Date</th><th>Domain</th><th>Platform</th><th>Source</th><th>Action</th></tr>
+{% for access in access_list %}
+<tr>
+<td>{{access.date}}</td>
+<td>{{access.user.machine.domain.name}}</td>
+<td>{{access.user.machine.platform}}</td>
+<td>{{access.source.name}}</td>
+<td>{{access.action.name}}</td>
+</tr>
+{% endfor %}
+</center>
+</table>
+</body>
+</html>
