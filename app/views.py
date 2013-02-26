@@ -1,8 +1,8 @@
-# Create your views here.
 import sys
 sys.path.append('app/scripts')
-from django.http import HttpResponse
-from django.template import Context, loader
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import Context, loader, RequestContext
 from django.utils import simplejson
 #import  sample_plot_function as spf
 from models import *
@@ -13,26 +13,42 @@ from django.contrib.auth import authenticate, login
 def hello(request):
     return HttpResponse("Hello World")
 
+def show_authentication_page(request):
+    return render_to_response('authentication_page.html', {
+    }, context_instance=RequestContext(request))
+
 def showlog(request):
-    username = request.POST['username']
-    password = request.POST['password']
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+    except:
+        # Either no username or no password supplied. They tried skipping the login and going
+        # straight to the results!
+        return HttpResponseRedirect('/log/')
+
+    # try logging in
     user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            # Redirect to a success page.
-        else:
-            # Return a 'disabled account' error message
-	    pass
+
+    # Invalid login
+    if user is None:
+        return render_to_response('authentication_page.html', {
+            'error_message': "Invalid username or password. Please try again.",
+        }, context_instance=RequestContext(request))
+    # De-activated user
+    elif not user.is_active:
+        return render_to_response('authentication_page.html', {
+            'error_message': "The account you are trying ot use has been disabled.<br/>Please contact a system administrator.",
+        }, context_instance=RequestContext(request))
+    # Valid login, active user
     else:
-        # Return an 'invalid login' error message.
-	pass
-    t=loader.get_template("templates/showlog.html")
-    domain_list=Domains.objects.all()
-    allaccess_list=Access.objects.all().order_by('-date')
-    access_list=allaccess_list[:200]
-    c=Context({'domain_list':domain_list,'access_list':access_list})
-    return HttpResponse(t.render(c))
+        login(request, user)
+        domain_list=Domains.objects.all()
+        allaccess_list=Access.objects.all().order_by('-date')
+        access_list=allaccess_list[:200]
+        return render_to_response('showlog.html', {
+            'domain_list': domain_list,
+            'access_list': access_list,
+        }, context_instance=RequestContext(request))
    
 def insertlog(request,username,platform,source,action):
     ip=request.META['REMOTE_ADDR']

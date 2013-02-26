@@ -11,9 +11,10 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'uvcdat_live.views.home', name='home'),
     ('^visual/$', hello),
+    url(r'^log/', include('app.urls')),
     #('^boxfill$', boxfill),
-    ('^doutriaux1/log$', showlog),
-    ('^(?P<username>.*)/(?P<platform>.*)/(?P<source>uvcdat|cdat|search|bldcnf|bldcmk)/(?P<action>.*)$',insertlog),
+    #('^doutriaux1/log$', showlog),
+    #('^(?P<username>.*)/(?P<platform>.*)/(?P<source>uvcdat|cdat|search|bldcnf|bldcmk)/(?P<action>.*)$',insertlog),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
