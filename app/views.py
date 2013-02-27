@@ -1,9 +1,11 @@
 import sys
 sys.path.append('app/scripts')
+from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Context, loader, RequestContext
 from django.utils import simplejson
+from django.views.decorators.csrf import csrf_exempt
 #import  sample_plot_function as spf
 from models import *
 import hashlib
@@ -16,6 +18,18 @@ def hello(request):
 def show_authentication_page(request):
     return render_to_response('authentication_page.html', {
     }, context_instance=RequestContext(request))
+
+def showlogJSON(request):
+    if request.user.is_authenticated():
+        json_list = serializers.serialize('json', Domains.objects.all())
+        json_list = "{ \"aaData\": " + json_list + "}"
+        print json_list
+        return HttpResponse(json_list, content_type="application/json")
+        #return render_to_response('jsonResponse.html', {
+        #    'json': json_list,
+        #}, context_instance=RequestContext(request))
+    else:
+        return HttpResponse("Unauthenticated")
 
 def showlog(request):
     try:
@@ -45,21 +59,51 @@ def showlog(request):
         domain_list=Domains.objects.all()
         allaccess_list=Access.objects.all().order_by('-date')
         access_list=allaccess_list[:200]
+        json_serializer = serializers.get_serializer("json")()
+        json_list = json_serializer.serialize(domain_list, ensure_ascii=False, indent=2, use_natural_keys=True)
         return render_to_response('showlog.html', {
             'domain_list': domain_list,
             'access_list': access_list,
+            'json_list': json_list,
         }, context_instance=RequestContext(request))
    
-def insertlog(request,username,platform,source,action):
-    ip=request.META['REMOTE_ADDR']
+# exempt insertlog from CSRF protection, or UV-CDAT will not be able to submit statistics!
+@csrf_exempt
+def insertlog(request):
+    # IP address (IPv4 only!)
+    try:
+        ip=request.POST['REMOTE_ADDR']
+    except:
+        ip="0.0.0.0"
+
+    # hostname
+    try:
+        name=request.POST['REMOTE_HOST']
+    except Exception, err:
+        name='Unknown'
+
+    # platform 
+    try:
+        platform=request.POST['platform']
+    except:
+        platform='Unknown'
+
+    # source 
+    try:
+        source = request.POST['source']
+    except:
+        source = 'Unknown'
+
+    # action 
+    try:
+        action = request.POST['action']
+    except:
+        action = 'Unknown'
+
     ipsp=ip.split(".")
     ip1=ipsp[0]
     ip2=ipsp[1]
-    try:
-        name=request.META['REMOTE_HOST']
-    except Exception, err:
-        name='Unknown'
-    user=hashlib.md5("%s.%s"%(ip,username)).hexdigest()
+    user=hashlib.md5("%s"%(ip)).hexdigest()
     domain=name
     try:
         domain_obj=Domains.objects.get(name=domain,ip1=ip1,ip2=ip2)
@@ -103,4 +147,6 @@ def insertlog(request,username,platform,source,action):
     access_obj.action=action_obj
     access_obj.save()
         
-    return HttpResponse("Log updated")
+    return render_to_response('', {
+        'request': request,
+    }, context_instance=RequestContext(request))

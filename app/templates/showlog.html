@@ -1,32 +1,56 @@
 <html>
+    <head>
+        <script type="text/javascript" language="javascript" src="{{ STATIC_URL }}jquery-1.9.1.js"></script>
+        <script type="text/javascript" language="javascript" src="{{ STATIC_URL }}jquery.dataTables.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#domain_table').dataTable( {
+                    "bProcessing": true,
+                    "sAjaxSource": '../showJSON/'
+                } );
+                $('#log_table').dataTable();
+            } );
+        </script>
     <body>
+        <script>
+            var data = {{ json_list|safe }};
+        </script>
         <center>
-            <table border=1>
+            <table border=1 id="domain_table">
                 <caption>Domains</caption>
-                <tr>
-                    <th>#</th><th>domain</th><th>ips</th>
-                </tr>
-                {% for domain in domain_list %}
-                <tr>
-                    <td>{{domain.id}}</td>
-                    <td>{{domain.name}}</td>
-                    <td>{{domain.ip1}}.{{domain.ip2}}.x.x</td>
-                </tr>
-                {% endfor %}
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>domain</th>
+                        <th>ips</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
             <br>
-            <table border=1>
+            <table border=1 id="log_table">
                 <caption>Log (latest 200 entries)</caption>
-                <tr><th>Date</th><th>Domain</th><th>Platform</th><th>Source</th><th>Action</th></tr>
-                {% for access in access_list %}
-                <tr>
-                    <td>{{access.date}}</td>
-                    <td>{{access.user.machine.domain.name}}</td>
-                    <td>{{access.user.machine.platform}}</td>
-                    <td>{{access.source.name}}</td>
-                    <td>{{access.action.name}}</td>
-                </tr>
-                {% endfor %}
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Domain</th>
+                        <th>Platform</th>
+                        <th>Source</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for access in access_list %}
+                    <tr>
+                        <td>{{access.date}}</td>
+                        <td>{{access.user.machine.domain.name}}</td>
+                        <td>{{access.user.machine.platform}}</td>
+                        <td>{{access.source.name}}</td>
+                        <td>{{access.action.name}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </center>
     </body>
