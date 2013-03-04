@@ -4,8 +4,9 @@ from django.db import models
 class Domains(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, blank=True, null=True)
-    ip1 = models.IntegerField(null=True,blank=True)
-    ip2 = models.IntegerField(null=True,blank=True)
+    ip = models.CharField(max_length=39, null=True, blank=True) # max length of 39 because IPv6
+    def __unicode__(self):
+        return self.name + "@" + self.ip
     class Meta:
         db_table=u'domains'
         ordering = ['name']
@@ -27,7 +28,7 @@ class Users(models.Model):
 
 class Sources(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=8, blank=True, null=True)
+    name = models.CharField(max_length=12, blank=True, null=True)
     class Meta:
         db_table = u'sources'
 

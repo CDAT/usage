@@ -1,4 +1,5 @@
 import sys
+import re
 sys.path.append('app/scripts')
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
@@ -19,17 +20,40 @@ def show_authentication_page(request):
     return render_to_response('authentication_page.html', {
     }, context_instance=RequestContext(request))
 
-def showlogJSON(request):
+def ajax_getDomainInfo(request):
     if request.user.is_authenticated():
-        json_list = serializers.serialize('json', Domains.objects.all())
+        list=Domains.objects.values('ip','name')
+
+        # convert to JSON
+        json_list = str(list)
+        json_list = re.sub(r"u'|'", '"', json_list)
         json_list = "{ \"aaData\": " + json_list + "}"
-        print json_list
+
         return HttpResponse(json_list, content_type="application/json")
-        #return render_to_response('jsonResponse.html', {
-        #    'json': json_list,
-        #}, context_instance=RequestContext(request))
     else:
         return HttpResponse("Unauthenticated")
+
+def ajax_getLogInfo(request):
+    if request.user.is_authenticated():
+        # Django doesn't support reverse indexing on QuerySets, so sort backwards and get the first 200 instead.
+        results = Access.objects.all().order_by('-date').values('date', 'user', 'source', 'action')
+        results = results[:200]
+        for r in results:
+            # replace datetime objects with a string representation of the date
+            r['date'] = r['date'].strftime("%Y-%m-%d %H:%M:%S")
+            # resolve foregin keys
+            r['user'] = Users.objects.get(pk=r['user']).machine.domain.name
+            r['source'] = Sources.objects.get(pk=r['source']).name
+            r['action'] = Actions.objects.get(pk=r['action']).name
+
+        # convert to JSON
+        json_results = str(results)
+        json_results = re.sub(r"u'|'", '"', json_results)
+        json_results = "{ \"aaData\":" + json_results + "}"
+        return HttpResponse(json_results, content_type="application/json")
+    else:
+        return HttpResponse("Unauthenticated")
+
 
 def showlog(request):
     try:
@@ -59,12 +83,9 @@ def showlog(request):
         domain_list=Domains.objects.all()
         allaccess_list=Access.objects.all().order_by('-date')
         access_list=allaccess_list[:200]
-        json_serializer = serializers.get_serializer("json")()
-        json_list = json_serializer.serialize(domain_list, ensure_ascii=False, indent=2, use_natural_keys=True)
         return render_to_response('showlog.html', {
             'domain_list': domain_list,
             'access_list': access_list,
-            'json_list': json_list,
         }, context_instance=RequestContext(request))
    
 # exempt insertlog from CSRF protection, or UV-CDAT will not be able to submit statistics!
@@ -100,20 +121,17 @@ def insertlog(request):
     except:
         action = 'Unknown'
 
-    ipsp=ip.split(".")
-    ip1=ipsp[0]
-    ip2=ipsp[1]
     user=hashlib.md5("%s"%(ip)).hexdigest()
     domain=name
     try:
-        domain_obj=Domains.objects.get(name=domain,ip1=ip1,ip2=ip2)
+        domain_obj=Domains.objects.get(name=domain,ip=ip)
     except Exception, err:
         domain_obj=Domains()
         domain_obj.name=domain
-        domain_obj.ip1=ip1
-        domain_obj.ip2=ip2
+        domain_obj.ip=ip
         domain_obj.save()
     machine=hashlib.md5(ip).hexdigest()
+
     try:
         machine_obj=Machines.objects.get(md5=machine)
     except Exception, err:
@@ -147,6 +165,6 @@ def insertlog(request):
     access_obj.action=action_obj
     access_obj.save()
         
-    return render_to_response('', {
+    return render_to_response('debug.html', {
         'request': request,
     }, context_instance=RequestContext(request))
