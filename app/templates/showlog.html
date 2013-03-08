@@ -4,34 +4,54 @@
         <script type="text/javascript" language="javascript" src="{{ STATIC_URL }}jquery.dataTables.js"></script>
         <script type="text/javascript" charset="utf-8">
             $(document).ready(function() {
+                $('#country_table').dataTable( {
+                    "bProcessing": true,
+                    "aaSorting": [[ 1, "desc" ]],
+                    "sAjaxSource": '../json/countryStats/'
+                } );
+            } );
+            $(document).ready(function() {
                 $('#domain_table').dataTable( {
                     "bProcessing": true,
-                    "sAjaxSource": '../json/domain/',
-                    "aoColumns": [
-                        { "mData": "ip" },
-                        { "mData": "name" }
-                    ]
+                    "aaSorting": [[ 1, "desc" ]],
+                    "sAjaxSource": '../json/domain/'
                 } );
+            } );
+            $(document).ready(function() {
                 $('#log_table').dataTable( {
                     "bProcessing": true,
+                    "aaSorting": [[ 0, "desc" ]],
                     "sAjaxSource": '../json/logInfo/',
                     "aoColumns": [
                         { "mData": "date" },
+                        { "mData": "platform"},
                         { "mData": "source" },
-                        { "mData": "user" },
-                        { "mData": "action" }
+                        { "mData": "action" },
+                        { "mData": "country" },
+                        { "mData": "domain" }
                     ]
                 } );
             } );
         </script>
     <body>
         <center>
+            <table border=1 id="country_table">
+                <caption>Countries</caption>
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Ocurrances</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
             <table border=1 id="domain_table">
                 <caption>Domains</caption>
                 <thead>
                     <tr>
-                        <th>IP address</th>
                         <th>Domain name</th>
+                        <th>Ocurrances</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,9 +63,11 @@
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Platform</th>
                         <th>Source</th>
-                        <th>User</th>
                         <th>Action</th>
+                        <th>Country</th>
+                        <th>Domain</th>
                     </tr>
                 </thead>
                 <tbody>
