@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 from pygeoip import GeoIP, GeoIPError
+from random import choice, randint
 import re
 import socket
 import sys
@@ -20,6 +21,7 @@ geoip_city_dat = 'GeoIP/GeoLiteCity.dat'
 geoip_org_dat = ''
 
 gic = GeoIP(geoip_city_dat)
+gio = None
 if geoip_org_dat != '':
     gio = GeoIp(geoip_org_dat)
 
@@ -37,14 +39,16 @@ def show_authentication_page(request):
 def ajax_getCountryInfo_days(request, _days="0"):
     if request.user.is_authenticated():
         days = int(_days) # django passes _days as a string. make it an int
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
         results = {}
-        machineLog = LogEvent.objects.values('netInfo', 'date').order_by('date')
-        for logEvent in machineLog:
-            # if days is 0, show all results. otherwise, show results form last 'days' days
-            if days == 0 or logEvent['date'] >= timezone.now() - datetime.timedelta(days=days):
-                netInfo = NetInfo.objects.get(pk=logEvent['netInfo'])
-                currentCountryCount = results.get(netInfo.country, 0)
-                results[netInfo.country] = currentCountryCount + 1
+        
+        if days == 0:
+            countryLog = LogEvent.objects.all().values('netInfo__country')
+        else:
+            countryLog = LogEvent.objects.all().filter(date__range = (date_from, timezone.now())).values('netInfo__country')
+        for country in countryLog:
+            currentCountryCount = results.get(country['netInfo__country'], 0)
+            results[country['netInfo__country']] = currentCountryCount + 1
             
         # convert to JSON
         json_results = []
@@ -55,7 +59,7 @@ def ajax_getCountryInfo_days(request, _days="0"):
             json_results.append(temp)
         json_results = simplejson.dumps(json_results)
         json_results = '{ "aaData": ' + json_results + '}'
-
+        
         return HttpResponse(json_results, content_type="application/json")
     else:
         return HttpResponse("Unauthenticated")
@@ -64,14 +68,18 @@ def ajax_getCountryInfo_days(request, _days="0"):
 def ajax_getDomainInfo(request, _days="0"):
     if request.user.is_authenticated():
         days = int(_days) # django passes _days as a string. make it an int
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
         results = {}
-        netInfoLog = LogEvent.objects.values('netInfo', 'date')
-        for logEvent in netInfoLog:
-            # if days is 0, show all results. otherwise, show results form last 'days' days
-            if days == 0 or logEvent['date'] >= timezone.now() - datetime.timedelta(days=days):
-                netInfo = NetInfo.objects.get(pk=logEvent['netInfo'])
-                currentDomainCount = results.get(netInfo.domain, 0)
-                results[netInfo.domain] = currentDomainCount + 1
+        
+        if days == 0:
+            domainLog = LogEvent.objects.all().values('netInfo__domain')
+        else:
+            domainLog = LogEvent.objects.all().filter(date__range = (date_from, timezone.now())).values('netInfo__domain')
+        
+        for domain in domainLog:
+            currentDomainCount = results.get(domain['netInfo__domain'], 0)
+            results[domain['netInfo__domain']] = currentDomainCount + 1
+            
             
         # convert to JSON
         json_results = []
@@ -82,36 +90,42 @@ def ajax_getDomainInfo(request, _days="0"):
             json_results.append(temp)
         json_results = simplejson.dumps(json_results)
         json_results = '{ "aaData": ' + json_results + '}'
-
+        
         return HttpResponse(json_results, content_type="application/json")
     else:
         return HttpResponse("Unauthenticated")
 
 def ajax_getLogInfo(request):
     if request.user.is_authenticated():
-        # Django doesn't support reverse indexing on QuerySets, so sort backwards and get the first 200 instead.
-        logs = LogEvent.objects.all().order_by('-date') 
-        logs = logs[:200]
+        # get the most recent 200 log events
+        logs = LogEvent.objects.all().order_by('-date')[:200].values('date',
+                                                                    'machine__platform',
+                                                                    'machine__platform_version',
+                                                                    'netInfo__country',
+                                                                    'netInfo__domain',
+                                                                    'source__name',
+                                                                    'source__version',
+                                                                    'action__name')
         results = []
         for l in logs:
             # create a dictionary for each record. Resulting JSON will look like [{"A": B}, {"C": D}]
             # this will allow DataTables to show information in an order-independent manner, making it easy to extend later
-            r = {} 
-            r['date'] = l.date.strftime("%Y-%m-%d %H:%M:%S")
-            r['platform'] = l.machine.platform
-            r['country'] = l.netInfo.country
-            r['domain'] = l.netInfo.domain
-            r['source'] = l.source.name
-            r['action'] = l.action.name
-
+            r = {}
+            r['date'] = l['date'].strftime("%Y-%m-%d %H:%M:%S")
+            r['platform'] = l['machine__platform']
+            r['country'] = l['netInfo__country']
+            r['domain'] = l['netInfo__domain']
+            r['source'] = l['source__name']
+            r['action'] = l['action__name']
+            
             # add version numbers for source and action if there is one
-            if l.machine.platform_version != None and l.machine.platform_version != "":
-                r['platform'] += " v" + l.machine.platform_version
-            if l.source.version != None and l.source.version != "":
-                r['source'] += " v" + l.source.version
-
+            if l['machine__platform_version'] != None and l['machine__platform_version'] != "":
+                r['platform'] += " v" + l['machine__platform_version']
+            if l['source__version'] != None and l['source__version'] != "":
+                r['source'] += " v" + l['source__version']
+                
             results.append(r)
-
+        
         # convert to JSON
         json_results = simplejson.dumps(results)
         json_results = '{ "aaData":' + json_results + '}'
@@ -166,6 +180,7 @@ def insertlog(request):
     if domain == '' or 'Unknown':
         domain =_censored_reverse_dns(uncensored_ip)
 
+    # if the request is missing some fields, it means someone or something probably just stumbled here by accident, so 404
     try:
         platform = request.POST['platform']
         platform_version = request.POST['platform_version']
@@ -177,6 +192,7 @@ def insertlog(request):
     except MultiValueDictKeyError as e:
         raise Http404
 
+    ####### NETINFO #######
     try:
         netInfo_obj = NetInfo.objects.get(ip = censored_ip)
     except Exception, err:
@@ -191,6 +207,11 @@ def insertlog(request):
             netInfo_obj.country = '--'
             netInfo_obj.latitude = None
             netInfo_obj.longitude = None
+        if gio != None:
+            try:
+                netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
+            except GeoIPError as e:
+                netInfo_obj.organization = 'Unknown'
         netInfo_obj.ip = censored_ip
         netInfo_obj.domain = domain
         netInfo_obj.save()
@@ -230,7 +251,7 @@ def insertlog(request):
         action_obj.name = action
         action_obj.save()
 
-    ####### LOG EVENT #######
+    ####### CREATE LOG EVENT #######
     log = LogEvent()
     log.user = user_obj
     log.machine = machine_obj
