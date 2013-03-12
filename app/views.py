@@ -9,6 +9,7 @@ import threading
 sys.path.append('app/scripts')
 from django.contrib.auth import authenticate, login
 from django.core import serializers
+from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Context, loader, RequestContext
@@ -43,19 +44,16 @@ def ajax_getCountryInfo_days(request, _days="0"):
         results = {}
         
         if days == 0:
-            countryLog = LogEvent.objects.all().values('netInfo__country')
+            countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
         else:
-            countryLog = LogEvent.objects.all().filter(date__range = (date_from, timezone.now())).values('netInfo__country')
-        for country in countryLog:
-            currentCountryCount = results.get(country['netInfo__country'], 0)
-            results[country['netInfo__country']] = currentCountryCount + 1
+            countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
             
         # convert to JSON
         json_results = []
-        for key in results.keys():
+        for country in countryLog:
             temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-            temp.append(key)
-            temp.append(results[key])
+            temp.append(country['netInfo__country'])
+            temp.append(country['count'])
             json_results.append(temp)
         json_results = simplejson.dumps(json_results)
         json_results = '{ "aaData": ' + json_results + '}'
@@ -72,21 +70,16 @@ def ajax_getDomainInfo(request, _days="0"):
         results = {}
         
         if days == 0:
-            domainLog = LogEvent.objects.all().values('netInfo__domain')
+            domainLog = LogEvent.objects.values('netInfo__domain').annotate(count=Count('netInfo__domain'))
         else:
-            domainLog = LogEvent.objects.all().filter(date__range = (date_from, timezone.now())).values('netInfo__domain')
-        
-        for domain in domainLog:
-            currentDomainCount = results.get(domain['netInfo__domain'], 0)
-            results[domain['netInfo__domain']] = currentDomainCount + 1
-            
+            domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__domain').annotate(count=Count('netInfo__domain'))
             
         # convert to JSON
         json_results = []
-        for key in results.keys():
+        for domain in domainLog:
             temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-            temp.append(key)
-            temp.append(results[key])
+            temp.append(domain['netInfo__domain'])
+            temp.append(domain['count'])
             json_results.append(temp)
         json_results = simplejson.dumps(json_results)
         json_results = '{ "aaData": ' + json_results + '}'
