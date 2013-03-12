@@ -63,10 +63,10 @@ class Action(models.Model):
 # log entries. time, user, location, action performed, etc...
 class LogEvent(models.Model):
     user = models.ForeignKey(User, null=True, blank=True)
-    machine = models.ForeignKey(Machine, null=True, blank=True)
-    netInfo = models.ForeignKey(NetInfo, null=True, blank=True)
-    source = models.ForeignKey(Source, null=True, blank=True)
-    action = models.ForeignKey(Action, null=True, blank=True)
+    machine = models.ForeignKey(Machine, null=False, blank=True)
+    netInfo = models.ForeignKey(NetInfo, null=False, blank=True)
+    source = models.ForeignKey(Source, null=False, blank=True)
+    action = models.ForeignKey(Action, null=False, blank=True)
     date = models.DateTimeField(auto_now=True)
     def __unicode__(self):
         return "%s by User %s at %s" % (self.action.name, self.user.id, self.date)
