@@ -270,7 +270,7 @@ def _censored_reverse_dns(ip):
         host = socket.gethostbyaddr(ip)[0]
         m = re.match(r'.+\.(\w+?\.\w+?)$', host)
         return m.group(1)
-    except socket.herror:
+    except (socket.herror, AttributeError):
         return 'Unknown'
 
 # censors an IP address by zeroing-out the last octet
@@ -279,4 +279,81 @@ def _censor_ip(ip):
     # from beginning of string, matches the first three sets of 1-3 digits separated by a period
     m = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3})', ip) 
     return m.group(1) + ".0"
+
+# fills the DB with randomly generated records
+def _fill_db(num_entries_to_add):
+    i = 0
+    while i < num_entries_to_add:
+        i += 1
+        uncensored_ip = "%s.%s.%s.%s" % (randint(1,255), randint(0, 255), randint(0,255), randint(1,254))
+        censored_ip = _censor_ip(uncensored_ip)
+        domain = _censored_reverse_dns(uncensored_ip)
+        hostname = "testMachine " + str(randint(0, 10000))
+        platform = choice(['Linux', 'Windows', 'OSX', 'FreeBSD', 'OpenBSD', 'AIX', 'Solaris', 'OpenSolaris', 'Linux']) # Linux included 2x so it comes-up more frequently
+        platform_version = "%s.%s.%s" % (randint(1,4), randint(0,3), randint(0,15))
+        username = "user " + str(randint(0, 10000))
+        source = choice(['Build', 'CDAT', 'UV-CDAT', 'ESGF'])
+        if randint(0,1) == 1:
+            source_version = "%s.%s" % (randint(1,8), randint(0,9))
+        else:
+            source_version = ''
+        if source == 'Build':
+            action = 'Build'
+        else:
+            action = choice(['FirstRun', 'Start', 'LoadModule', 'Exit', 'Other thing', 'Something', 'Stuff'])
+        
+        
+        ####### NETINFO #######
+        netInfo_obj = NetInfo()
+        # GeoIP stuff (tested with IPv4 only!)
+        try:
+            geoIpInfo = gic.record_by_addr(uncensored_ip)
+            netInfo_obj.country = geoIpInfo['country_code']
+            netInfo_obj.latitude = geoIpInfo['latitude']
+            netInfo_obj.longitude = geoIpInfo['longitude']
+        except (GeoIPError, KeyError) as e:
+            netInfo_obj.country = '--'
+            netInfo_obj.latitude = None
+            netInfo_obj.longitude = None
+        if gio != None:
+            try:
+                netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
+            except GeoIPError as e:
+                netInfo_obj.organization = 'Unknown'
+        netInfo_obj.ip = censored_ip
+        netInfo_obj.domain = domain
+        netInfo_obj.save()
+        
+        ####### MACHINE #######
+        machine_obj = Machine()
+        machine_obj.hashed_hostname = hostname
+        machine_obj.platform = platform
+        machine_obj.platform_version = platform_version
+        machine_obj.save()
+        
+        ####### USER #######
+        user_obj = User()
+        user_obj.hashed_username = username
+        user_obj.save()
+    
+        ####### SOURCE #######
+        source_obj = Source()
+        source_obj.name = source
+        source_obj.version = source_version
+        source_obj.save()
+    
+        ####### ACTION #######
+        action_obj = Action()
+        action_obj.name = action
+        action_obj.save()
+    
+        ####### CREATE LOG EVENT #######
+        log = LogEvent()
+        log.user = user_obj
+        log.machine = machine_obj
+        log.netInfo = netInfo_obj
+        log.source = source_obj
+        log.action = action_obj
+        log.save()
+
 
