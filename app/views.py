@@ -103,7 +103,6 @@ def ajax_getPlatformInfo(request, _days="0"):
         # convert to JSON
         json_results = []
         for platform in platformLog:
-            print platform
             temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
             temp.append(platform['machine__platform'])
             temp.append(platform['count'])
