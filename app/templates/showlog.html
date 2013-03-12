@@ -18,6 +18,13 @@
                 } );
             } );
             $(document).ready(function() {
+                $('#platform_table').dataTable( {
+                    "bProcessing": true,
+                    "aaSorting": [[ 1, "desc" ]],
+                    "sAjaxSource": '../json/platform/'
+                } );
+            } );
+            $(document).ready(function() {
                 $('#log_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 0, "desc" ]],
@@ -51,6 +58,18 @@
                 <thead>
                     <tr>
                         <th>Domain name</th>
+                        <th>Ocurrances</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <br>
+            <table border=1 id="platform_table">
+                <caption>Platforms</caption>
+                <thead>
+                    <tr>
+                        <th>Platform name</th>
                         <th>Ocurrances</th>
                     </tr>
                 </thead>

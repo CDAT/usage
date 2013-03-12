@@ -37,7 +37,7 @@ def show_authentication_page(request):
     }, context_instance=RequestContext(request))
 
 # hit count by country in the last x days
-def ajax_getCountryInfo_days(request, _days="0"):
+def ajax_getCountryInfo(request, _days="0"):
     if request.user.is_authenticated():
         days = int(_days) # django passes _days as a string. make it an int
         date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
@@ -80,6 +80,33 @@ def ajax_getDomainInfo(request, _days="0"):
             temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
             temp.append(domain['netInfo__domain'])
             temp.append(domain['count'])
+            json_results.append(temp)
+        json_results = simplejson.dumps(json_results)
+        json_results = '{ "aaData": ' + json_results + '}'
+        
+        return HttpResponse(json_results, content_type="application/json")
+    else:
+        return HttpResponse("Unauthenticated")
+    
+# hit count by country in the last x days
+def ajax_getPlatformInfo(request, _days="0"):
+    if request.user.is_authenticated():
+        days = int(_days) # django passes _days as a string. make it an int
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        results = {}
+        
+        if days == 0:
+            platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
+        else:
+            platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+            
+        # convert to JSON
+        json_results = []
+        for platform in platformLog:
+            print platform
+            temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+            temp.append(platform['machine__platform'])
+            temp.append(platform['count'])
             json_results.append(temp)
         json_results = simplejson.dumps(json_results)
         json_results = '{ "aaData": ' + json_results + '}'
