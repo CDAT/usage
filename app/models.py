@@ -72,7 +72,7 @@ class LogEvent(models.Model):
         return "%s by User %s at %s" % (self.action.name, self.user.id, self.date)
 
     class Meta:
-        db_table = u'access'
+        db_table = u'eventlog'
 
 
 # log error description, severity, stack trace, user comments, and execution log
@@ -89,4 +89,4 @@ class Error(models.Model):
         return "ERROR: (%s) %s " % (self.severity, self.description[:50])
 
     class Meta:
-        db_table = u'errors'
+        db_table = u'errorlog'
