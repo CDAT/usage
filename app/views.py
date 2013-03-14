@@ -229,8 +229,8 @@ def insertlog(request, returnLogObject=False):
             netInfo_obj.longitude = geoIpInfo['longitude']
         except (GeoIPError, KeyError) as e:
             netInfo_obj.country = '--'
-            netInfo_obj.latitude = None
-            netInfo_obj.longitude = None
+            netInfo_obj.latitude = ''
+            netInfo_obj.longitude = ''
         if gio != None:
             try:
                 netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
