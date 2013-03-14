@@ -7,28 +7,31 @@
                 $('#country_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '../json/country/'
+                    "sAjaxSource": '/log/json/country/'
                 } );
             } );
             $(document).ready(function() {
                 $('#domain_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '../json/domain/'
+                    "sAjaxSource": '/log/json/domain/'
                 } );
             } );
             $(document).ready(function() {
                 $('#platform_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '../json/platform/'
+                    "sAjaxSource": '/log/json/platform/'
                 } );
             } );
+        </script>
+        {% if user.is_authenticated %}
+        <script type="text/javascript" charset="utf-8">
             $(document).ready(function() {
                 $('#log_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 0, "desc" ]],
-                    "sAjaxSource": '../json/logInfo/',
+                    "sAjaxSource": '/log/json/details/',
                     "aoColumns": [
                         { "mData": "date" },
                         { "mData": "platform"},
@@ -40,6 +43,7 @@
                 } );
             } );
         </script>
+        {% endif %}
     <body>
         <center>
             <table border=1 id="country_table">
@@ -78,6 +82,7 @@
                 </tbody>
             </table>
             <br>
+            {% if user.is_authenticated %}
             <table border=1 id="log_table">
                 <caption>Log (latest 200 entries)</caption>
                 <thead>
@@ -93,6 +98,9 @@
                 <tbody>
                 </tbody>
             </table>
+            {% else %}
+            <p>Please <a href="/log/login">log-in</a> to see more detailed logs.</p>
+            {% endif %}
             <font size="1">
                 This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
             </font>

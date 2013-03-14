@@ -32,12 +32,35 @@ if geoip_org_dat != '':
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(5)
 
-def show_authentication_page(request):
+def show_sign_in_page(request):
     '''
     Shows login page.
     '''
-    return render_to_response('authentication_page.html', {
-    }, context_instance=RequestContext(request))
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+    except:
+        return render_to_response('authentication_page.html', {
+        }, context_instance = RequestContext(request))
+
+    # try logging in
+    user = authenticate(username = username, password = password)
+
+    # Invalid login
+    if user is None:
+        return render_to_response('authentication_page.html', {
+            'error_message': "Invalid username or password. Please try again.",
+        }, context_instance = RequestContext(request))
+    # De-activated user
+    elif not user.is_active:
+        return render_to_response('authentication_page.html', {
+            'error_message': "The account you are trying ot use has been disabled.<br/>" + 
+            "Please contact a system administrator.",
+        }, context_instance = RequestContext(request))
+    # Valid login, active user
+    else:
+        login(request, user)
+        return HttpResponseRedirect('/log/')
 
 def ajax_getCountryInfo(request, _days="0"):
     '''
@@ -54,30 +77,27 @@ def ajax_getCountryInfo(request, _days="0"):
             ]
         }
     '''
-    if request.user.is_authenticated():
-        days = int(_days) # django passes _days as a string. make it an int
-        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
-        results = {}
-        
-        if days == 0:
-            countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
-            print countryLog
-        else:
-            countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
-            
-        # convert to JSON
-        json_results = []
-        for country in countryLog:
-            temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-            temp.append(country['netInfo__country'])
-            temp.append(country['count'])
-            json_results.append(temp)
-        json_results = simplejson.dumps(json_results)
-        json_results = '{ "aaData": ' + json_results + '}'
-        
-        return HttpResponse(json_results, content_type="application/json")
+    days = int(_days) # django passes _days as a string. make it an int
+    date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+    results = {}
+    
+    if days == 0:
+        countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
+        print countryLog
     else:
-        return HttpResponse("Unauthenticated")
+        countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
+        
+    # convert to JSON
+    json_results = []
+    for country in countryLog:
+        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        temp.append(country['netInfo__country'])
+        temp.append(country['count'])
+        json_results.append(temp)
+    json_results = simplejson.dumps(json_results)
+    json_results = '{ "aaData": ' + json_results + '}'
+    
+    return HttpResponse(json_results, content_type="application/json")
 
 def ajax_getDomainInfo(request, _days="0"):
     '''
@@ -93,29 +113,26 @@ def ajax_getDomainInfo(request, _days="0"):
             ]
         }
     '''
-    if request.user.is_authenticated():
-        days = int(_days) # django passes _days as a string. make it an int
-        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
-        results = {}
-        
-        if days == 0:
-            domainLog = LogEvent.objects.values('netInfo__domain').annotate(count=Count('netInfo__domain'))
-        else:
-            domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__domain').annotate(count=Count('netInfo__domain'))
-            
-        # convert to JSON
-        json_results = []
-        for domain in domainLog:
-            temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-            temp.append(domain['netInfo__domain'])
-            temp.append(domain['count'])
-            json_results.append(temp)
-        json_results = simplejson.dumps(json_results)
-        json_results = '{ "aaData": ' + json_results + '}'
-        
-        return HttpResponse(json_results, content_type="application/json")
+    days = int(_days) # django passes _days as a string. make it an int
+    date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+    results = {}
+    
+    if days == 0:
+        domainLog = LogEvent.objects.values('netInfo__domain').annotate(count=Count('netInfo__domain'))
     else:
-        return HttpResponse("Unauthenticated")
+        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__domain').annotate(count=Count('netInfo__domain'))
+        
+    # convert to JSON
+    json_results = []
+    for domain in domainLog:
+        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        temp.append(domain['netInfo__domain'])
+        temp.append(domain['count'])
+        json_results.append(temp)
+    json_results = simplejson.dumps(json_results)
+    json_results = '{ "aaData": ' + json_results + '}'
+    
+    return HttpResponse(json_results, content_type="application/json")
     
 def ajax_getPlatformInfo(request, _days="0"):
     '''
@@ -131,33 +148,31 @@ def ajax_getPlatformInfo(request, _days="0"):
             ]
         }
     '''
-    if request.user.is_authenticated():
-        days = int(_days) # django passes _days as a string. make it an int
-        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
-        results = {}
-        
-        if days == 0:
-            platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
-        else:
-            platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
-            
-        # convert to JSON
-        json_results = []
-        for platform in platformLog:
-            temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-            temp.append(platform['machine__platform'])
-            temp.append(platform['count'])
-            json_results.append(temp)
-        json_results = simplejson.dumps(json_results)
-        json_results = '{ "aaData": ' + json_results + '}'
-        
-        return HttpResponse(json_results, content_type="application/json")
+    days = int(_days) # django passes _days as a string. make it an int
+    date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+    results = {}
+    
+    if days == 0:
+        platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
     else:
-        return HttpResponse("Unauthenticated")
+        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+        
+    # convert to JSON
+    json_results = []
+    for platform in platformLog:
+        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        temp.append(platform['machine__platform'])
+        temp.append(platform['count'])
+        json_results.append(temp)
+    json_results = simplejson.dumps(json_results)
+    json_results = '{ "aaData": ' + json_results + '}'
+    
+    return HttpResponse(json_results, content_type="application/json")
 
-def ajax_getLogInfo(request):
+def ajax_getLogDetails(request):
     '''
     Returns JSON array of JSON objects representing the 200 most recent log events.
+    Requires log-in to access, because the combination of Domain and Action is too personally identifyable.
     The information available is:
         domain
         source
@@ -247,35 +262,10 @@ def showdebugerr(request):
 
 def showlog(request):
     '''
-    Authenticates users and shows them the logs.
+    Renders the logs.
     '''
-    try:
-        username = request.POST['username']
-        password = request.POST['password']
-    except:
-        # Either no username or no password supplied. They tried skipping the login and going
-        # straight to the results! Redirect them to the login page
-        return HttpResponseRedirect('/log/')
-
-    # try logging in
-    user = authenticate(username = username, password = password)
-
-    # Invalid login
-    if user is None:
-        return render_to_response('authentication_page.html', {
-            'error_message': "Invalid username or password. Please try again.",
-        }, context_instance = RequestContext(request))
-    # De-activated user
-    elif not user.is_active:
-        return render_to_response('authentication_page.html', {
-            'error_message': "The account you are trying ot use has been disabled.<br/>" + 
-            "Please contact a system administrator.",
-        }, context_instance = RequestContext(request))
-    # Valid login, active user
-    else:
-        login(request, user)
-        return render_to_response('showlog.html', {
-        }, context_instance = RequestContext(request))
+    return render_to_response('showlog.html', {
+    }, context_instance = RequestContext(request))
 
 # exempt insertlog from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
