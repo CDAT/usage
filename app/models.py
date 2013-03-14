@@ -13,8 +13,8 @@ class User(models.Model):
 class Machine(models.Model):
     id = models.AutoField(primary_key=True)
     hashed_hostname = models.CharField(max_length=40, null=False, blank=False) # Use SHA-1
-    platform = models.CharField(max_length=30, null=True, blank=True)
-    platform_version = models.CharField(max_length=30, null=True, blank=True)
+    platform = models.CharField(max_length=30, null=False, blank=True)
+    platform_version = models.CharField(max_length=10, null=False, blank=True)
     def __unicode__(self):
         return "Machine %s - %s - %s" % (self.id, self.platform, self.platform_version)
     class Meta:
@@ -24,11 +24,11 @@ class Machine(models.Model):
 class NetInfo(models.Model):
     # IP anonymized by zerio-ing out the last 2 octets. ie: '10.254.23.156' will be stored as '10.254.0.0'
     ip = models.GenericIPAddressField()
-    latitude = models.DecimalField(max_digits=13, decimal_places=10, null=True)
-    longitude = models.DecimalField(max_digits=13, decimal_places=10, null=True)
-    country = models.CharField(max_length=2, null=True, blank=True)
-    domain = models.CharField(max_length=50, blank=True, null=True)
-    organization = models.CharField(max_length=50, null=True, blank=True)
+    latitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
+    longitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
+    country = models.CharField(max_length=2, null=False, blank=True)
+    domain = models.CharField(max_length=50, blank=True, null=False)
+    organization = models.CharField(max_length=50, null=False, blank=True)
     def __unicode__(self):
         if self.latitude != None and self.longitude != None:
             return "%s @ %s  (%d, %d)" % (self.ip, self.domain, self.latitude, self.longitude)
@@ -40,9 +40,9 @@ class NetInfo(models.Model):
 # program submitting this log entry. 'cdat', 'uvcdat', 'search', etc...
 class Source(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=12, blank=True, null=True)
+    name = models.CharField(max_length=12, blank=True, null=False)
     # use CharField for version number because sometimes versions have multiple decimal places or letters (eg 2.3.2rc1)
-    version = models.CharField(max_length=10, blank=True, null=True)
+    version = models.CharField(max_length=10, blank=True, null=False)
     def __unicode__(self):
         if self.version != None and self.version != '':
             return "%s v%s" % (self.name, self.version)
@@ -54,7 +54,7 @@ class Source(models.Model):
 # action taken
 class Action(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=20, blank=True, null=True)
+    name = models.CharField(max_length=36, blank=True, null=False)
     def __unicode__(self):
         return self.name
     class Meta:
@@ -62,7 +62,7 @@ class Action(models.Model):
 
 # log entries. time, user, location, action performed, etc...
 class LogEvent(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True)
+    user = models.ForeignKey(User, null=False, blank=True)
     machine = models.ForeignKey(Machine, null=False, blank=True)
     netInfo = models.ForeignKey(NetInfo, null=False, blank=True)
     source = models.ForeignKey(Source, null=False, blank=True)
