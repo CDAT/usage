@@ -7,6 +7,7 @@ import socket
 import sys
 import threading
 sys.path.append('app/scripts')
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core import serializers
 from django.db.models import Count
@@ -26,18 +27,33 @@ gio = None
 if geoip_org_dat != '':
     gio = GeoIp(geoip_org_dat)
 
+# set socket default timeout to 5 seconds.
+# this setting is used by the reverse-DNS lookup
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(5)
 
-def hello(request):
-    return HttpResponse("Hello World")
-
 def show_authentication_page(request):
+    '''
+    Shows login page.
+    '''
     return render_to_response('authentication_page.html', {
     }, context_instance=RequestContext(request))
 
-# hit count by country in the last x days
 def ajax_getCountryInfo(request, _days="0"):
+    '''
+    Returns JSON array of JSON arrays representing the total number of log events per country.
+    The optional prameter "_days" specifies how many days back the log should go.
+    0 days returns the results for all-time.
+    '--' represents "Unknown"
+
+    eg: { 
+            "aaData": [
+                ["US", 5],
+                ["--", 2],
+                ["GB", 1]
+            ]
+        }
+    '''
     if request.user.is_authenticated():
         days = int(_days) # django passes _days as a string. make it an int
         date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
@@ -63,8 +79,20 @@ def ajax_getCountryInfo(request, _days="0"):
     else:
         return HttpResponse("Unauthenticated")
 
-# hit count by domain in the last x days
 def ajax_getDomainInfo(request, _days="0"):
+    '''
+    Returns JSON array of JSON arrays representing the total number of log events per domain.
+    The optional prameter "_days" specifies how many days back the log should go.
+    0 days returns the results for all-time.
+
+    eg: { 
+            "aaData": [
+                ["llnl.gov", 5],
+                ["example.com", 2],
+                ["Unknown", 1]
+            ]
+        }
+    '''
     if request.user.is_authenticated():
         days = int(_days) # django passes _days as a string. make it an int
         date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
@@ -89,8 +117,20 @@ def ajax_getDomainInfo(request, _days="0"):
     else:
         return HttpResponse("Unauthenticated")
     
-# hit count by country in the last x days
 def ajax_getPlatformInfo(request, _days="0"):
+    '''
+    Returns JSON array of JSON arrays representing the total number of log events per platform.
+    The optional prameter "_days" specifies how many days back the log should go.
+    0 days returns the results for all-time.
+
+    eg: { 
+            "aaData": [
+                ["Linux", 5],
+                ["Windows", 2],
+                ["Darwin", 1]
+            ]
+        }
+    '''
     if request.user.is_authenticated():
         days = int(_days) # django passes _days as a string. make it an int
         date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
@@ -116,6 +156,38 @@ def ajax_getPlatformInfo(request, _days="0"):
         return HttpResponse("Unauthenticated")
 
 def ajax_getLogInfo(request):
+    '''
+    Returns JSON array of JSON objects representing the 200 most recent log events.
+    The information available is:
+        domain
+        source
+        country
+        platform
+        date
+        action
+
+    eg: { 
+            "aaData": 
+            [
+                {   
+                    "domain": "llnl.gov", 
+                    "source": "debugPage v1.0.1rc2", 
+                    "country": "US", 
+                    "platform": "Windows v7 x64 SP1", 
+                    "date": "2013-03-14 16:58:21", 
+                    "action": "Started UV-CDAT"
+                }, 
+                {   
+                    "domain": "llnl.gov", 
+                    "source": "debugPage v1.0.1rc2", 
+                    "country": "US", 
+                    "platform": "Windows v7 x64 SP1", 
+                    "date": "2013-03-14 16:57:04", 
+                    "action": "Error (FATAL)"
+                }
+            ]
+        }
+    '''
     if request.user.is_authenticated():
         # get the most recent 200 log events
         logs = LogEvent.objects.all().order_by('-date')[:200].values('date',
@@ -154,14 +226,29 @@ def ajax_getLogInfo(request):
         return HttpResponse('Unauthenticated')
 
 def showdebug(request):
-    return render_to_response('debug.html', {
-    }, context_instance = RequestContext(request))
+    '''
+    For debugging use only, will show a form where you can submit log events.
+    '''
+    if settings.DEBUG:
+        return render_to_response('debug.html', {
+        }, context_instance = RequestContext(request))
+    else:
+        raise Http404
 
 def showdebugerr(request):
-    return render_to_response('debugerr.html', {
-    }, context_instance = RequestContext(request))
+    '''
+    For debugging use only, will show a form where you can submit errors to be logged.
+    '''
+    if settings.DEBUG:
+        return render_to_response('debugerr.html', {
+        }, context_instance = RequestContext(request))
+    else:
+        raise Http404
 
 def showlog(request):
+    '''
+    Authenticates users and shows them the logs.
+    '''
     try:
         username = request.POST['username']
         password = request.POST['password']
@@ -193,6 +280,9 @@ def showlog(request):
 # exempt insertlog from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
 def insertlog(request, returnLogObject=False):
+    '''
+    Creates a LogEvent.
+    '''
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
     # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR key instead
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
@@ -289,8 +379,12 @@ def insertlog(request, returnLogObject=False):
     else:
         return HttpResponse('Thank you for participating!')
 
+# exempt logError from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
 def logError(request):
+    '''
+    Creates an Error object, which contains information about an error that occurred.
+    '''
     try:
         # get info from the POST
         description = request.POST.get('description', 'No description provided.')
@@ -323,10 +417,11 @@ def logError(request):
         I don't really know how this will help you, but the error message reutnred was:<br/>
         '%s' ''' % e.message)
 
-
-# returns the censored results of a reverse-DNS lookup
-# eg mycomputername.llnl.gov becomes llnl.gov
 def _censored_reverse_dns(ip):
+    '''
+    Returns the censored results of a reverse-DNS lookup.
+    eg mycomputername.llnl.gov becomes llnl.gov
+    '''
     try:
         host = socket.gethostbyaddr(ip)[0]
         m = re.match(r'.+\.(\w+?\.\w+?)$', host)
@@ -334,15 +429,24 @@ def _censored_reverse_dns(ip):
     except (socket.herror, AttributeError):
         return 'Unknown'
 
-# censors an IP address by zeroing-out the last octet
-# (assumes IPv4)
 def _censor_ip(ip):
+    '''
+    Returns a censored IPv4 address by zeroing-out the last octet.
+    eg 12.34.56.78 --> 12.34.56.0
+    '''
     # from beginning of string, matches the first three sets of 1-3 digits separated by a period
     m = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3})', ip) 
     return m.group(1) + ".0"
 
 # fills the DB with randomly generated records
 def _fill_db(num_entries_to_add):
+    '''
+    Logs randomly generated data. Only usable from the command line in debug mode. DO NOT reference this in app/urls.py
+    '''
+    # if Django's not running  in debug mode, 404 out
+    if not settings.DEBUG:
+        raise Http404
+
     i = 0
     while i < num_entries_to_add:
         i += 1
