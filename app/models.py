@@ -73,3 +73,20 @@ class LogEvent(models.Model):
 
     class Meta:
         db_table = u'access'
+
+
+# log error description, severity, stack trace, user comments, and execution log
+# I have no idea what an "execution log" is, so I'm going to assume it can be represented as a string
+class Error(models.Model):
+    logEvent = models.ForeignKey(LogEvent, null=False, blank=False)
+    description = models.TextField(null=False, blank=False)
+    severity = models.CharField(max_length=10, null=False, blank=False)
+    stackTrace = models.TextField(null=False, blank=True)
+    userComments = models.TextField(null=False, blank=True)
+    executionLog = models.TextField(null=False, blank=True)
+    date = models.DateTimeField(auto_now=True)
+    def __unicode__(self):
+        return "ERROR: (%s) %s " % (self.severity, self.description[:50])
+
+    class Meta:
+        db_table = u'errors'

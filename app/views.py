@@ -45,6 +45,7 @@ def ajax_getCountryInfo(request, _days="0"):
         
         if days == 0:
             countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
+            print countryLog
         else:
             countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
             
@@ -156,6 +157,10 @@ def showdebug(request):
     return render_to_response('debug.html', {
     }, context_instance = RequestContext(request))
 
+def showdebugerr(request):
+    return render_to_response('debugerr.html', {
+    }, context_instance = RequestContext(request))
+
 def showlog(request):
     try:
         username = request.POST['username']
@@ -187,12 +192,12 @@ def showlog(request):
 
 # exempt insertlog from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
-def insertlog(request):
-
+def insertlog(request, returnLogObject=False):
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
     # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR key instead
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
         uncensored_ip = request.META.get('HTTP_X_FORWARDED_FOR', '0.0.0.0')
+
     censored_ip = _censor_ip(uncensored_ip)
 
     domain = request.META.get('REMOTE_HOST', 'Unknown')
@@ -279,8 +284,45 @@ def insertlog(request):
     log.action = action_obj
     log.save()
 
-    #raise Http404 # decoy 404 to throw-off people who might otherwise find the URL and spam fake statistics at us
-    return HttpResponse('Thank you for participating!')
+    if returnLogObject:
+        return log
+    else:
+        return HttpResponse('Thank you for participating!')
+
+@csrf_exempt
+def logError(request):
+    try:
+        # get info from the POST
+        description = request.POST.get('description', 'No description provided.')
+        severity = request.POST.get('severity', 'Unknown')
+        stackTrace = request.POST.get('stack_trace', '')
+        userComments = request.POST.get('comments', '')
+        executionLog = request.POST.get('execution_log', '')
+
+        # create a LogEntry with the appropriate action
+        request.POST = request.POST.copy() # to make it mutable
+        request.POST['action'] = "Error (%s)" % severity
+        log_obj = insertlog(request, returnLogObject=True)
+
+        # create our Error object and save it
+        error = Error()
+        error.logEvent = log_obj
+        error.description = description
+        error.severity = severity
+        error.stackTrace = stackTrace
+        error.userComments = userComments
+        error.executionLog = executionLog
+        error.save()
+
+        return HttpResponse('Your crash report has been recorded. Thank you!')
+
+    except Exception as e:
+        print e
+        return HttpResponse('''
+        I'm really sorry about this, but an error occurred while trying to record your error report!<br/>
+        I don't really know how this will help you, but the error message reutnred was:<br/>
+        '%s' ''' % e.message)
+
 
 # returns the censored results of a reverse-DNS lookup
 # eg mycomputername.llnl.gov becomes llnl.gov
