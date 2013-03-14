@@ -294,7 +294,7 @@ def logError(request):
     try:
         # get info from the POST
         description = request.POST.get('description', 'No description provided.')
-        severity = request.POST.get('severity', 'Unknown')
+        severity = request.POST.get('severity', 'Unknown').upper()
         stackTrace = request.POST.get('stack_trace', '')
         userComments = request.POST.get('comments', '')
         executionLog = request.POST.get('execution_log', '')
