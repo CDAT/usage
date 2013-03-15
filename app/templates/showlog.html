@@ -7,21 +7,24 @@
                 $('#country_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '/log/json/country/'
+                    "sAjaxSource": '/log/json/country/',
+                    "sAjaxDataProp": 'countries'
                 } );
             } );
             $(document).ready(function() {
                 $('#domain_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '/log/json/domain/'
+                    "sAjaxSource": '/log/json/domain/',
+                    "sAjaxDataProp": 'domains'
                 } );
             } );
             $(document).ready(function() {
                 $('#platform_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '/log/json/platform/'
+                    "sAjaxSource": '/log/json/platform/',
+                    "sAjaxDataProp": 'platforms'
                 } );
             } );
         </script>
@@ -32,6 +35,7 @@
                     "bProcessing": true,
                     "aaSorting": [[ 0, "desc" ]],
                     "sAjaxSource": '/log/json/details/',
+                    "sAjaxDataProp": 'logs',
                     "aoColumns": [
                         { "mData": "date" },
                         { "mData": "platform"},

@@ -32,6 +32,8 @@ if geoip_org_dat != '':
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(5)
 
+
+
 def show_sign_in_page(request):
     '''
     Shows login page.
@@ -62,6 +64,8 @@ def show_sign_in_page(request):
         login(request, user)
         return HttpResponseRedirect('/log/')
 
+
+
 def ajax_getCountryInfo(request, _days="0"):
     '''
     Returns JSON array of JSON arrays representing the total number of log events per country.
@@ -71,7 +75,7 @@ def ajax_getCountryInfo(request, _days="0"):
 
     format is ["country code", counts]
     eg: { 
-            "aaData": [
+            "countries": [
                 ["US", 5],
                 ["--", 2],
                 ["GB", 1]
@@ -95,9 +99,11 @@ def ajax_getCountryInfo(request, _days="0"):
         temp.append(country['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "aaData": ' + json_results + '}'
+    json_results = '{ "countries": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
+
+
 
 def ajax_getDomainInfo(request, _days="0"):
     '''
@@ -107,7 +113,7 @@ def ajax_getDomainInfo(request, _days="0"):
 
     format is ["domain", counts]
     eg: { 
-            "aaData": [
+            "domains": [
                 ["llnl.gov", 5],
                 ["example.com", 2],
                 ["Unknown", 1]
@@ -131,10 +137,12 @@ def ajax_getDomainInfo(request, _days="0"):
         temp.append(domain['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "aaData": ' + json_results + '}'
+    json_results = '{ "domains": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
-    
+   
+
+
 def ajax_getPlatformInfo(request, _days="0"):
     '''
     Returns JSON array of JSON arrays representing the total number of log events per platform.
@@ -143,7 +151,7 @@ def ajax_getPlatformInfo(request, _days="0"):
 
     format is ["platform", counts]
     eg: { 
-            "aaData": [
+            "platforms": [
                 ["Linux", 5],
                 ["Windows", 2],
                 ["Darwin", 1]
@@ -167,10 +175,12 @@ def ajax_getPlatformInfo(request, _days="0"):
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "aaData": ' + json_results + '}'
+    json_results = '{ "platforms": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
     
+
+
 def ajax_getDetailedPlatformInfo(request, _days="0"):
     '''
     Returns JSON array of JSON arrays representing the total number of log events per platform.
@@ -179,7 +189,7 @@ def ajax_getDetailedPlatformInfo(request, _days="0"):
 
     format is ["platform", "version", counts]
     eg: { 
-            "aaData": [
+            "detailedPlatforms": [
                 ["Linux", "2.6.32-358.el6.x86_64", 7],
                 ["OpenSolaris", "4.0.11", 2],
                 ["Windows", "7 x64 SP1", 1],
@@ -205,9 +215,10 @@ def ajax_getDetailedPlatformInfo(request, _days="0"):
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "aaData": ' + json_results + '}'
+    json_results = '{ "detailedPlatforms": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
+
 
 
 def ajax_getSourceInfo(request, _days="0"):
@@ -218,7 +229,7 @@ def ajax_getSourceInfo(request, _days="0"):
 
     format is ["source name", counts]
     eg: { 
-            "aaData": [
+            "sources": [
                 ["UV-CDAT", 5],
                 ["CDAT", 2],
                 ["Build", 1]
@@ -242,9 +253,11 @@ def ajax_getSourceInfo(request, _days="0"):
         temp.append(source['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "aaData": ' + json_results + '}'
+    json_results = '{ "sources": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
+
+
 
 def ajax_getSourceDetailedInfo(request, _days="0"):
     '''
@@ -254,7 +267,7 @@ def ajax_getSourceDetailedInfo(request, _days="0"):
 
     format is ["source name", "source version", counts]
     eg: { 
-            "aaData": [
+            "detailedSources": [
                 ["debugPage", "1.0.1rc2", 2],
                 ["UV-CDAT", "6.9", 1],
                 ["CDAT", "", 3],
@@ -279,9 +292,11 @@ def ajax_getSourceDetailedInfo(request, _days="0"):
         temp.append(source['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "aaData": ' + json_results + '}'
+    json_results = '{ "detailedSources": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
+
+
 
 def ajax_getLogDetails(request):
     '''
@@ -296,7 +311,7 @@ def ajax_getLogDetails(request):
         action
 
     eg: { 
-            "aaData": 
+            "logs": 
             [
                 {   
                     "domain": "llnl.gov", 
@@ -349,10 +364,12 @@ def ajax_getLogDetails(request):
         
         # convert to JSON
         json_results = simplejson.dumps(results)
-        json_results = '{ "aaData":' + json_results + '}'
+        json_results = '{ "logs":' + json_results + '}'
         return HttpResponse(json_results, content_type="application/json")
     else:
         return HttpResponse('Unauthenticated')
+
+
 
 def showdebug(request):
     '''
@@ -364,6 +381,8 @@ def showdebug(request):
     else:
         raise Http404
 
+
+
 def showdebugerr(request):
     '''
     For debugging use only, will show a form where you can submit errors to be logged.
@@ -374,12 +393,16 @@ def showdebugerr(request):
     else:
         raise Http404
 
+
+
 def showlog(request):
     '''
     Renders the logs.
     '''
     return render_to_response('showlog.html', {
     }, context_instance = RequestContext(request))
+
+
 
 # exempt insertlog from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
@@ -483,6 +506,8 @@ def insertlog(request, returnLogObject=False):
     else:
         return HttpResponse('Thank you for participating!')
 
+
+
 # exempt logError from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
 def logError(request):
@@ -519,7 +544,9 @@ def logError(request):
         return HttpResponse('''
         I'm really sorry about this, but an error occurred while trying to record your error report!<br/>
         I don't really know how this will help you, but the error message reutnred was:<br/>
-        '%s' ''' % e.message)
+        '%s' ''' % e)
+
+
 
 def _censored_reverse_dns(ip):
     '''
@@ -533,6 +560,8 @@ def _censored_reverse_dns(ip):
     except (socket.herror, AttributeError):
         return 'Unknown'
 
+
+
 def _censor_ip(ip):
     '''
     Returns a censored IPv4 address by zeroing-out the last octet.
@@ -541,6 +570,8 @@ def _censor_ip(ip):
     # from beginning of string, matches the first three sets of 1-3 digits separated by a period
     m = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3})', ip) 
     return m.group(1) + ".0"
+
+
 
 # fills the DB with randomly generated records
 def _fill_db(num_entries_to_add):
@@ -624,5 +655,3 @@ def _fill_db(num_entries_to_add):
         log.source = source_obj
         log.action = action_obj
         log.save()
-
-
