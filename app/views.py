@@ -69,6 +69,7 @@ def ajax_getCountryInfo(request, _days="0"):
     0 days returns the results for all-time.
     '--' represents "Unknown"
 
+    format is ["country code", counts]
     eg: { 
             "aaData": [
                 ["US", 5],
@@ -78,13 +79,12 @@ def ajax_getCountryInfo(request, _days="0"):
         }
     '''
     days = int(_days) # django passes _days as a string. make it an int
-    date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
     results = {}
     
     if days == 0:
         countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
-        print countryLog
     else:
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
         countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
         
     # convert to JSON
@@ -105,6 +105,7 @@ def ajax_getDomainInfo(request, _days="0"):
     The optional prameter "_days" specifies how many days back the log should go.
     0 days returns the results for all-time.
 
+    format is ["domain", counts]
     eg: { 
             "aaData": [
                 ["llnl.gov", 5],
@@ -114,12 +115,12 @@ def ajax_getDomainInfo(request, _days="0"):
         }
     '''
     days = int(_days) # django passes _days as a string. make it an int
-    date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
     results = {}
     
     if days == 0:
         domainLog = LogEvent.objects.values('netInfo__domain').annotate(count=Count('netInfo__domain'))
     else:
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
         domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__domain').annotate(count=Count('netInfo__domain'))
         
     # convert to JSON
@@ -140,6 +141,7 @@ def ajax_getPlatformInfo(request, _days="0"):
     The optional prameter "_days" specifies how many days back the log should go.
     0 days returns the results for all-time.
 
+    format is ["platform", counts]
     eg: { 
             "aaData": [
                 ["Linux", 5],
@@ -149,13 +151,13 @@ def ajax_getPlatformInfo(request, _days="0"):
         }
     '''
     days = int(_days) # django passes _days as a string. make it an int
-    date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
     results = {}
     
     if days == 0:
         platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
     else:
-        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform').annotate(count=Count('machine__platform'))
         
     # convert to JSON
     json_results = []
@@ -163,6 +165,118 @@ def ajax_getPlatformInfo(request, _days="0"):
         temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
         temp.append(platform['machine__platform'])
         temp.append(platform['count'])
+        json_results.append(temp)
+    json_results = simplejson.dumps(json_results)
+    json_results = '{ "aaData": ' + json_results + '}'
+    
+    return HttpResponse(json_results, content_type="application/json")
+    
+def ajax_getDetailedPlatformInfo(request, _days="0"):
+    '''
+    Returns JSON array of JSON arrays representing the total number of log events per platform.
+    The optional prameter "_days" specifies how many days back the log should go.
+    0 days returns the results for all-time.
+
+    format is ["platform", "version", counts]
+    eg: { 
+            "aaData": [
+                ["Linux", "2.6.32-358.el6.x86_64", 7],
+                ["OpenSolaris", "4.0.11", 2],
+                ["Windows", "7 x64 SP1", 1],
+                ["AIX", "3.0.15", 1]
+            ]
+        }
+    '''
+    days = int(_days) # django passes _days as a string. make it an int
+    results = {}
+    
+    if days == 0:
+        platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
+    else:
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+        
+    # convert to JSON
+    json_results = []
+    for platform in platformLog:
+        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        temp.append(platform['machine__platform'])
+        temp.append(platform['machine__platform_version'])
+        temp.append(platform['count'])
+        json_results.append(temp)
+    json_results = simplejson.dumps(json_results)
+    json_results = '{ "aaData": ' + json_results + '}'
+    
+    return HttpResponse(json_results, content_type="application/json")
+
+
+def ajax_getSourceInfo(request, _days="0"):
+    '''
+    Returns JSON array of JSON arrays representing the total number of log events per source.
+    The optional prameter "_days" specifies how many days back the log should go.
+    0 days returns the results for all-time.
+
+    format is ["source name", counts]
+    eg: { 
+            "aaData": [
+                ["UV-CDAT", 5],
+                ["CDAT", 2],
+                ["Build", 1]
+            ]
+        }
+    '''
+    days = int(_days) # django passes _days as a string. make it an int
+    results = {}
+    
+    if days == 0:
+        domainLog = LogEvent.objects.values('source__name').annotate(count=Count('source__name'))
+    else:
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name').annotate(count=Count('source__name'))
+        
+    # convert to JSON
+    json_results = []
+    for source in domainLog:
+        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        temp.append(source['source__name'])
+        temp.append(source['count'])
+        json_results.append(temp)
+    json_results = simplejson.dumps(json_results)
+    json_results = '{ "aaData": ' + json_results + '}'
+    
+    return HttpResponse(json_results, content_type="application/json")
+
+def ajax_getSourceDetailedInfo(request, _days="0"):
+    '''
+    Returns JSON array of JSON arrays representing the total number of log events per source (by version).
+    The optional prameter "_days" specifies how many days back the log should go.
+    0 days returns the results for all-time.
+
+    format is ["source name", "source version", counts]
+    eg: { 
+            "aaData": [
+                ["debugPage", "1.0.1rc2", 2],
+                ["UV-CDAT", "6.9", 1],
+                ["CDAT", "", 3],
+            ]
+        }
+    '''
+    days = int(_days) # django passes _days as a string. make it an int
+    results = {}
+    
+    if days == 0:
+        domainLog = LogEvent.objects.values('source__name', 'source__version').annotate(count=Count('source__name'))
+    else:
+        date_from = (timezone.now() - datetime.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name', 'source__version').annotate(count=Count('source__name'))
+        
+    # convert to JSON
+    json_results = []
+    for source in domainLog:
+        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        temp.append(source['source__name'])
+        temp.append(source['source__version'])
+        temp.append(source['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
     json_results = '{ "aaData": ' + json_results + '}'
