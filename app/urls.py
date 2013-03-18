@@ -20,7 +20,6 @@ urlpatterns = patterns('app.views',
 
     # /log/json/platform/
     # /log/json/platform/?days=25
-    # (?!regex) == negative lookahead. Only matches if "platform/" is NOT followed by "details"
 	url(r'^json/platform/$', 'ajax_getPlatformInfo'),
 
     # /log/json/platform/details/
@@ -29,8 +28,7 @@ urlpatterns = patterns('app.views',
 
     # /log/json/source/
     # /log/json/source/?days=22
-    # (?!regex) == negative lookahead. Only matches if "source/" is NOT followed by "details"
-	url(r'^json/source/(?!details)$', 'ajax_getSourceInfo'),
+	url(r'^json/source/$', 'ajax_getSourceInfo'),
 
     # /log/json/source/details/
     # /log/json/source/details/?days=15
