@@ -15,40 +15,30 @@ urlpatterns = patterns('app.views',
     url(r'^debugerr/$', 'showdebugerr'),
 
     # /log/json/domain/
-    url(r'^json/domain/$','ajax_getDomainInfo'),
-
-    # /log/json/domain/3/
-    url(r'^json/domain/(?P<_days>\d+)/$','ajax_getDomainInfo'),
+    # /log/json/domain/?days=5
+    url(r'^json/domain/.*','ajax_getDomainInfo'),
 
     # /log/json/platform/
-	url(r'^json/platform/$', 'ajax_getPlatformInfo'),
-
-    # /log/json/platform/25/
-	url(r'^json/platform/(?P<_days>\d+)/$', 'ajax_getPlatformInfo'),
+    # /log/json/platform/?days=25
+    # (?!regex) == negative lookahead. Only matches if "platform/" is NOT followed by "details"
+	url(r'^json/platform/(?!details).*', 'ajax_getPlatformInfo'),
 
     # /log/json/platform/details/
-	url(r'^json/platform/details/$', 'ajax_getDetailedPlatformInfo'),
-
-    # /log/json/platform/32/details/
-	url(r'^json/platform/(?P<_days>\d+)/details/$', 'ajax_getDetailedPlatformInfo'),
+    # /log/json/platform/details/?days=32
+	url(r'^json/platform/details/.*', 'ajax_getDetailedPlatformInfo'),
 
     # /log/json/source/
-	url(r'^json/source/$', 'ajax_getSourceInfo'),
-
-    # /log/json/source/22/
-	url(r'^json/source/(?P<_days>\d+)/$', 'ajax_getSourceInfo'),
+    # /log/json/source/?days=22
+    # (?!regex) == negative lookahead. Only matches if "source/" is NOT followed by "details"
+	url(r'^json/source/(?!details).*', 'ajax_getSourceInfo'),
 
     # /log/json/source/details/
-	url(r'^json/source/details/$', 'ajax_getSourceDetailedInfo'),
-
-    # /log/json/source/15/details/
-	url(r'^json/source/(?P<_days>\d+)/details/$', 'ajax_getSourceDetailedInfo'),
+    # /log/json/source/details/?days=15
+	url(r'^json/source/details/.*', 'ajax_getDetailedSourceInfo'),
 
     # /log/json/country/
-    url(r'^json/country/$','ajax_getCountryInfo'),
-
-    # /log/json/country/7/
-    url(r'^json/country/(?P<_days>\d+)/$','ajax_getCountryInfo'),
+    # /log/json/country/?days=7
+    url(r'^json/country/.*','ajax_getCountryInfo'),
 
     # /log/json/details/
     url(r'^json/details/$', 'ajax_getLogDetails'),
