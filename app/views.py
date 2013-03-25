@@ -19,9 +19,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
 
-geoip_city_dat = 'GeoIP/GeoLiteCity.dat'
-geoip_org_dat = ''
 
+geoip_city_dat = '/git/usage/GeoIP/GeoLiteCity.dat'
+geoip_org_dat = ''
 gic = GeoIP(geoip_city_dat)
 gio = None
 if geoip_org_dat != '':
@@ -62,7 +62,7 @@ def show_sign_in_page(request):
     # Valid login, active user
     else:
         login(request, user)
-        return HttpResponseRedirect('/log/')
+        return HttpResponseRedirect('log/')
 
 
 
@@ -442,12 +442,12 @@ def insertlog(request, returnLogObject=False):
         try:
             geoIpInfo = gic.record_by_addr(uncensored_ip)
             netInfo_obj.country = geoIpInfo['country_code']
-            netInfo_obj.latitude = geoIpInfo['latitude']
-            netInfo_obj.longitude = geoIpInfo['longitude']
+            netInfo_obj.latitude = str(geoIpInfo['latitude'])
+            netInfo_obj.longitude = str(geoIpInfo['longitude'])
         except (GeoIPError, KeyError) as e:
             netInfo_obj.country = '--'
-            netInfo_obj.latitude = ''
-            netInfo_obj.longitude = ''
+            netInfo_obj.latitude = '0.0'
+            netInfo_obj.longitude = '0.0'
         if gio != None:
             try:
                 netInfo_obj.organization = gio.org_by_addr(uncensored_ip)

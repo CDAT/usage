@@ -14,6 +14,9 @@ framework.
 
 """
 import os
+os.environ["LD_LIBRARY_PATH"]="/usr/local/mysql/lib/mysql"
+import sys
+sys.path.insert(0,"/git/usage")
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "live.settings")
 

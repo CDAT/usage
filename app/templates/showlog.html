@@ -1,13 +1,13 @@
 <html>
     <head>
-        <script type="text/javascript" language="javascript" src="{{ STATIC_URL }}jquery-1.9.1.js"></script>
-        <script type="text/javascript" language="javascript" src="{{ STATIC_URL }}jquery.dataTables.js"></script>
+        <script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script type="text/javascript" language="javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script>
         <script type="text/javascript" charset="utf-8">
             $(document).ready(function() {
                 $('#country_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '/log/json/country/',
+                    "sAjaxSource": 'json/country/',
                     "sAjaxDataProp": 'countries'
                 } );
             } );
@@ -15,7 +15,7 @@
                 $('#domain_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '/log/json/domain/',
+                    "sAjaxSource": 'json/domain/',
                     "sAjaxDataProp": 'domains'
                 } );
             } );
@@ -23,7 +23,7 @@
                 $('#platform_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": '/log/json/platform/',
+                    "sAjaxSource": 'json/platform/',
                     "sAjaxDataProp": 'platforms'
                 } );
             } );
@@ -34,7 +34,7 @@
                 $('#log_table').dataTable( {
                     "bProcessing": true,
                     "aaSorting": [[ 0, "desc" ]],
-                    "sAjaxSource": '/log/json/details/',
+                    "sAjaxSource": 'json/details/',
                     "sAjaxDataProp": 'logs',
                     "aoColumns": [
                         { "mData": "date" },
@@ -103,7 +103,7 @@
                 </tbody>
             </table>
             {% else %}
-            <p>Please <a href="/log/login">log-in</a> to see more detailed logs.</p>
+            <p>Please <a href="login">log-in</a> to see more detailed logs.</p>
             {% endif %}
             <font size="1">
                 This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.

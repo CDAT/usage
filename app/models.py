@@ -37,7 +37,7 @@ class NetInfo(models.Model):
     domain = models.CharField(max_length=50, blank=True, null=False)
     organization = models.CharField(max_length=50, null=False, blank=True)
     def __unicode__(self):
-        if self.latitude != None and self.longitude != None:
+        if self.latitude not in [None,''] and self.longitude not in  [None,'']:
             return "%s @ %s  (%d, %d)" % (self.ip, self.domain, self.latitude, self.longitude)
         else:
             return "%s @ %s" % (self.ip, self.domain)
