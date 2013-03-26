@@ -6,7 +6,6 @@ import re
 import socket
 import sys
 import threading
-sys.path.append('app/scripts')
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core import serializers
@@ -19,9 +18,11 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
 
-
-geoip_city_dat = '/git/usage/GeoIP/GeoLiteCity.dat'
+geoip_city_dat = 'GeoIP/GeoLiteCity.dat'
 geoip_org_dat = ''
+
+default_sleep_minutes = 30 # default amount of time which must pass before the same event from the same user is logged again
+
 gic = GeoIP(geoip_city_dat)
 gio = None
 if geoip_org_dat != '':
@@ -493,18 +494,37 @@ def insertlog(request, returnLogObject=False):
         action_obj.save()
 
     ####### CREATE LOG EVENT #######
-    log = LogEvent()
-    log.user = user_obj
-    log.machine = machine_obj
-    log.netInfo = netInfo_obj
-    log.source = source_obj
-    log.action = action_obj
-    log.save()
+    # first, check if this user has logged the same event within the last default_sleep_minutes.
+    # if they have, ignore this log event.
+    try:
+        sleepTime = int(request.POST.get('sleep', default_sleep_minutes))
+    except ValueError:
+        sleepTime = default_sleep_minutes
+
+    # get most recent log event with same user/machine/action/etc
+    try:
+        prevLogEvent = LogEvent.objects.filter(user = user_obj, machine = machine_obj, netInfo = netInfo_obj, source = source_obj, action = action_obj).latest('date')
+    except LogEvent.DoesNotExist, e:
+        prevLogEvent = None
+    print type(prevLogEvent)
+    print prevLogEvent
+    if sleepTime <= 0 or prevLogEvent == None or prevLogEvent.date < (timezone.now() - timezone.timedelta(minutes=sleepTime)):
+        log = LogEvent()
+        log.user = user_obj
+        log.machine = machine_obj
+        log.netInfo = netInfo_obj
+        log.source = source_obj
+        log.action = action_obj
+        log.save()
+        responseMsg = "Thank you for participating!"
+    else:
+        log = prevLogEvent
+        responseMsg = "I'm ignoring you because you already sent this event within the last %i minutes!" % sleepTime
 
     if returnLogObject:
         return log
     else:
-        return HttpResponse('Thank you for participating!')
+        return HttpResponse(responseMsg)
 
 
 
