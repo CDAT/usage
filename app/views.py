@@ -63,7 +63,7 @@ def show_sign_in_page(request):
     # Valid login, active user
     else:
         login(request, user)
-        return HttpResponseRedirect('log/')
+        return HttpResponseRedirect('../')
 
 
 
