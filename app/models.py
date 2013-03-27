@@ -17,8 +17,8 @@ class Machine(models.Model):
     '''
     id = models.AutoField(primary_key=True)
     hashed_hostname = models.CharField(max_length=40, null=False, blank=False) # Use SHA-1
-    platform = models.CharField(max_length=30, null=False, blank=True)
-    platform_version = models.CharField(max_length=10, null=False, blank=True)
+    platform = models.CharField(max_length=32, null=False, blank=True)
+    platform_version = models.CharField(max_length=16, null=False, blank=True)
     def __unicode__(self):
         return "Machine %s - %s - %s" % (self.id, self.platform, self.platform_version)
     class Meta:
@@ -34,8 +34,8 @@ class NetInfo(models.Model):
     latitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
     longitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
     country = models.CharField(max_length=2, null=False, blank=True)
-    domain = models.CharField(max_length=50, blank=True, null=False)
-    organization = models.CharField(max_length=50, null=False, blank=True)
+    domain = models.CharField(max_length=64, blank=True, null=False)
+    organization = models.CharField(max_length=64, null=False, blank=True)
     def __unicode__(self):
         if self.latitude not in [None,''] and self.longitude not in  [None,'']:
             return "%s @ %s  (%d, %d)" % (self.ip, self.domain, self.latitude, self.longitude)
@@ -49,9 +49,9 @@ class Source(models.Model):
     Stores name and version of the program which submitted the log entry.
     '''
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=12, blank=True, null=False)
+    name = models.CharField(max_length=16, blank=True, null=False)
     # use CharField for version number because sometimes versions have multiple decimal places or letters (eg 2.3.2rc1)
-    version = models.CharField(max_length=10, blank=True, null=False)
+    version = models.CharField(max_length=64, blank=True, null=False)
     def __unicode__(self):
         if self.version != None and self.version != '':
             return "%s v%s" % (self.name, self.version)
@@ -66,7 +66,7 @@ class Action(models.Model):
     This could be things like "Started UV-CDAT", "Error (FATAL)", or "Build successful"
     '''
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=36, blank=True, null=False)
+    name = models.CharField(max_length=64, blank=True, null=False)
     def __unicode__(self):
         return self.name
     class Meta:
@@ -98,7 +98,7 @@ class Error(models.Model):
     '''
     logEvent = models.ForeignKey(LogEvent, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    severity = models.CharField(max_length=10, null=False, blank=False)
+    severity = models.CharField(max_length=8, null=False, blank=False)
     stackTrace = models.TextField(null=False, blank=True)
     userComments = models.TextField(null=False, blank=True)
     executionLog = models.TextField(null=False, blank=True)
