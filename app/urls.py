@@ -3,16 +3,22 @@ from django.views.generic import DetailView, ListView
 
 urlpatterns = patterns('app.views',
     # /log/
-    url(r'^$','showlog'),
+    url(r'^$','show_log'),
+
+    # /log/error
+    url(r'^error/$','show_error_log'),
+
+    # /log/error/203215
+    #url(r'^error/(?P<error_id>\d+)/$','show_error_details'),
 
     # /log/login/
     url(r'^login/$','show_sign_in_page'),
 
     # /log/debug/
-    url(r'^debug/$', 'showdebug'),
+    url(r'^debug/$', 'show_debug'),
 
     # /log/debugerr/
-    url(r'^debugerr/$', 'showdebugerr'),
+    url(r'^debugerr/$', 'show_debug_error'),
 
     # /log/json/domain/
     # /log/json/domain/?days=5
@@ -42,8 +48,8 @@ urlpatterns = patterns('app.views',
     url(r'^json/details/$', 'ajax_getLogDetails'),
 
     # /log/add/
-    url(r'^add/$', 'insertlog'),
+    url(r'^add/$', 'log_event'),
 
-    # /log/error/
-    url(r'^error/$', 'logError'),
+    # /log/add/error/
+    url(r'^add/error/$', 'log_error'),
 )

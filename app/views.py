@@ -372,7 +372,7 @@ def ajax_getLogDetails(request):
 
 
 
-def showdebug(request):
+def show_debug(request):
     '''
     For debugging use only, will show a form where you can submit log events.
     '''
@@ -384,7 +384,7 @@ def showdebug(request):
 
 
 
-def showdebugerr(request):
+def show_debug_error(request):
     '''
     For debugging use only, will show a form where you can submit errors to be logged.
     '''
@@ -396,7 +396,15 @@ def showdebugerr(request):
 
 
 
-def showlog(request):
+def show_log(request):
+    '''
+    Renders the logs.
+    '''
+    return render_to_response('showlog.html', {
+    }, context_instance = RequestContext(request))
+
+
+def show_error_log(request):
     '''
     Renders the logs.
     '''
@@ -405,9 +413,9 @@ def showlog(request):
 
 
 
-# exempt insertlog from CSRF protection, or programs will not be able to submit their statistics!
+# exempt logEvent from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
-def insertlog(request, returnLogObject=False):
+def log_event(request, returnLogObject=False):
     '''
     Creates a LogEvent.
     '''
@@ -530,7 +538,7 @@ def insertlog(request, returnLogObject=False):
 
 # exempt logError from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
-def logError(request):
+def log_error(request):
     '''
     Creates an Error object, which contains information about an error that occurred.
     '''
@@ -545,7 +553,7 @@ def logError(request):
         # create a LogEntry with the appropriate action
         request.POST = request.POST.copy() # to make it mutable
         request.POST['action'] = "Error (%s)" % severity
-        log_obj = insertlog(request, returnLogObject=True)
+        log_obj = log_event(request, returnLogObject=True)
 
         # create our Error object and save it
         error = Error()
