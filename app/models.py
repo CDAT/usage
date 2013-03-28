@@ -7,7 +7,7 @@ class User(models.Model):
     id = models.AutoField(primary_key=True)
     hashed_username = models.CharField(max_length=40, blank=True) # Use SHA-1
     def __unicode__(self):
-        return "User %s" % self.id
+        return "User %s - '%s'" % (self.id, self.hashed_username)
     class Meta:
         db_table = u'users'
 
