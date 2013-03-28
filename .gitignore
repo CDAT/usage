@@ -3,3 +3,5 @@
 .htaccess
 db.php
 *.swp
+live/settings.py
+

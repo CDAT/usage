@@ -17,8 +17,9 @@ from django.utils import simplejson, timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
+import live.settings
 
-geoip_city_dat = 'GeoIP/GeoLiteCity.dat'
+geoip_city_dat = '%s/GeoIP/GeoLiteCity.dat' % live.settings.WWWROOT
 geoip_org_dat = ''
 
 default_sleep_minutes = 30 # default amount of time which must pass before the same event from the same user is logged again
