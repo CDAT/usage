@@ -529,8 +529,6 @@ def log_event(request, returnLogObject=False):
         prevLogEvent = LogEvent.objects.filter(user = user_obj, machine = machine_obj, netInfo = netInfo_obj, source = source_obj, action = action_obj).latest('date')
     except LogEvent.DoesNotExist, e:
         prevLogEvent = None
-    print type(prevLogEvent)
-    print prevLogEvent
     if sleepTime <= 0 or prevLogEvent == None or prevLogEvent.date < (timezone.now() - timezone.timedelta(minutes=sleepTime)):
         log = LogEvent()
         log.user = user_obj
@@ -583,7 +581,7 @@ def log_error(request):
         return HttpResponse('Your crash report has been recorded. Thank you!')
 
     except Exception as e:
-        print e
+        sys.stderr.write("Fatal Exception: " + str(e))
         return HttpResponse('''
         I'm really sorry about this, but an error occurred while trying to record your error report!<br/>
         I don't really know how this will help you, but the error message reutnred was:<br/>
@@ -653,7 +651,6 @@ def _fill_db(num_entries_to_add):
             geoIpInfo = gic.record_by_addr(uncensored_ip)
             netInfo_obj.country = geoIpInfo['country_code']
             netInfo_obj.city = geoIpInfo['city']
-            print "City: " + netInfo_obj.city
             if netInfo_obj.city in ('', None):
                 netInfo_obj.city = 'Unknown'
             netInfo_obj.latitude = geoIpInfo['latitude']
