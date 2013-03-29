@@ -45,6 +45,7 @@ if hasattr(socket, 'setdefaulttimeout'):
 
 
 
+####### TEMPLATE RENDERERS #######
 def show_sign_in_page(request):
     '''
     Shows login page.
@@ -77,6 +78,49 @@ def show_sign_in_page(request):
 
 
 
+def show_log(request):
+    '''
+    Renders the logs.
+    '''
+    return render_to_response('showlog.html', {
+    }, context_instance = RequestContext(request))
+
+
+
+def show_error_log(request):
+    '''
+    Renders the logs.
+    '''
+    return render_to_response('showlog.html', {
+    }, context_instance = RequestContext(request))
+
+
+
+def show_debug(request):
+    '''
+    For debugging use only, will show a form where you can submit log events.
+    '''
+    if settings.DEBUG:
+        return render_to_response('debug.html', {
+        }, context_instance = RequestContext(request))
+    else:
+        raise Http404
+
+
+
+def show_debug_error(request):
+    '''
+    For debugging use only, will show a form where you can submit errors to be logged.
+    '''
+    if settings.DEBUG:
+        return render_to_response('debugerr.html', {
+        }, context_instance = RequestContext(request))
+    else:
+        raise Http404
+    
+
+
+####### AJAX DATA ACCESS #######
 def ajax_getCountryInfo(request):
     '''
     Returns JSON array of JSON arrays representing the total number of log events per country.
@@ -380,47 +424,6 @@ def ajax_getLogDetails(request):
         return HttpResponse(json_results, content_type="application/json")
     else:
         return HttpResponse('Unauthenticated')
-
-
-
-def show_debug(request):
-    '''
-    For debugging use only, will show a form where you can submit log events.
-    '''
-    if settings.DEBUG:
-        return render_to_response('debug.html', {
-        }, context_instance = RequestContext(request))
-    else:
-        raise Http404
-
-
-
-def show_debug_error(request):
-    '''
-    For debugging use only, will show a form where you can submit errors to be logged.
-    '''
-    if settings.DEBUG:
-        return render_to_response('debugerr.html', {
-        }, context_instance = RequestContext(request))
-    else:
-        raise Http404
-
-
-
-def show_log(request):
-    '''
-    Renders the logs.
-    '''
-    return render_to_response('showlog.html', {
-    }, context_instance = RequestContext(request))
-
-
-def show_error_log(request):
-    '''
-    Renders the logs.
-    '''
-    return render_to_response('showlog.html', {
-    }, context_instance = RequestContext(request))
 
 
 
