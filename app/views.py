@@ -599,7 +599,7 @@ def _censored_reverse_dns(ip):
         m = re.match(r'.+\.(\w+?\.\w+?)$', host)
         return m.group(1)
     except (socket.herror, socket.timeout, AttributeError):
-        return 'Unknown'
+        return 'unknown'
 
 
 
@@ -651,7 +651,7 @@ def _fill_db(num_entries_to_add):
             geoIpInfo = gic.record_by_addr(uncensored_ip)
             netInfo_obj.country = geoIpInfo['country_code']
             netInfo_obj.city = geoIpInfo['city']
-            if netInfo_obj.city in ('', None):
+            if netInfo_obj.city == '':
                 netInfo_obj.city = 'Unknown'
             netInfo_obj.latitude = geoIpInfo['latitude']
             netInfo_obj.longitude = geoIpInfo['longitude']
