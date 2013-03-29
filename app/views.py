@@ -2,6 +2,7 @@ import datetime
 import hashlib
 from pygeoip import GeoIP, GeoIPError
 from random import choice, randint
+import os
 import re
 import socket
 import sys
@@ -19,15 +20,23 @@ from django.views.decorators.csrf import csrf_exempt
 from models import *
 import live.settings
 
-geoip_city_dat = '%s/GeoIP/GeoLiteCity.dat' % live.settings.WWWROOT
-geoip_org_dat = ''
+geoip_city_dat = "%s/%s" % (os.getcwdu(), live.settings.GEOLITECITY_RELATIVE_PATH)
+geoip_org_dat = "%s/%s" % (os.getcwdu(), live.settings.GEOORGANIZATION_RELATIVE_PATH)
 
 default_sleep_minutes = 30 # default amount of time which must pass before the same event from the same user is logged again
 
-gic = GeoIP(geoip_city_dat)
+gic = None
+try:
+    gic = GeoIP(geoip_city_dat)
+except IOError:
+    sys.stderr.write("""ERROR: Could not find GeoIP database. Tried looking in "%s". If this is not where you have your GeoIP .dat file stored, edit GEOLITECITY_RELATIVE_PATH in live/settings.py\nIf you don't have the GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".""" % (geoip_city_dat))
+
 gio = None
-if geoip_org_dat != '':
-    gio = GeoIp(geoip_org_dat)
+try:
+    gio = GeoIP(geoip_org_dat)
+except IOError:
+    # we don't want to spam the log with warning messages, so don't do anything here...
+    pass
 
 # set socket default timeout to 5 seconds.
 # this setting is used by the reverse-DNS lookup
@@ -340,6 +349,7 @@ def ajax_getLogDetails(request):
                                                                     'machine__platform',
                                                                     'machine__platform_version',
                                                                     'netInfo__country',
+                                                                    'netInfo__city',
                                                                     'netInfo__domain',
                                                                     'source__name',
                                                                     'source__version',
@@ -351,7 +361,7 @@ def ajax_getLogDetails(request):
             r = {}
             r['date'] = l['date'].strftime("%Y-%m-%d %H:%M:%S")
             r['platform'] = l['machine__platform']
-            r['country'] = l['netInfo__country']
+            r['location'] = "%s, %s" % (l['netInfo__city'], l['netInfo__country'])
             r['domain'] = l['netInfo__domain']
             r['source'] = l['source__name']
             r['action'] = l['action__name']
@@ -452,12 +462,16 @@ def log_event(request, returnLogObject=False):
         try:
             geoIpInfo = gic.record_by_addr(uncensored_ip)
             netInfo_obj.country = geoIpInfo['country_code']
+            netInfo_obj.city = geoIpInfo['city']
+            if netInfo_obj.city == '':
+                netInfo_obj.city = 'Unknown'
             netInfo_obj.latitude = str(geoIpInfo['latitude'])
             netInfo_obj.longitude = str(geoIpInfo['longitude'])
-        except (GeoIPError, KeyError) as e:
+        except (GeoIPError, KeyError, AttributeError) as e:
             netInfo_obj.country = '--'
-            netInfo_obj.latitude = '0.0'
-            netInfo_obj.longitude = '0.0'
+            netInfo_obj.city = "Unknown"
+            netInfo_obj.latitude = 0.0
+            netInfo_obj.longitude = 0.0
         if gio != None:
             try:
                 netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
@@ -586,7 +600,7 @@ def _censored_reverse_dns(ip):
         host = socket.gethostbyaddr(ip)[0]
         m = re.match(r'.+\.(\w+?\.\w+?)$', host)
         return m.group(1)
-    except (socket.herror, AttributeError):
+    except (socket.herror, socket.timeout, AttributeError):
         return 'Unknown'
 
 
@@ -638,15 +652,22 @@ def _fill_db(num_entries_to_add):
         try:
             geoIpInfo = gic.record_by_addr(uncensored_ip)
             netInfo_obj.country = geoIpInfo['country_code']
+            netInfo_obj.city = geoIpInfo['city']
+            print "City: " + netInfo_obj.city
+            if netInfo_obj.city in ('', None):
+                netInfo_obj.city = 'Unknown'
             netInfo_obj.latitude = geoIpInfo['latitude']
             netInfo_obj.longitude = geoIpInfo['longitude']
-        except (GeoIPError, KeyError) as e:
+        except (GeoIPError, KeyError, AttributeError) as e:
             netInfo_obj.country = '--'
-            netInfo_obj.latitude = None
-            netInfo_obj.longitude = None
+            netInfo_obj.city = "Unknown"
+            netInfo_obj.latitude = 0.0
+            netInfo_obj.longitude = 0.0
         if gio != None:
             try:
                 netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
+                if netInfo_obj.organization == '':
+                    netInfo_obj.organization = 'Unknown'
             except GeoIPError as e:
                 netInfo_obj.organization = 'Unknown'
         netInfo_obj.ip = censored_ip

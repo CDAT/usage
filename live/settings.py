@@ -153,4 +153,5 @@ LOGGING = {
         },
     }
 }
-WWWROOT = "/git/usage"
+GEOLITECITY_RELATIVE_PATH = "GeoIP/GeoLiteCity.dat"
+GEOORGANIZATION_RELATIVE_PATH = "GeoIP/GeoOrganization.dat"
