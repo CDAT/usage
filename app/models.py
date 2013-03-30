@@ -86,7 +86,7 @@ class LogEvent(models.Model):
     def __unicode__(self):
         return "%s by User %s at %s" % (self.action.name, self.user.hashed_username, self.date)
     class Meta:
-        db_table = u'eventlog'
+        db_table = u'logevent'
 
 
 # log error description, severity, stack trace, user comments, and execution log
@@ -105,4 +105,4 @@ class Error(models.Model):
     def __unicode__(self):
         return "ERROR: (%s) %s " % (self.severity, self.description[:50])
     class Meta:
-        db_table = u'errorlog'
+        db_table = u'error'

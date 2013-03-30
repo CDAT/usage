@@ -5,8 +5,8 @@ urlpatterns = patterns('app.views',
     # /log/
     url(r'^$','show_log'),
 
-    # /log/error
-    url(r'^error/$','show_error_log'),
+    # /log/errors
+    url(r'^errors/$','show_error_log'),
 
     # /log/error/203215
     #url(r'^error/(?P<error_id>\d+)/$','show_error_details'),
@@ -46,6 +46,9 @@ urlpatterns = patterns('app.views',
 
     # /log/json/details/
     url(r'^json/details/$', 'ajax_getLogDetails'),
+	
+	# /log/json/errorlist/
+	url(r'^json/errorlist/$', 'ajax_getErrorList'),
 
     # /log/add/
     url(r'^add/$', 'log_event'),

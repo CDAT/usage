@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            @import "{{ static }}/css/smoothness/jquery-ui-1.10.2.custom.min.css";
+        </style>
+        <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+        {% if user.is_authenticated %}
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#error_table').dataTable( {
+                    "bProcessing": true,
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
+                    "aaSorting": [[ 0, "desc" ]],
+                    "sAjaxSource": '../json/errorlist/',
+                    "sAjaxDataProp": 'errors',
+                    "aoColumns": [
+                        { "mData": "date" },
+                        { "mData": "severity"},
+                        { "mData": "source" },
+                        { "mData": "platform"},
+                        { "mData": "description"},
+                        { "mData": "domain" }
+                    ]
+                } );
+            } );
+        </script>
+        {% endif %}
+    <body>
+        <center>
+            {% if user.is_authenticated %}
+            <table border=1 id="error_table">
+                <caption>Log (latest 100 entries)</caption>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Severity</th>
+                        <th>Source</th>
+                        <th>Platform</th>
+                        <th>Description</th>
+                        <th>Domain</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            {% else %}
+            <p>Please <a href="login">log-in</a> to see more detailed logs.</p>
+            {% endif %}
+            <font size="1">
+                This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
+            </font>
+        </center>
+    </body>
+</html>

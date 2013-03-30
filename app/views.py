@@ -91,7 +91,7 @@ def show_error_log(request):
     '''
     Renders the logs.
     '''
-    return render_to_response('showlog.html', {
+    return render_to_response('showerrorlog.html', {
     }, context_instance = RequestContext(request))
 
 
@@ -426,6 +426,67 @@ def ajax_getLogDetails(request):
         return HttpResponse('Unauthenticated')
 
 
+
+def ajax_getErrorList(request):
+    '''
+    Returns JSON array of JSON objects representing the 100 most recent errors.
+    Requires log-in to access, because the information is too personally identifyable.
+    The information available is:
+        domain
+        source
+        city, country
+        platform
+        date
+        error description
+        error severity
+    '''
+    if request.user.is_authenticated():
+        # get the most recent 200 log events
+        logs = Error.objects.all().order_by('-date')[:100].values('date',
+                                                                    'logEvent__machine__platform',
+                                                                    'logEvent__machine__platform_version',
+                                                                    'logEvent__netInfo__country',
+                                                                    'logEvent__netInfo__city',
+                                                                    'logEvent__netInfo__domain',
+                                                                    'logEvent__source__name',
+                                                                    'logEvent__source__version',
+                                                                    'description',
+                                                                    'severity',
+                                                                    'stackTrace',
+                                                                    'userComments',
+                                                                    'executionLog',)
+        results = []
+        for l in logs:
+            # create a dictionary for each record. Resulting JSON will look like [{"A": B}, {"C": D}]
+            # this will allow DataTables to show information in an order-independent manner, making it easy to extend later
+            r = {}
+            r['date'] = l['date'].strftime("%Y-%m-%d %H:%M:%S")
+            r['platform'] = l['logEvent__machine__platform']
+            r['location'] = "%s, %s" % (l['logEvent__netInfo__city'], l['logEvent__netInfo__country'])
+            r['domain'] = l['logEvent__netInfo__domain']
+            r['source'] = l['logEvent__source__name']
+            r['description'] = l['description']
+            r['severity'] = l['severity']
+            r['stacktrace'] = l['stackTrace']
+            r['usercomments'] = l['userComments']
+            r['executionlog'] = l['executionLog']
+            
+            # add version numbers for source and action if there is one
+            if l['logEvent__machine__platform_version'] != None and l['logEvent__machine__platform_version'] != "":
+                r['platform'] += " v" + l['logEvent__machine__platform_version']
+            if l['logEvent__source__version'] != None and l['logEvent__source__version'] != "":
+                r['source'] += " v" + l['logEvent__source__version']
+                
+            results.append(r)
+        
+        # convert to JSON
+        json_results = simplejson.dumps(results)
+        json_results = '{ "errors":' + json_results + '}'
+        return HttpResponse(json_results, content_type="application/json")
+    else:
+        return HttpResponse('Unauthenticated')
+    
+    
 
 # exempt logEvent from CSRF protection, or programs will not be able to submit their statistics!
 @csrf_exempt
