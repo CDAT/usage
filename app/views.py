@@ -20,17 +20,17 @@ from django.views.decorators.csrf import csrf_exempt
 from models import *
 import live.settings
 
-geoip_city_dat = "%s/%s" % (os.getcwdu(), live.settings.GEOLITECITY_RELATIVE_PATH)
-geoip_org_dat = "%s/%s" % (os.getcwdu(), live.settings.GEOORGANIZATION_RELATIVE_PATH)
+geoip_city_dat = "%s/%s" % (live.settings.mediapth, live.settings.GEOLITECITY_RELATIVE_PATH)
+geoip_org_dat = "%s/%s" % (live.settings.mediapth, live.settings.GEOORGANIZATION_RELATIVE_PATH)
 
 default_sleep_minutes = 30 # default amount of time which must pass before the same event from the same user is logged again
 
 gic = None
 try:
     gic = GeoIP(geoip_city_dat)
-except IOError:
+except IOError,err:
     sys.stderr.write("""ERROR: Could not find GeoIP database. Tried looking in "%s". If this is not where you have your GeoIP .dat file stored, edit GEOLITECITY_RELATIVE_PATH in live/settings.py\nIf you don't have the GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".""" % (geoip_city_dat))
-
+    sys.exit(1)
 gio = None
 try:
     gio = GeoIP(geoip_org_dat)
