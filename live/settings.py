@@ -1,5 +1,8 @@
 # Local customization file loaded in , conatins password and all, not in repo
-f=open("settings.local")
+import os
+print os.getcwd()
+
+f=open(os.getcwd()+"/settings.local")
 dbname = f.readline().strip()
 dbuser=f.readline().strip()
 dbpassword=f.readline().strip()
