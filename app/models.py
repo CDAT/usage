@@ -4,10 +4,9 @@ class User(models.Model):
     '''
     Stores anonymized information about a user.
     '''
-    id = models.AutoField(primary_key=True)
-    hashed_username = models.CharField(max_length=40, blank=True) # Use SHA-1
+    hashed_username = models.CharField(primary_key=True, max_length=40, blank=True) # Use SHA-1
     def __unicode__(self):
-        return "User %s" % self.id
+        return "User: %s" % (self.hashed_username)
     class Meta:
         db_table = u'users'
 
@@ -15,12 +14,11 @@ class Machine(models.Model):
     '''
     Stores anonymized information about a machine.
     '''
-    id = models.AutoField(primary_key=True)
-    hashed_hostname = models.CharField(max_length=40, null=False, blank=False) # Use SHA-1
+    hashed_hostname = models.CharField(primary_key=True, max_length=40, null=False, blank=False) # Use SHA-1
     platform = models.CharField(max_length=32, null=False, blank=True)
     platform_version = models.CharField(max_length=16, null=False, blank=True)
     def __unicode__(self):
-        return "Machine %s - %s - %s" % (self.id, self.platform, self.platform_version)
+        return "Machine: %s - %s" % (self.platform, self.platform_version)
     class Meta:
         db_table = u'machines'
 
@@ -34,6 +32,7 @@ class NetInfo(models.Model):
     latitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
     longitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
     country = models.CharField(max_length=2, null=False, blank=True)
+    city = models.CharField(max_length=64, null=False, blank=True)
     domain = models.CharField(max_length=64, blank=True, null=False)
     organization = models.CharField(max_length=64, null=False, blank=True)
     def __unicode__(self):
@@ -85,7 +84,7 @@ class LogEvent(models.Model):
     action = models.ForeignKey(Action, null=False, blank=True)
     date = models.DateTimeField(auto_now=True)
     def __unicode__(self):
-        return "%s by User %s at %s" % (self.action.name, self.user.id, self.date)
+        return "%s by User %s at %s" % (self.action.name, self.user.hashed_username, self.date)
     class Meta:
         db_table = u'eventlog'
 
