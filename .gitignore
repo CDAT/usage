@@ -1,3 +1,4 @@
+settings.local
 *.pyc
 *~
 .htaccess
