@@ -68,7 +68,7 @@ def show_sign_in_page(request):
     # De-activated user
     elif not user.is_active:
         return render_to_response('authentication_page.html', {
-            'error_message': "The account you are trying ot use has been disabled.<br/>" + 
+            'error_message': "The account you are trying to use has been disabled.<br/>" + 
             "Please contact a system administrator.",
         }, context_instance = RequestContext(request))
     # Valid login, active user
