@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<title name="page-title">Details for Error {{ id }}</title>
+	</head>
+	<body>
+		{% if user.is_authenticated %}
+		<div>
+			<h3>Details:</h3>
+			<div>
+				<strong>Error:</strong> {{ id }}
+			</div>
+			<div>
+				<strong>Severity:</strong> {{ severity }}
+			</div>
+			<div>
+				<strong>Date:</strong> {{ date }}
+			</div>
+			<div>
+				<strong>Source:</strong> {{ source }}
+			</div>
+			<div>
+				<strong>Platform:</strong> {{ platform }}
+			</div>
+			<div>
+				<strong>Description:</strong> {{ description }}
+			</div>
+			<div>
+				<strong>Stack Trace:</strong><br/>
+				{{ stack_trace }}
+			</div>
+			<div>
+				<strong>Execution Log</strong><br/>
+				{{ execution_log }}
+			</div>
+			<div>
+				<strong>Actions leading-up to error:</strong>
+				<table border="1" id="recent_actions_table">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for action in actions %}
+						<tr>
+							<td>{{ action.date }}</td>
+							<td>{{ action.name }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{{ action }}
+			</div>
+		</div>
+		{% else %}
+		<p>Please <a href="../../login">login</a> to view error details.</p>
+		{% endif %}
+	</body>
+</html>
