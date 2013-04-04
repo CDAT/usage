@@ -9,7 +9,7 @@ urlpatterns = patterns('app.views',
     url(r'^errors/$','show_error_log'),
 
     # /log/error/203215
-    #url(r'^error/(?P<error_id>\d+)/$','show_error_details'),
+    url(r'^error/(?P<error_id>\d+)/$','show_error_details'),
 
     # /log/login/
     url(r'^login/$','show_sign_in_page'),

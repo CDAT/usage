@@ -14,10 +14,11 @@
                     "bProcessing": true,
                     "bJQueryUI": true,
                     "sPaginationType": "full_numbers",
-                    "aaSorting": [[ 0, "desc" ]],
+                    "aaSorting": [[ 1, "desc" ]],
                     "sAjaxSource": '../json/errorlist/',
                     "sAjaxDataProp": 'errors',
                     "aoColumns": [
+                        { "mData": "id", "mRender": function(data, type, row) {return '<a href="../error/' + data + '">Error ' + data + '</a>'} },
                         { "mData": "date" },
                         { "mData": "severity"},
                         { "mData": "source" },
@@ -36,6 +37,7 @@
                 <caption>Log (latest 100 entries)</caption>
                 <thead>
                     <tr>
+                        <th>Error ID</th>
                         <th>Date</th>
                         <th>Severity</th>
                         <th>Source</th>
@@ -47,12 +49,12 @@
                 <tbody>
                 </tbody>
             </table>
-            {% else %}
-            <p>Please <a href="login">log-in</a> to see more detailed logs.</p>
-            {% endif %}
             <font size="1">
                 This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
             </font>
+            {% else %}
+            <p>Please <a href="../login">log-in</a> to see more detailed logs.</p>
+            {% endif %}
         </center>
     </body>
 </html>

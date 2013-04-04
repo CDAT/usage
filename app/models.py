@@ -17,6 +17,12 @@ class Machine(models.Model):
     hashed_hostname = models.CharField(primary_key=True, max_length=40, null=False, blank=False) # Use SHA-1
     platform = models.CharField(max_length=32, null=False, blank=True)
     platform_version = models.CharField(max_length=16, null=False, blank=True)
+    def getPlatform(self):
+        if self.platform_version not in [None, '']:
+            return "%s v%s" % (self.platform, self.platform_version)
+        else:
+            return platform
+    
     def __unicode__(self):
         return "Machine: %s - %s" % (self.platform, self.platform_version)
     class Meta:

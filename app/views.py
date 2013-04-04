@@ -96,6 +96,32 @@ def show_error_log(request):
 
 
 
+def show_error_details(request, error_id):
+    '''
+    Renders the template which shows detailed error info.
+    '''
+    error_obj = get_object_or_404(Error, pk=error_id)
+    # countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
+    actions = LogEvent.objects.values('date', 'action__name').filter(date__lte=error_obj.date, user=error_obj.logEvent.user, machine=error_obj.logEvent.machine).order_by('-date')[:10]
+    for action in actions:
+        action['name'] = action['action__name']
+        del(action['action__name'])
+        
+    return render_to_response('errordetails.html', {
+        "id": error_id,
+        "description": error_obj.description,
+        "stack_trace": error_obj.stackTrace,
+        "severity": error_obj.severity,
+        "user_comments": error_obj.userComments,
+        "execution_log": error_obj.executionLog,
+        "date": error_obj.date,
+        "source": error_obj.logEvent.source,
+        "platform": error_obj.logEvent.machine.getPlatform(),
+        "actions": actions,
+    }, context_instance = RequestContext(request))
+
+
+
 def show_debug(request):
     '''
     For debugging use only, will show a form where you can submit log events.
@@ -442,7 +468,8 @@ def ajax_getErrorList(request):
     '''
     if request.user.is_authenticated():
         # get the most recent 200 log events
-        logs = Error.objects.all().order_by('-date')[:100].values('date',
+        logs = Error.objects.all().order_by('-date')[:100].values('id',
+                                                                    'date',
                                                                     'logEvent__machine__platform',
                                                                     'logEvent__machine__platform_version',
                                                                     'logEvent__netInfo__country',
@@ -460,6 +487,7 @@ def ajax_getErrorList(request):
             # create a dictionary for each record. Resulting JSON will look like [{"A": B}, {"C": D}]
             # this will allow DataTables to show information in an order-independent manner, making it easy to extend later
             r = {}
+            r['id'] = l['id']
             r['date'] = l['date'].strftime("%Y-%m-%d %H:%M:%S")
             r['platform'] = l['logEvent__machine__platform']
             r['location'] = "%s, %s" % (l['logEvent__netInfo__city'], l['logEvent__netInfo__country'])
@@ -646,10 +674,11 @@ def log_error(request):
 
     except Exception as e:
         sys.stderr.write("Fatal Exception: " + str(e))
-        return HttpResponse('''
-        I'm really sorry about this, but an error occurred while trying to record your error report!<br/>
-        I don't really know how this will help you, but the error message reutnred was:<br/>
-        '%s' ''' % e)
+        response = render_to_response('error.html', {
+            'error_msg': str(e)
+        }, context_instance = RequestContext(request))
+        response.status_code = 400
+        return response
 
 
 
