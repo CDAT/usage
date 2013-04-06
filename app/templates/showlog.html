@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="icon" type="image/png" href="http://uv-cdat.llnl.gov/images/uv-cdat-favicon.png">
+        <link rel='stylesheet' href='http://uv-cdat.llnl.gov/styles.css' type='text/css'>
         <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="../scripts/jquery-ui-1.10.2.custom.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript">
+        if (typeof jQuery == 'undefined')
+        {
+           document.write(unescape("%3Cscript src='../scripts/jquery-1.9.1.min.js' type='text/javascript'%3E%3C/script%3E"));
+           document.write(unescape("%3Cscript src='../scripts/jquery.dataTables.js' type='text/javascript'%3E%3C/script%3E"));
+        }
+        </script>
         <script type="text/javascript" charset="utf8">
             $(document).ready(function() {
                 $('#country_table').dataTable( {
                     "bProcessing": true,
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
                     "aaSorting": [[ 1, "desc" ]],
                     "sAjaxSource": 'json/country/',
                     "sAjaxDataProp": 'countries'
@@ -15,6 +27,8 @@
             $(document).ready(function() {
                 $('#domain_table').dataTable( {
                     "bProcessing": true,
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
                     "aaSorting": [[ 1, "desc" ]],
                     "sAjaxSource": 'json/domain/',
                     "sAjaxDataProp": 'domains'
@@ -23,6 +37,8 @@
             $(document).ready(function() {
                 $('#platform_table').dataTable( {
                     "bProcessing": true,
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
                     "aaSorting": [[ 1, "desc" ]],
                     "sAjaxSource": 'json/platform/',
                     "sAjaxDataProp": 'platforms'
@@ -34,6 +50,8 @@
             $(document).ready(function() {
                 $('#log_table').dataTable( {
                     "bProcessing": true,
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
                     "aaSorting": [[ 0, "desc" ]],
                     "sAjaxSource": 'json/details/',
                     "sAjaxDataProp": 'logs',
@@ -49,67 +67,125 @@
             } );
         </script>
         {% endif %}
+        <!--<link rel="stylesheet" type="text/css" href="../css/smoothness/jquery-ui-1.10.2.custom.css">-->
+        <link rel="stylesheet" type="text/css" media="screen" href="../css/smoothness/jquery-ui-1.10.2.custom.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="../css/usageTheme.css">
+    </head>
+    
     <body>
-        <center>
-            <table border=1 id="country_table">
-                <caption>Countries</caption>
-                <thead>
-                    <tr>
-                        <th>Location</th>
-                        <th>Ocurrances</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <br/>
-            <table border=1 id="domain_table">
-                <caption>Domains</caption>
-                <thead>
-                    <tr>
-                        <th>Domain name</th>
-                        <th>Ocurrances</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <br/>
-            <table border=1 id="platform_table">
-                <caption>Platforms</caption>
-                <thead>
-                    <tr>
-                        <th>Platform name</th>
-                        <th>Ocurrances</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <br>
+        <!-- header starts here -->
+        <div id="header" style="overflow: hidden">
+            <div id='logo' style='float: left; margin-right: 20px; margin-left: -10px'>
+                <a href="http://uv-cdat.llnl.gov/"><img src='http://uv-cdat.llnl.gov/images/uv-cdat-logo.png' height="70" border="0"></a>
+            </div>
+            <div style='float: right; margin-right: 20px'>
+                <img src='http://uv-cdat.llnl.gov/images/DOE_Banner.png' height="70" >
+            </div>
+            
+            <div style='float: right; margin-right: 20px'> 
+                <img src='images/logo.png' height="70" >     
+            </div>
+            
+            <div>  <!-- inside header -->   
+            
+                <div class="title">UV-CDAT
+                </div>
+                <div class="subtitle">Ultrascale Visualization - Climate Data Analysis Tools
+                </div>
+                <!-- projects top navigation -->  
+                <!-- projects top navigation -->  
+                <div class="projects">  <!-- projects -->   
+                    <a href="/cdat-site">CDAT</a> &middot;
+                    <a href="/vistrails-site">VisTrails</a> &middot;
+                    <a href="/paraview-site">ParaView</a>  &middot;
+                    <a href="/visit-site">VisIt</a>  &middot;
+                    <a href="/dv3d-site">DV3D</a>  &middot;
+                    <a href="/r-site">R</a> &middot;
+                    <a href="http://www.earthsystemcog.org/projects/esmf/">ESMF</a>
+                </div> <!-- projects -->    
+            
+            </div>  <!-- inside header -->
+		</div>  <!-- header -->
+        
+        
+        <div id="main-div" class="content">
+            <div id="explanation">
+                <h3>UV-CDAT/CDAT Usage statistics:</h3>
+                <p>UV-CDAT optionally sends anonymous statistics to this server. This information is used to help us decide which components are most widely used. (and thus, deserve more attention from the developers)</p>
+            </div>
+            <div id="column-L">
+                
+                <div id="country-table-div" class="stats-div">
+                    <h4 class="table-caption">Countries</h4>
+                    <table border=1 id="country_table">
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Ocurrances</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="domain-table-div" class="stats-div">
+                    <h4 class="table-caption">Domains</h4>
+                    <table border=1 id="domain_table">
+                        <thead>
+                            <tr>
+                                <th>Domain name</th>
+                                <th>Ocurrances</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        
+            <div id="column-R">
+                <div id="platform-table-div" class="stats-div">
+                    <h4 class="table-caption">Platforms</h4>
+                    <table border=1 id="platform_table">
+                        <thead>
+                            <tr>
+                                <th>Platform name</th>
+                                <th>Ocurrances</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
             {% if user.is_authenticated %}
-            <table border=1 id="log_table">
-                <caption>Log (latest 200 entries)</caption>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Platform</th>
-                        <th>Source</th>
-                        <th>Action</th>
-                        <th>Country</th>
-                        <th>Domain</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-	    <p> Access admin interface <a href="../admin">here</a></p>
+            <div id="detailed-log-table-div" class="detail-div">
+                <h4 class="table-caption">Detailed logs</h4>
+                <table border=1 id="log_table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Platform</th>
+                            <th>Source</th>
+                            <th>Action</th>
+                            <th>Country</th>
+                            <th>Domain</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <p> Access admin interface <a href="../admin">here</a></p>
             {% else %}
             <p>Please <a href="login">log-in</a> to see more detailed logs.</p>
             {% endif %}
             <font size="1">
                 This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
             </font>
-        </center>
+        </div>
     </body>
 </html>

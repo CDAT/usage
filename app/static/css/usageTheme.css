@@ -1,0 +1,142 @@
+body,
+html {
+	margin: 0;
+	padding: 0;
+	color: #000;
+	background: #fff;
+}
+
+#main-div {
+	width: 1000px;
+	margin: 0 auto;
+	background: #fff;
+}
+
+.stats-div {
+	width:490px;
+	padding: 5px;
+	background: #fff;
+}
+
+.table-caption {
+	text-align: center;
+}
+
+.dataTable {
+	width: 100%;
+}
+
+.dataTables_filter {
+	width: 50%;
+	float: right;
+	text-align: right;
+}
+
+.dataTables_info {
+	width: 50%;
+	float: left;
+}
+
+.dataTables_paginate {
+	float: right;
+	text-align: right;
+}
+
+.paging_two_button .ui-button {
+	float: left;
+	cursor: pointer;
+	* cursor: hand;
+}
+
+.paging_full_numbers .ui-button {
+	padding: 2px 6px;
+	margin: 0;
+	cursor: pointer;
+	* cursor: hand;
+	color: #333 !important;
+}
+
+.paging_full_numbers {
+	width: 350px !important;
+}
+
+div.dataTables_wrapper .ui-widget-header {
+	font-weight: normal;
+}
+
+/*
+ * Sort arrow icon positioning
+ */
+table.display thead th div.DataTables_sort_wrapper {
+	position: relative;
+	padding-right: 20px;
+}
+
+table.display thead th div.DataTables_sort_wrapper span {
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
+	right: 0;
+}
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * DataTables display
+ */
+table.display {
+	margin: 0 auto;
+	width: 100%;
+	clear: both;
+	border-collapse: collapse;
+}
+
+table.display tfoot th {
+	padding: 3px 0px 3px 10px;
+	font-weight: bold;
+	font-weight: normal;
+}
+
+table.display tr.heading2 td {
+	border-bottom: 1px solid #aaa;
+}
+
+table.display td {
+	padding: 3px 10px;
+}
+
+table.display td.center {
+	text-align: center;
+}
+
+
+
+
+
+#country-table-div {
+	float: left;
+}
+
+#domain-table-div {
+	float: right;
+}
+
+#platform-table-div {
+	float: left;
+}
+
+#detailed-log-table-div {
+	clear: both;
+	padding: 10;
+}
+
+#colun-L {
+	float:left;
+	width: 50%;
+}
+
+#colun-R {
+	float:right;
+	width: 50%;
+}
