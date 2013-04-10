@@ -53,6 +53,16 @@
                     "sAjaxDataProp": "platforms"
                 } );
             } );
+            $(document).ready(function() {
+                $("#source_detail_table").dataTable( {
+                    "bProcessing": true,
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
+                    "aaSorting": [[ 2, "desc" ]],
+                    "sAjaxSource": "json/source/details/",
+                    "sAjaxDataProp": "detailedSources"
+                } );
+            } );
         </script>
         {% if user.is_authenticated %}
         <script type="text/javascript" charset="utf-8">
@@ -176,6 +186,21 @@
                         <thead>
                             <tr>
                                 <th>Platform name</th>
+                                <th>Occurrences</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="source-detail-table-div" class="stats-div">
+                    <h4 class="table-caption">Sources</h4>
+                    <table border=1 id="source_detail_table">
+                        <thead>
+                            <tr>
+                                <th>Source name</th>
+                                <th>Source version</th>
                                 <th>Occurrences</th>
                             </tr>
                         </thead>

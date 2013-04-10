@@ -145,6 +145,9 @@ tr.even {
 #platform-table-div {
 	float: left;
 }
+#source-detail-table-div {
+	float: right;
+}
 
 #detailed-log-table-div {
 	clear: both;
