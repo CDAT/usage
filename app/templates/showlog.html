@@ -60,7 +60,13 @@
                     "sPaginationType": "full_numbers",
                     "aaSorting": [[ 2, "desc" ]],
                     "sAjaxSource": "json/source/details/",
-                    "sAjaxDataProp": "detailedSources"
+                    "sAjaxDataProp": "detailedSources",
+                    "bAutoWidth": false,
+                    "aoColumns": [
+                        {"sWidth": "20%"},
+                        {"sWidth": "65%"},
+                        {"sWidth": "15%"}
+                    ]
                 } );
             } );
         </script>
@@ -180,6 +186,7 @@
             </div>
         
             <div id="column-R">
+                
                 <div id="platform-table-div" class="stats-div">
                     <h4 class="table-caption">Platforms</h4>
                     <table border=1 id="platform_table">
@@ -208,6 +215,7 @@
                         </tbody>
                     </table>
                 </div>
+                
             </div>
             <br/>
             <br/>
