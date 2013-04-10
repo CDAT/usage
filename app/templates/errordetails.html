@@ -2,10 +2,80 @@
 <html>
     <head>
 		<title name="page-title">Details for Error {{ id }}</title>
+		
+		<!-- css -->
+        <link rel="icon" type="image/png" href="http://uv-cdat.llnl.gov/images/uv-cdat-favicon.png">
+        <link rel="stylesheet" href="http://uv-cdat.llnl.gov/styles.css" type="text/css">
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}css/usageTheme.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.2.custom.css">
+            
+        <!-- JavaScript -->
+        <script type="text/javascript" charset="utf8" language="javascript" src="{{ STATIC_URL }}scripts/jquery-1.9.1.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="{{ STATIC_URL }}scripts/jquery.dataTables.js"></script>
+        
+        <!-- Load from CDN if files failed to load locally (eg. on an unconfigured development machine) -->
+        <script type="text/javascript" charset="utf8" language="javascript">
+        if (typeof jQuery == 'undefined') {
+           document.write(unescape("%3Cscript src=\"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js\" type=\"text/javascript\"%3E%3C/script%3E"));
+        }
+        if (typeof jQuery.fn.dataTable == 'undefined') {
+           document.write(unescape("%3Cscript src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js\" type=\"text/javascript\"%3E%3C/script%3E"));
+        }
+        </script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="{{ STATIC_URL }}scripts/jquery-ui-1.10.2.custom.js"></script>
+		
+		<script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $("#recent_actions_table").dataTable( {
+					"bJQueryUI": true,
+					"bPaginate": false,
+					"aaSorting": [[0, "desc"]],
+					"aoColumns": [ 
+						{ "bSortable": false },
+						{ "bSortable": false }
+					]
+				});
+			});
+		</script>
+
 	</head>
 	<body>
+		<!-- header starts here -->
+        <div id="header" style="overflow: hidden">
+            <div id="logo" style="float: left; margin-right: 20px; margin-left: -10px">
+                <a href="http://uv-cdat.llnl.gov/"><img src="http://uv-cdat.llnl.gov/images/uv-cdat-logo.png" height="70" border="0"></a>
+            </div>
+            <div style="float: right; margin-right: 20px">
+                <img src="http://uv-cdat.llnl.gov/images/DOE_Banner.png" height="70" >
+            </div>
+            
+            <div style="float: right; margin-right: 20px"> 
+                <img src="http://uv-cdat.llnl.gov/images/logo.png" height="70" >     
+            </div>
+            
+            <div>  <!-- inside header -->   
+            
+                <div class="title">UV-CDAT
+                </div>
+                <div class="subtitle">Ultrascale Visualization - Climate Data Analysis Tools
+                </div>
+                <!-- projects top navigation -->  
+                <!-- projects top navigation -->  
+                <div class="projects">  <!-- projects -->   
+                    <a href="/cdat-site">CDAT</a> &middot;
+                    <a href="/vistrails-site">VisTrails</a> &middot;
+                    <a href="/paraview-site">ParaView</a>  &middot;
+                    <a href="/visit-site">VisIt</a>  &middot;
+                    <a href="/dv3d-site">DV3D</a>  &middot;
+                    <a href="/r-site">R</a> &middot;
+                    <a href="http://www.earthsystemcog.org/projects/esmf/">ESMF</a>
+                </div> <!-- projects -->    
+            
+            </div>  <!-- inside header -->
+		</div>  <!-- header -->
+        
 		{% if user.is_authenticated %}
-		<div>
+		<div id="main-div" class="content">
 			<h3>Details:</h3>
 			<div>
 				<strong>Error:</strong> {{ id }}
@@ -33,8 +103,8 @@
 				<strong>Execution Log</strong><br/>
 				{{ execution_log }}
 			</div>
-			<div>
-				<strong>Actions leading-up to error:</strong>
+			<div class="stats-div">
+				<h4 class="table-caption">Actions leading-up to error:</h4>
 				<table border="1" id="recent_actions_table">
 					<thead>
 						<tr>
