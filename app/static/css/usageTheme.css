@@ -12,6 +12,16 @@ html {
 	background: #fff;
 }
 
+select {
+	color: #000;
+	background-color: #fff;
+}
+
+input {
+	color: #000;
+	background-color: #fff;
+}
+
 .stats-div {
 	width:490px;
 	padding: 5px;
@@ -45,14 +55,14 @@ html {
 .paging_two_button .ui-button {
 	float: left;
 	cursor: pointer;
-	* cursor: hand;
+	cursor: hand;
 }
 
 .paging_full_numbers .ui-button {
 	padding: 2px 6px;
 	margin: 0;
 	cursor: pointer;
-	* cursor: hand;
+	cursor: hand;
 	color: #333 !important;
 }
 
@@ -111,6 +121,16 @@ table.display td.center {
 }
 
 
+/************************************************
+ * Even/odd table rows have alternating colors
+ ***********************************************/
+tr.odd {
+	background-color: #E2E4FF;
+}
+
+tr.even {
+	background-color: white;
+}
 
 
 
@@ -128,7 +148,7 @@ table.display td.center {
 
 #detailed-log-table-div {
 	clear: both;
-	padding: 10;
+	padding: 10px;
 }
 
 #colun-L {
