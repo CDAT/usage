@@ -11,11 +11,12 @@ f.close()
 
 # Django settings for live project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('leung25', 'leung25@llnl.gov'),
+    ('fedorthurman1', 'fedorthurman1@llnl.gov'),
 )
 
 MANAGERS = ADMINS
@@ -30,6 +31,12 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+# A list of strings representing the host/domain names that this Django site can serve.
+# This is a security measure to prevent an attacker from poisoning caches and password
+# reset emails with links to malicious hosts by submitting requests with a fake HTTP Host
+# header, which is possible even under many seemingly-safe webserver configurations.
+ALLOWED_HOSTS = ['uvcdat.llnl.gov', '127.0.0.1', 'localhost']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -67,11 +74,11 @@ MEDIA_URL = 'http://localhost:8080/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = '/var/www/emily.llnl.gov/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/DJANGO/static/'
+STATIC_URL = 'http://127.0.0.1/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -117,7 +124,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/git/usage/app'
+    '%s/app' % mediapth
 )
 
 INSTALLED_APPS = (
@@ -143,12 +150,28 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
     'handlers': {
+        'console':{
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'verbose'
+        },
+        'file':{
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -157,7 +180,7 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['mail_admins', 'console'],
             'level': 'ERROR',
             'propagate': True,
         },
