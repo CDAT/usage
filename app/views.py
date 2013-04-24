@@ -10,6 +10,7 @@ import threading
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -548,7 +549,7 @@ def log_event(request, returnLogObject=False):
     ####### NETINFO #######
     try:
         netInfo_obj = NetInfo.objects.get(ip = censored_ip)
-    except Exception, err:
+    except ObjectDoesNotExist as err:
         netInfo_obj = NetInfo()
         # GeoIP stuff (tested with IPv4 only!)
         try:
@@ -576,7 +577,7 @@ def log_event(request, returnLogObject=False):
     ####### MACHINE #######
     try:
         machine_obj = Machine.objects.get(hashed_hostname = hostname)
-    except:
+    except ObjectDoesNotExist as err:
         machine_obj = Machine()
         machine_obj.hashed_hostname = hostname
         machine_obj.platform = platform
@@ -586,7 +587,7 @@ def log_event(request, returnLogObject=False):
     ####### USER #######
     try:
         user_obj = User.objects.get(hashed_username = username)
-    except:
+    except ObjectDoesNotExist as err:
         user_obj = User()
         user_obj.hashed_username = username
         user_obj.save()
@@ -594,7 +595,7 @@ def log_event(request, returnLogObject=False):
     ####### SOURCE #######
     try:
         source_obj = Source.objects.get(name = source, version = source_version)
-    except:
+    except ObjectDoesNotExist as err:
         source_obj = Source()
         source_obj.name = source
         source_obj.version = source_version
@@ -603,7 +604,7 @@ def log_event(request, returnLogObject=False):
     ####### ACTION #######
     try:
         action_obj = Action.objects.get(name = action)
-    except:
+    except ObjectDoesNotExist as err:
         action_obj = Action()
         action_obj.name = action
         action_obj.save()
@@ -619,7 +620,7 @@ def log_event(request, returnLogObject=False):
     # get most recent log event with same user/machine/action/etc
     try:
         prevLogEvent = LogEvent.objects.filter(user = user_obj, machine = machine_obj, netInfo = netInfo_obj, source = source_obj, action = action_obj).latest('date')
-    except LogEvent.DoesNotExist, e:
+    except ObjectDoesNotExist as e:
         prevLogEvent = None
     if sleepTime <= 0 or prevLogEvent == None or prevLogEvent.date < (timezone.now() - timezone.timedelta(minutes=sleepTime)):
         log = LogEvent()
@@ -657,7 +658,8 @@ def log_error(request):
 
         # create a LogEntry with the appropriate action
         request.POST = request.POST.copy() # to make it mutable
-        request.POST['action'] = "Error (%s)" % severity
+        request.POST['sleep'] = 0 # force it to create unique log events for errors.
+        request.POST['action'] = "Error (%s) - " % (severity, description[:30])
         log_obj = log_event(request, returnLogObject=True)
 
         # create our Error object and save it
