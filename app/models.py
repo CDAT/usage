@@ -4,7 +4,7 @@ class User(models.Model):
     '''
     Stores anonymized information about a user.
     '''
-    hashed_username = models.CharField(primary_key=True, max_length=40, blank=True) # Use SHA-1
+    hashed_username = models.CharField(primary_key=True, max_length=40, blank=False) # Use SHA-1
     def __unicode__(self):
         return "User: %s" % (self.hashed_username)
     class Meta:
@@ -34,7 +34,7 @@ class NetInfo(models.Model):
     (IP address anonymized by zerioing-out the last octet.)
     eg: 12.34.56.78 --> 12.34.56.0
     '''
-    ip = models.GenericIPAddressField()
+    ip = models.GenericIPAddressField(primary_key=True, null=False, blank=False)
     latitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
     longitude = models.DecimalField(max_digits=13, decimal_places=10, null=False)
     country = models.CharField(max_length=2, null=False, blank=True)
@@ -53,7 +53,7 @@ class Source(models.Model):
     '''
     Stores name and version of the program which submitted the log entry.
     '''
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True, null=False, blank=False)
     name = models.CharField(max_length=16, blank=True, null=False)
     # use CharField for version number because sometimes versions have multiple decimal places or letters (eg 2.3.2rc1)
     version = models.CharField(max_length=64, blank=True, null=False)
@@ -64,14 +64,14 @@ class Source(models.Model):
             return "%s" % (self.name)
     class Meta:
         db_table = u'sources'
+        unique_together = ("name", "version")
 
 class Action(models.Model):
     '''
     Stores the action taken in the log event.
     This could be things like "Started UV-CDAT", "Error (FATAL)", or "Build successful"
     '''
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=64, blank=True, null=False)
+    name = models.CharField(primary_key=True, max_length=64, blank=False, null=False)
     def __unicode__(self):
         return self.name
     class Meta:
@@ -81,8 +81,9 @@ class Action(models.Model):
 class LogEvent(models.Model):
     '''
     The actual log.
-    A LogEvent is a relation between users, machines, netINfos, sources, and actions that happened on a particular date at a particular time.
+    A LogEvent is a relation between users, machines, netInfos, sources, and actions that happened on a particular date at a particular time.
     '''
+    id = models.AutoField(primary_key=True, null=False, blank=False)
     user = models.ForeignKey(User, null=False, blank=True)
     machine = models.ForeignKey(Machine, null=False, blank=True)
     netInfo = models.ForeignKey(NetInfo, null=False, blank=True)
@@ -93,6 +94,7 @@ class LogEvent(models.Model):
         return "%s by User %s at %s" % (self.action.name, self.user.hashed_username, self.date)
     class Meta:
         db_table = u'logevent'
+        unique_together = ("user", "machine", "netInfo", "source", "action", "date")
 
 
 # log error description, severity, stack trace, user comments, and execution log
@@ -101,7 +103,8 @@ class Error(models.Model):
     '''
     Stores information related to errors. (severity, description, stack trace, etc)
     '''
-    logEvent = models.ForeignKey(LogEvent, null=False, blank=False)
+    id = models.AutoField(primary_key=True, null=False, blank=False)
+    logEvent = models.ForeignKey(LogEvent, unique=True, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
     severity = models.CharField(max_length=8, null=False, blank=False)
     stackTrace = models.TextField(null=False, blank=True)

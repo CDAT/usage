@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -619,9 +620,14 @@ def log_event(request, returnLogObject=False):
 
     # get most recent log event with same user/machine/action/etc
     try:
-        prevLogEvent = LogEvent.objects.filter(user = user_obj, machine = machine_obj, netInfo = netInfo_obj, source = source_obj, action = action_obj).latest('date')
+        prevLogEvent = LogEvent.objects.filter(user = user_obj,
+                                               machine = machine_obj,
+                                               netInfo = netInfo_obj,
+                                               source = source_obj,
+                                               action = action_obj).latest('date')
     except ObjectDoesNotExist as e:
         prevLogEvent = None
+        
     if sleepTime <= 0 or prevLogEvent == None or prevLogEvent.date < (timezone.now() - timezone.timedelta(minutes=sleepTime)):
         log = LogEvent()
         log.user = user_obj
@@ -629,8 +635,12 @@ def log_event(request, returnLogObject=False):
         log.netInfo = netInfo_obj
         log.source = source_obj
         log.action = action_obj
-        log.save()
-        responseMsg = "Thank you for participating!"
+        try:
+            log.save()
+            responseMsg = "Thank you for participating!"
+        except IntegrityError:
+            responseMsg = "Ignoring attempted duplicate log addition."
+        
     else:
         log = prevLogEvent
         responseMsg = "I'm ignoring you because you already sent this event within the last %i minutes!" % sleepTime
@@ -670,9 +680,13 @@ def log_error(request):
         error.stackTrace = stackTrace
         error.userComments = userComments
         error.executionLog = executionLog
-        error.save()
+        try:
+            error.save()
+            return HttpResponse('Your crash report has been recorded. Thank you!')
+        except IntegrityError:
+            return HttpResponse('Ignoring attempted duplicate error report addition.')
 
-        return HttpResponse('Your crash report has been recorded. Thank you!')
+
 
     except Exception as e:
         sys.stderr.write("Fatal Exception: " + str(e))
