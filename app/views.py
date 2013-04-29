@@ -690,8 +690,7 @@ def log_error(request):
 
     except Exception as e:
         sys.stderr.write("Fatal Exception in uvcdat usage: " + str(e))
-        print e
-        response.status_code = 400
+        response.status_code = 500
         return response
 
 
