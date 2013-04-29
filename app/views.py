@@ -669,7 +669,7 @@ def log_error(request):
         # create a LogEntry with the appropriate action
         request.POST = request.POST.copy() # to make it mutable
         request.POST['sleep'] = 0 # force it to create unique log events for errors.
-        request.POST['action'] = "Error (%s) - " % (severity, description[:30])
+        request.POST['action'] = "Error (%s) - %s" % (severity, description[:30])
         log_obj = log_event(request, returnLogObject=True)
 
         # create our Error object and save it
@@ -689,10 +689,8 @@ def log_error(request):
 
 
     except Exception as e:
-        sys.stderr.write("Fatal Exception: " + str(e))
-        response = render_to_response('error.html', {
-            'error_msg': str(e)
-        }, context_instance = RequestContext(request))
+        sys.stderr.write("Fatal Exception in uvcdat usage: " + str(e))
+        print e
         response.status_code = 400
         return response
 
