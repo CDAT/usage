@@ -43,9 +43,9 @@ urlpatterns = patterns('app.views',
     # /log/json/country/
     # /log/json/country/?days=7
     url(r'^json/country/$','ajax_getCountryInfo'),
-
-    # /log/json/details/
-    url(r'^json/details/$', 'ajax_getLogDetails'),
+	
+	# /log/json/eventlist/
+	url(r'^json/eventlist/$', 'ajax_getLogEventList'),
 	
 	# /log/json/errorlist/
 	url(r'^json/errorlist/$', 'ajax_getErrorList'),

@@ -381,7 +381,7 @@ def ajax_getDetailedSourceInfo(request):
 
 
 
-def ajax_getLogDetails(request):
+def ajax_getLogEventList(request):
     '''
     Returns JSON array of JSON objects representing the 200 most recent log events.
     Requires log-in to access, because the combination of Domain and Action is too personally identifyable.
