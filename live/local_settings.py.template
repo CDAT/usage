@@ -18,8 +18,8 @@
 # from MaxMind. GeoLite City is free for most uses. See license on site.
 # Latest version of GeoLite City can be downloaded from
 # http://dev.maxmind.com/geoip/legacy/geolite
-GEOLITECITY_RELATIVE_PATH = "GeoIP/GeoLiteCity.dat"
-GEOORGANIZATION_RELATIVE_PATH = "GeoIP/GeoOrganization.dat"
+GEOLITECITY_ABSOLUTE_PATH = "/var/www/example/GeoIP/GeoLiteCity.dat"
+GEOORGANIZATION_ABSOLUTE_PATH = "/var/www/example/GeoIP/GeoOrganization.dat"
 
 # use DEBUG = False in production!
 DEBUG = True
