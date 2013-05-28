@@ -33,13 +33,19 @@ gic = None
 try:
     gic = GeoIP(geoip_city_dat)
 except IOError,err:
-    sys.stderr.write("""ERROR: Could not find GeoIP database. Tried looking in "%s". If this is not where you have your GeoIP .dat file stored, edit GEOLITECITY_ABSOLUTE_PATH in live/local_settings.py\nIf you don't have the GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".""" % (geoip_city_dat))
+    sys.stderr.write("""
+ERROR: Could not find GeoIP database. Tried looking in "%s".
+If this is not where you have your GeoIP .dat file stored, edit
+GEOLITECITY_ABSOLUTE_PATH in live/local_settings.py\nIf you don't have the
+GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".
+""" % (geoip_city_dat))
     sys.exit(1)
 gio = None
 try:
     gio = GeoIP(geoip_org_dat)
 except IOError:
-    # we don't want to spam the log with warning messages, so don't do anything here...
+    # we don't want to spam the log with warning messages, so don't do anything here.
+    # it's desgined to work without the GeoIP Organization database anyway...
     pass
 
 # set socket default timeout to 5 seconds.
