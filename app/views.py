@@ -40,6 +40,7 @@ GEOLITECITY_ABSOLUTE_PATH in live/local_settings.py\nIf you don't have the
 GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".
 """ % (geoip_city_dat))
     sys.exit(1)
+    
 gio = None
 try:
     gio = GeoIP(geoip_org_dat)
@@ -52,7 +53,6 @@ except IOError:
 # this setting is used by the reverse-DNS lookup
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(5)
-
 
 
 ####### TEMPLATE RENDERERS #######
@@ -159,9 +159,8 @@ def show_debug_error(request):
 ####### AJAX DATA ACCESS #######
 def ajax_getCountryInfo(request):
     '''
-    Returns JSON array of JSON arrays representing the total number of log events per country.
-    The optional prameter "_days" specifies how many days back the log should go.
-    0 days returns the results for all-time.
+    Returns JSON array of JSON arrays representing the total number of unique
+    machines broken down by country.
     '--' represents "Unknown"
 
     format is ["country code", counts]
@@ -177,10 +176,10 @@ def ajax_getCountryInfo(request):
     results = {}
     
     if days == 0:
-        countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
+        countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
     else:
         date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
-        countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
+        countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
         
     # convert to JSON
     json_results = []
