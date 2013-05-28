@@ -791,28 +791,40 @@ def _fill_db(num_entries_to_add):
         netInfo_obj.save()
         
         ####### MACHINE #######
-        machine_obj = Machine()
-        machine_obj.hashed_hostname = hostname
-        machine_obj.platform = platform
-        machine_obj.platform_version = platform_version
-        machine_obj.save()
-        
+        try:
+            machine_obj = Machine.objects.get(hashed_hostname = hostname)
+        except ObjectDoesNotExist as err:
+            machine_obj = Machine()
+            machine_obj.hashed_hostname = hostname
+            machine_obj.platform = platform
+            machine_obj.platform_version = platform_version
+            machine_obj.save()
+    
         ####### USER #######
-        user_obj = User()
-        user_obj.hashed_username = username
-        user_obj.save()
+        try:
+            user_obj = User.objects.get(hashed_username = username)
+        except ObjectDoesNotExist as err:
+            user_obj = User()
+            user_obj.hashed_username = username
+            user_obj.save()
     
         ####### SOURCE #######
-        source_obj = Source()
-        source_obj.name = source
-        source_obj.version = source_version
-        source_obj.save()
+        try:
+            source_obj = Source.objects.get(name = source, version = source_version)
+        except ObjectDoesNotExist as err:
+            source_obj = Source()
+            source_obj.name = source
+            source_obj.version = source_version
+            source_obj.save()
     
         ####### ACTION #######
-        action_obj = Action()
-        action_obj.name = action
-        action_obj.save()
-    
+        try:
+            action_obj = Action.objects.get(name = action)
+        except ObjectDoesNotExist as err:
+            action_obj = Action()
+            action_obj.name = action
+            action_obj.save()
+            
         ####### CREATE LOG EVENT #######
         log = LogEvent()
         log.user = user_obj
