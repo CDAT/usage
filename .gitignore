@@ -8,3 +8,5 @@ db.php
 GeoIP-1.4.8/*
 GeoIP.tar.gz
 *.komodoproject
+*.db
+*.log
