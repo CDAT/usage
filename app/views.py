@@ -33,20 +33,26 @@ gic = None
 try:
     gic = GeoIP(geoip_city_dat)
 except IOError,err:
-    sys.stderr.write("""ERROR: Could not find GeoIP database. Tried looking in "%s". If this is not where you have your GeoIP .dat file stored, edit GEOLITECITY_ABSOLUTE_PATH in live/local_settings.py\nIf you don't have the GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".""" % (geoip_city_dat))
+    sys.stderr.write("""
+ERROR: Could not find GeoIP database. Tried looking in "%s".
+If this is not where you have your GeoIP .dat file stored, edit
+GEOLITECITY_ABSOLUTE_PATH in live/local_settings.py\nIf you don't have the
+GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".
+""" % (geoip_city_dat))
     sys.exit(1)
+    
 gio = None
 try:
     gio = GeoIP(geoip_org_dat)
 except IOError:
-    # we don't want to spam the log with warning messages, so don't do anything here...
+    # we don't want to spam the log with warning messages, so don't do anything here.
+    # it's desgined to work without the GeoIP Organization database anyway...
     pass
 
 # set socket default timeout to 5 seconds.
 # this setting is used by the reverse-DNS lookup
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(5)
-
 
 
 ####### TEMPLATE RENDERERS #######
@@ -153,9 +159,8 @@ def show_debug_error(request):
 ####### AJAX DATA ACCESS #######
 def ajax_getCountryInfo(request):
     '''
-    Returns JSON array of JSON arrays representing the total number of log events per country.
-    The optional prameter "_days" specifies how many days back the log should go.
-    0 days returns the results for all-time.
+    Returns JSON array of JSON arrays representing the total number of unique
+    machines broken down by country.
     '--' represents "Unknown"
 
     format is ["country code", counts]
@@ -171,10 +176,10 @@ def ajax_getCountryInfo(request):
     results = {}
     
     if days == 0:
-        countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('netInfo__country'))
+        countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
     else:
         date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
-        countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('netInfo__country'))
+        countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
         
     # convert to JSON
     json_results = []
@@ -785,28 +790,40 @@ def _fill_db(num_entries_to_add):
         netInfo_obj.save()
         
         ####### MACHINE #######
-        machine_obj = Machine()
-        machine_obj.hashed_hostname = hostname
-        machine_obj.platform = platform
-        machine_obj.platform_version = platform_version
-        machine_obj.save()
-        
+        try:
+            machine_obj = Machine.objects.get(hashed_hostname = hostname)
+        except ObjectDoesNotExist as err:
+            machine_obj = Machine()
+            machine_obj.hashed_hostname = hostname
+            machine_obj.platform = platform
+            machine_obj.platform_version = platform_version
+            machine_obj.save()
+    
         ####### USER #######
-        user_obj = User()
-        user_obj.hashed_username = username
-        user_obj.save()
+        try:
+            user_obj = User.objects.get(hashed_username = username)
+        except ObjectDoesNotExist as err:
+            user_obj = User()
+            user_obj.hashed_username = username
+            user_obj.save()
     
         ####### SOURCE #######
-        source_obj = Source()
-        source_obj.name = source
-        source_obj.version = source_version
-        source_obj.save()
+        try:
+            source_obj = Source.objects.get(name = source, version = source_version)
+        except ObjectDoesNotExist as err:
+            source_obj = Source()
+            source_obj.name = source
+            source_obj.version = source_version
+            source_obj.save()
     
         ####### ACTION #######
-        action_obj = Action()
-        action_obj.name = action
-        action_obj.save()
-    
+        try:
+            action_obj = Action.objects.get(name = action)
+        except ObjectDoesNotExist as err:
+            action_obj = Action()
+            action_obj.name = action
+            action_obj.save()
+            
         ####### CREATE LOG EVENT #######
         log = LogEvent()
         log.user = user_obj
