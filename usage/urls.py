@@ -7,12 +7,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
-    # Examples:
-    # url(r'^$', 'uvcdat_live.views.home', name='home'),
-    url(r'^log/', include('app.urls')),
-    #('^boxfill$', boxfill),
-    #('^doutriaux1/log$', showlog),
-    #('^(?P<username>.*)/(?P<platform>.*)/(?P<source>uvcdat|cdat|search|bldcnf|bldcmk)/(?P<action>.*)$',insertlog),
+    # I'm still not sure if I like these split out as separate apps...
+    url(r'log/add/', include('recordStats.urls')),
+    url(r'^log/', include('viewStats.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

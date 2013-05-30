@@ -1,4 +1,4 @@
-from app.models import *
+from usageModel.models import *
 from django.contrib import admin
 
 admin.site.register(User)

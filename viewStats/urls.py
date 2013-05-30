@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView, ListView
 
-urlpatterns = patterns('app.views',
+urlpatterns = patterns('viewStats.views',
     # /log/
     url(r'^$','show_log'),
 
@@ -49,10 +49,4 @@ urlpatterns = patterns('app.views',
 	
 	# /log/json/errorlist/
 	url(r'^json/errorlist/$', 'ajax_getErrorList'),
-
-    # /log/add/
-    url(r'^add/$', 'log_event'),
-
-    # /log/add/error/
-    url(r'^add/error/$', 'log_error'),
 )
