@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Log-in</title>
+    </head>
+    <body>
+        {% if error_message %}<p><strong><font color="#ff0000">{{ error_message }}</font></strong></p>{% endif %}
+        <form action='.' method='post'>
+            {% csrf_token %}
+            <input type='hidden' name='redir' value='{{ redir }}'/>
+            <table border="0">
+                <tr>
+                    <td>
+                        <label for="username">Username:</label>
+                    </td>
+                    <td>
+                        <input type="text" name="username" id="username" /><br/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="password">Password:<label>
+                    </td>
+                    <td>
+                        <input type="password" name="password" id="password" /><br/>
+                    </td>
+                </tr>
+            </table>
+            <input type='submit' value='Log in'/>
+        </form>
+    </body>
+</html>
