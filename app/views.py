@@ -178,7 +178,7 @@ def ajax_getCountryInfo(request):
     if days == 0:
         countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
         countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
         
     # convert to JSON
@@ -216,7 +216,7 @@ def ajax_getDomainInfo(request):
     if days == 0:
         domainLog = LogEvent.objects.values('netInfo__domain').annotate(count=Count('netInfo__domain'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
         domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__domain').annotate(count=Count('netInfo__domain'))
         
     # convert to JSON
@@ -254,7 +254,7 @@ def ajax_getPlatformInfo(request):
     if days == 0:
         platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
         platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform').annotate(count=Count('machine__platform'))
         
     # convert to JSON
@@ -293,7 +293,7 @@ def ajax_getDetailedPlatformInfo(request):
     if days == 0:
         platformLog = LogEvent.objects.values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
         platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
         
     # convert to JSON
@@ -332,7 +332,7 @@ def ajax_getSourceInfo(request):
     if days == 0:
         domainLog = LogEvent.objects.values('source__name').annotate(count=Count('source__name'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
         domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name').annotate(count=Count('source__name'))
         
     # convert to JSON
@@ -370,7 +370,7 @@ def ajax_getDetailedSourceInfo(request):
     if days == 0:
         domainLog = LogEvent.objects.values('source__name', 'source__version').annotate(count=Count('source__name'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days - 1)).strftime("%Y-%m-%d")
+        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
         domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name', 'source__version').annotate(count=Count('source__name'))
         
     # convert to JSON
