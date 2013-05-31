@@ -6,13 +6,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^$', include('statsPage.urls')),
+    url(r'log/', include('stats.urls')),
     (r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
-    # Examples:
-    # url(r'^$', 'uvcdat_live.views.home', name='home'),
-    url(r'^log/', include('app.urls')),
-    #('^boxfill$', boxfill),
-    #('^doutriaux1/log$', showlog),
-    #('^(?P<username>.*)/(?P<platform>.*)/(?P<source>uvcdat|cdat|search|bldcnf|bldcmk)/(?P<action>.*)$',insertlog),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
