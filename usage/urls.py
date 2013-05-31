@@ -8,6 +8,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', include('statsPage.urls')),
     url(r'log/', include('stats.urls')),
+    url(r'login/', include('login.urls')),
     (r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
 
     # Uncomment the admin/doc line below to enable admin documentation:
