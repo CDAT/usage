@@ -153,16 +153,17 @@ def ajax_getPlatformInfo(request):
     results = {}
     
     if days == 0:
-        platformLog = LogEvent.objects.values('machine__platform').annotate(count=Count('machine__platform'))
+        platformLog = Machine.objects.values('hashed_hostname').distinct().values('platform').annotate(count=Count('platform'))
     else:
         date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform').annotate(count=Count('machine__platform'))
+        recentMachines = Machine.objects.values('hashed_hostname').distinct().filter(logevent__date__range = (date_from, timezone.now()))
+        platformLog = Machine.objects.filter(hashed_hostname__in=recentMachines).values('platform').annotate(count=Count('platform'))
         
     # convert to JSON
     json_results = []
     for platform in platformLog:
         temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-        temp.append(platform['machine__platform'])
+        temp.append(platform['platform'])
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
@@ -192,10 +193,11 @@ def ajax_getDetailedPlatformInfo(request):
     results = {}
     
     if days == 0:
-        platformLog = LogEvent.objects.values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+        platformLog = Machine.objects.values('hashed_hostname').distinct().values('platform', 'platform_version').annotate(count=Count('platform'))
     else:
         date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+        recentMachines = Machine.objects.values('hashed_hostname').distinct().filter(logevent__date__range = (date_from, timezone.now()))
+        platformLog = Machine.objects.filter(hashed_hostname__in=recentMachines).values('platform', 'platform_version').annotate(count=Count('platform'))
         
     # convert to JSON
     json_results = []
