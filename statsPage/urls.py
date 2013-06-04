@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView, ListView
 
 urlpatterns = patterns('statsPage.views',
-    # /log/
+    # /
     url(r'^$','show_log'),
 
     # /log/errors
