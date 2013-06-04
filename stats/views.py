@@ -204,8 +204,8 @@ def ajax_getDetailedPlatformInfo(request):
     json_results = []
     for platform in platformLog:
         temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-        temp.append(platform['machine__platform'])
-        temp.append(platform['machine__platform_version'])
+        temp.append(platform['platform'])
+        temp.append(platform['platform_version'])
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
