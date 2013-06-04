@@ -303,7 +303,7 @@ def ajax_getDetailedSourceInfo(request):
     for src in src_list:
         json_results.append(src)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "detailedPlatforms": ' + json_results + '}'
+    json_results = '{ "detailedSources": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
 
