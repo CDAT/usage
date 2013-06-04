@@ -1,4 +1,5 @@
-import datetime
+from customsql import get_machine_count_for_sources
+from datetime import datetime, timedelta
 import hashlib
 from pygeoip import GeoIP, GeoIPError
 from random import choice, randint
@@ -20,7 +21,7 @@ from django.utils import simplejson, timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
-from django.conf import settings
+
 if not settings.configured:
     settings.configure()
 
@@ -188,14 +189,20 @@ def ajax_getDetailedPlatformInfo(request):
             ]
         }
     '''
+
     days = int(request.GET.get('days', '0'))
     results = {}
     
-    if days == 0:
-        platformLog = LogEvent.objects.values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
-    else:
+    # get all log events
+    platformLog = LogEvent.objects.all()
+    # filter for recent ones if necessary
+    if days != 0:
         date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        platformLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('machine__platform', 'machine__platform_version').annotate(count=Count('machine__platform'))
+        platformLog = platformLog.filter(date__range = (date_from, timezone.now()))
+    # get the platform and platform_version
+    platformLog = platformLog.values('machine__platform', 'machine__platform_version')
+    # count the number of platforms
+    platformLog = platformLog.annotate(count=Count('machine__platform'))
         
     # convert to JSON
     json_results = []
@@ -214,7 +221,10 @@ def ajax_getDetailedPlatformInfo(request):
 
 def ajax_getSourceInfo(request):
     '''
-    Returns JSON array of JSON arrays representing the total number of log events per source.
+    Returns JSON array of JSON arrays representing the total number of machines
+    that have used that source. (machines that have used more than one source
+    count towards the total for each of the sources)
+    
     The optional prameter "_days" specifies how many days back the log should go.
     0 days returns the results for all-time.
 
@@ -265,25 +275,42 @@ def ajax_getDetailedSourceInfo(request):
             ]
         }
     '''
-    days = int(request.GET.get('days', '0'))
-    results = {}
     
-    if days == 0:
-        domainLog = LogEvent.objects.values('source__name', 'source__version').annotate(count=Count('source__name'))
-    else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name', 'source__version').annotate(count=Count('source__name'))
+    date_from = datetime(1970, 01, 01) # unix epoch
+    date_to = datetime.now() + timedelta(days = 1) # tomorrow
+    
+    # handle a `?days=<num>`
+    days = 0
+    if(request.GET.has_key('days')):
+        days = int(request.GET.get('days', 99999))
         
-    # convert to JSON
+        # ?days=0 is a special case. Show stats for all time.
+        if(days <= 0):
+            days = 99999
+        date_from = (datetime.now() - timedelta(days = days-1))
+    # handle a `?startdate=<num>&enddate=<num>`
+    # where the date takes the form of YYYY MM DD HH MM
+    # eg 201301010930 = 2013 01 01 09 30 = Jan 1st, 2013 at 09:30am
+    else:
+        if(request.GET.has_key('startdate')):
+            try:
+                date_from = datetime.strptime(request.GET['startdate'], "%Y%m%d%H%M")
+            except ValueError:
+                #return an error
+                pass
+        if(request.GET.has_key('enddate')):
+            try:
+                date_to = datetime.strptime(request.GET['enddate'], "%Y%m%d%H%M")
+            except ValueError:
+                # return an error
+                pass
+        
+    src_list = get_machine_count_for_sources(date_from, date_to)
     json_results = []
-    for source in domainLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-        temp.append(source['source__name'])
-        temp.append(source['source__version'])
-        temp.append(source['count'])
-        json_results.append(temp)
+    for src in src_list:
+        json_results.append(src)
     json_results = simplejson.dumps(json_results)
-    json_results = '{ "detailedSources": ' + json_results + '}'
+    json_results = '{ "detailedPlatforms": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
 
