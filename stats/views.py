@@ -1,4 +1,5 @@
-import datetime
+from customsql import get_machine_count_for_sources
+from datetime import datetime, timedelta
 import hashlib
 from pygeoip import GeoIP, GeoIPError
 from random import choice, randint
@@ -20,7 +21,7 @@ from django.utils import simplejson, timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
-from django.conf import settings
+
 if not settings.configured:
     settings.configure()
 
@@ -203,8 +204,8 @@ def ajax_getDetailedPlatformInfo(request):
     json_results = []
     for platform in platformLog:
         temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-        temp.append(platform['machine__platform'])
-        temp.append(platform['machine__platform_version'])
+        temp.append(platform['platform'])
+        temp.append(platform['platform_version'])
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = simplejson.dumps(json_results)
@@ -267,23 +268,40 @@ def ajax_getDetailedSourceInfo(request):
             ]
         }
     '''
-    days = int(request.GET.get('days', '0'))
-    results = {}
     
-    if days == 0:
-        domainLog = LogEvent.objects.values('source__name', 'source__version').annotate(count=Count('source__name'))
-    else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name', 'source__version').annotate(count=Count('source__name'))
+    date_from = datetime(1970, 01, 01) # unix epoch
+    date_to = datetime.now() + timedelta(days = 1) # tomorrow
+    
+    # handle a `?days=<num>`
+    days = 0
+    if(request.GET.has_key('days')):
+        days = int(request.GET.get('days', 99999))
         
-    # convert to JSON
+        # ?days=0 is a special case. Show stats for all time.
+        if(days <= 0):
+            days = 99999
+        date_from = (datetime.now() - timedelta(days = days-1))
+    # handle a `?startdate=<num>&enddate=<num>`
+    # where the date takes the form of YYYY MM DD HH MM
+    # eg 201301010930 = 2013 01 01 09 30 = Jan 1st, 2013 at 09:30am
+    else:
+        if(request.GET.has_key('startdate')):
+            try:
+                date_from = datetime.strptime(request.GET['startdate'], "%Y%m%d%H%M")
+            except ValueError:
+                #return an error
+                pass
+        if(request.GET.has_key('enddate')):
+            try:
+                date_to = datetime.strptime(request.GET['enddate'], "%Y%m%d%H%M")
+            except ValueError:
+                # return an error
+                pass
+        
+    src_list = get_machine_count_for_sources(date_from, date_to)
     json_results = []
-    for source in domainLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
-        temp.append(source['source__name'])
-        temp.append(source['source__version'])
-        temp.append(source['count'])
-        json_results.append(temp)
+    for src in src_list:
+        json_results.append(src)
     json_results = simplejson.dumps(json_results)
     json_results = '{ "detailedSources": ' + json_results + '}'
     
