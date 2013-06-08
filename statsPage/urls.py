@@ -5,18 +5,18 @@ urlpatterns = patterns('statsPage.views',
     # /
     url(r'^$','show_log'),
 
-    # /errors
+    # /log/errors
     url(r'^errors/$','show_error_log'),
 
-    # /error/203215
+    # /log/error/203215
     url(r'^error/(?P<error_id>\d+)/$','show_error_details'),
 
-    # /login/
+    # /log/login/
     url(r'^login/$','show_sign_in_page'),
 
-    # /debug/
+    # /log/debug/
     url(r'^debug/$', 'show_debug'),
 
-    # /debugerr/
+    # /log/debugerr/
     url(r'^debugerr/$', 'show_debug_error'),
 )
