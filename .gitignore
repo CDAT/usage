@@ -1,5 +1,5 @@
 settings.local
-live/local_settings.py
+usage/local_settings.py
 *.pyc
 *~
 .htaccess
