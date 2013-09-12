@@ -10,3 +10,7 @@ GeoIP.tar.gz
 *.komodoproject
 *.db
 *.log
+admin/
+css/
+passwd.txt
+scripts/

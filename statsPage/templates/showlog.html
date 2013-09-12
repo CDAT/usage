@@ -4,23 +4,12 @@
         <!-- css -->
         <link rel="icon" type="image/png" href="http://uv-cdat.llnl.gov/images/uv-cdat-favicon.png">
         <link rel="stylesheet" href="http://uv-cdat.llnl.gov/styles.css" type="text/css">
-        <link rel="stylesheet" type="text/css" media="screen" href="http://uv-cdat.llnl.gov/css/usageTheme.css">
-        <link rel="stylesheet" type="text/css" media="screen" href="http://uv-cdat.llnl.gov/css/smoothness/jquery-ui-1.10.2.custom.css">
             
         <!-- JavaScript -->
-        <script type="text/javascript" charset="utf8" language="javascript" src="http://uv-cdat.llnl.gov/scripts/jquery-1.9.1.js"></script>
-        <script type="text/javascript" charset="utf8" language="javascript" src="http://uv-cdat.llnl.gov/scripts/jquery.dataTables.js"></script>
-        <script type="text/javascript" charset="utf8" language="javascript" src="http://uv-cdat.llnl.gov/scripts/jquery-ui-1.10.2.custom.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" charset="utf8" language="javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/jquery-ui.min.js"></script>
         
-        <!-- Load from CDN if files failed to load locally (eg. on an unconfigured development machine) -->
-        <script type="text/javascript" charset="utf8" language="javascript">
-        if ((typeof jQuery == 'undefined') || (typeof jQuery.fn.dataTable == 'undefined')) {
-           document.write(unescape("%3Cscript src=\"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js\" type=\"text/javascript\"%3E%3C/script%3E"));
-           document.write(unescape("%3Cscript src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js\" type=\"text/javascript\"%3E%3C/script%3E"));
-           document.write(unescape("%3Cscript src=\"http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/jquery-ui.min.js\"%3E%3C/script%3E"));
-        }
-        </script>
-
         <script type="text/javascript" charset="utf8">
             $(document).ready(function() {
                 $("#country_table").dataTable( {
@@ -28,7 +17,7 @@
                     "bJQueryUI": true,
                     "sPaginationType": "full_numbers",
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": "log/json/country/?days=0",
+                    "sAjaxSource": "UVCDATUsage/log/json/country/?days=0",
                     "sAjaxDataProp": "countries"
                 } );
             } );
@@ -38,7 +27,7 @@
                     "bJQueryUI": true,
                     "sPaginationType": "full_numbers",
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": "log/json/domain/?days=0",
+                    "sAjaxSource": "UVCDATUsage/log/json/domain/?days=0",
                     "sAjaxDataProp": "domains"
                 } );
             } );
@@ -48,7 +37,7 @@
                     "bJQueryUI": true,
                     "sPaginationType": "full_numbers",
                     "aaSorting": [[ 1, "desc" ]],
-                    "sAjaxSource": "log/json/platform/?days=0",
+                    "sAjaxSource": "UVCDATUsage/log/json/platform/?days=0",
                     "sAjaxDataProp": "platforms"
                 } );
             } );
@@ -58,7 +47,7 @@
                     "bJQueryUI": true,
                     "sPaginationType": "full_numbers",
                     "aaSorting": [[ 2, "desc" ]],
-                    "sAjaxSource": "log/json/source/details/?days=0",
+                    "sAjaxSource": "UVCDATUsage/log/json/source/details/?days=0",
                     "sAjaxDataProp": "detailedSources",
                     "bAutoWidth": false,
                     "aoColumns": [
@@ -77,7 +66,7 @@
                     "bJQueryUI": true,
                     "sPaginationType": "full_numbers",
                     "aaSorting": [[ 0, "desc" ]],
-                    "sAjaxSource": "log/json/eventlist/",
+                    "sAjaxSource": "UVCDAT/log/json/eventlist/",
                     "sAjaxDataProp": "logs",
                     "aoColumns": [
                         { "mData": "date" },
@@ -239,7 +228,7 @@
             </div>
             <p> Access admin interface <a href="../admin">here</a></p>
             {% else %}
-            <p>Please <a href="login">log-in</a> to see more detailed logs.</p>
+            <p>Please <a href="UVCDATUsage/login">log-in</a> to see more detailed logs.</p>
             {% endif %}
             <font size="1">
                 This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
