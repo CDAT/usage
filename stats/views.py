@@ -17,7 +17,8 @@ from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Context, loader, RequestContext
-from django.utils import simplejson, timezone
+import json
+from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
@@ -90,7 +91,7 @@ def ajax_getCountryInfo(request):
         temp.append(country['netInfo__country'])
         temp.append(country['count'])
         json_results.append(temp)
-    json_results = simplejson.dumps(json_results)
+    json_results = json.dumps(json_results)
     json_results = '{ "countries": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
@@ -128,7 +129,7 @@ def ajax_getDomainInfo(request):
         temp.append(domain['netInfo__domain'])
         temp.append(domain['count'])
         json_results.append(temp)
-    json_results = simplejson.dumps(json_results)
+    json_results = json.dumps(json_results)
     json_results = '{ "domains": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
@@ -167,7 +168,7 @@ def ajax_getPlatformInfo(request):
         temp.append(platform['platform'])
         temp.append(platform['count'])
         json_results.append(temp)
-    json_results = simplejson.dumps(json_results)
+    json_results = json.dumps(json_results)
     json_results = '{ "platforms": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
@@ -208,7 +209,7 @@ def ajax_getDetailedPlatformInfo(request):
         temp.append(platform['platform_version'])
         temp.append(platform['count'])
         json_results.append(temp)
-    json_results = simplejson.dumps(json_results)
+    json_results = json.dumps(json_results)
     json_results = '{ "detailedPlatforms": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
@@ -246,7 +247,7 @@ def ajax_getSourceInfo(request):
         temp.append(source['source__name'])
         temp.append(source['count'])
         json_results.append(temp)
-    json_results = simplejson.dumps(json_results)
+    json_results = json.dumps(json_results)
     json_results = '{ "sources": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
@@ -302,7 +303,7 @@ def ajax_getDetailedSourceInfo(request):
     json_results = []
     for src in src_list:
         json_results.append(src)
-    json_results = simplejson.dumps(json_results)
+    json_results = json.dumps(json_results)
     json_results = '{ "detailedSources": ' + json_results + '}'
     
     return HttpResponse(json_results, content_type="application/json")
@@ -375,7 +376,7 @@ def ajax_getLogEventList(request):
             results.append(r)
         
         # convert to JSON
-        json_results = simplejson.dumps(results)
+        json_results = json.dumps(results)
         json_results = '{ "logs":' + json_results + '}'
         return HttpResponse(json_results, content_type="application/json")
     else:
@@ -438,7 +439,7 @@ def ajax_getErrorList(request):
             results.append(r)
         
         # convert to JSON
-        json_results = simplejson.dumps(results)
+        json_results = json.dumps(results)
         json_results = '{ "errors":' + json_results + '}'
         return HttpResponse(json_results, content_type="application/json")
     else:

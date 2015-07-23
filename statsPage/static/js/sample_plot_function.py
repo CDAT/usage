@@ -2,7 +2,7 @@ import cdms2
 import vcs
 x=vcs.init()
 import sys
-from django.utils import simplejson
+import json
 import os
 
 outpth = "app/media/"
