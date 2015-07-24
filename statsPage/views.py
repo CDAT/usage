@@ -37,7 +37,7 @@ def show_sign_in_page(request):
         password = request.POST['password']
     except:
         return render_to_response('authentication_page.html', {
-        }, context_instance = RequestContext(request))
+        }, context_instance=RequestContext(request))
 
     # try logging in
     user = authenticate(username = username, password = password)
@@ -46,13 +46,13 @@ def show_sign_in_page(request):
     if user is None:
         return render_to_response('authentication_page.html', {
             'error_message': "Invalid username or password. Please try again.",
-        }, context_instance = RequestContext(request))
+        }, context_instance=RequestContext(request))
     # De-activated user
     elif not user.is_active:
         return render_to_response('authentication_page.html', {
             'error_message': "The account you are trying to use has been disabled.<br/>" + 
             "Please contact a system administrator.",
-        }, context_instance = RequestContext(request))
+        }, context_instance=RequestContext(request))
     # Valid login, active user
     else:
         login(request, user)
@@ -65,7 +65,7 @@ def show_log(request):
     Renders the logs.
     '''
     return render_to_response('showlog.html', {
-    }, context_instance = RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 
@@ -74,7 +74,7 @@ def show_error_log(request):
     Renders the logs.
     '''
     return render_to_response('showerrorlog.html', {
-    }, context_instance = RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 
@@ -88,7 +88,7 @@ def show_error_details(request, error_id):
     for action in actions:
         action['name'] = action['action__name']
         del(action['action__name'])
-        
+
     return render_to_response('errordetails.html', {
         "id": error_id,
         "description": error_obj.description,
@@ -100,7 +100,7 @@ def show_error_details(request, error_id):
         "source": error_obj.logEvent.source,
         "platform": error_obj.logEvent.machine.getPlatform(),
         "actions": actions,
-    }, context_instance = RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 
@@ -110,7 +110,7 @@ def show_debug(request):
     '''
     if settings.DEBUG:
         return render_to_response('debug.html', {
-        }, context_instance = RequestContext(request))
+        }, context_instance=RequestContext(request))
     else:
         raise Http404
 
@@ -122,6 +122,6 @@ def show_debug_error(request):
     '''
     if settings.DEBUG:
         return render_to_response('debugerr.html', {
-        }, context_instance = RequestContext(request))
+        }, context_instance=RequestContext(request))
     else:
         raise Http404

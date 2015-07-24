@@ -1,22 +1,17 @@
 from customsql import get_machine_count_for_sources
 from datetime import datetime, timedelta
-import hashlib
 from pygeoip import GeoIP, GeoIPError
 from random import choice, randint
-import os
 import re
 import socket
 import sys
-import threading
 from django.conf import settings
-from django.contrib.auth import authenticate, login
-from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import Count
-from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import Context, loader, RequestContext
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 import json
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -29,12 +24,14 @@ if not settings.configured:
 geoip_city_dat = settings.GEOLITECITY_ABSOLUTE_PATH
 geoip_org_dat = settings.GEOORGANIZATION_ABSOLUTE_PATH
 
-default_sleep_minutes = 30 # default amount of time which must pass before the same event from the same user is logged again
+# default amount of time which must pass before the same event from the
+# same user is logged again
+default_sleep_minutes = 30
 
 gic = None
 try:
     gic = GeoIP(geoip_city_dat)
-except IOError,err:
+except IOError, err:
     sys.stderr.write("""
 ERROR: Could not find GeoIP database. Tried looking in "%s".
 If this is not where you have your GeoIP .dat file stored, edit
@@ -42,24 +39,24 @@ GEOLITECITY_ABSOLUTE_PATH in live/local_settings.py\nIf you don't have the
 GeoIP City database, you can get it from "http://dev.maxmind.com/geoip/geolite".
 """ % (geoip_city_dat))
     sys.exit(1)
-    
+
 gio = None
 try:
     gio = GeoIP(geoip_org_dat)
 except IOError:
-    # we don't want to spam the log with warning messages, so don't do anything here.
-    # it's desgined to work without the GeoIP Organization database anyway...
+    # we don't want to spam the log with warning messages, so don't do anything
+    # here. it's desgined to work without the GeoIP Organization database
+    # anyway...
     pass
 
 # set socket default timeout to 5 seconds.
 # this setting is used by the reverse-DNS lookup
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(5)
-    
-   
 
 
-####### AJAX DATA ACCESS #######
+# AJAX DATA ACCESS
+
 def ajax_getCountryInfo(request):
     '''
     Returns JSON array of JSON arrays representing the total number of unique
@@ -67,7 +64,7 @@ def ajax_getCountryInfo(request):
     '--' represents "Unknown"
 
     format is ["country code", counts]
-    eg: { 
+    eg: {
             "countries": [
                 ["US", 5],
                 ["--", 2],
@@ -77,25 +74,29 @@ def ajax_getCountryInfo(request):
     '''
     days = int(request.GET.get('days', '0'))
     results = {}
-    
+
     if days == 0:
-        countryLog = LogEvent.objects.values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
+        countryLog = LogEvent.objects.values('netInfo__country').annotate(
+            count=Count('machine__hashed_hostname', distinct=True))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        countryLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
-        
+        date_from = (
+            timezone.now() - timezone.timedelta(days=days)).strftime("%Y-%m-%d")
+        countryLog = LogEvent.objects.filter(date__range=(date_from, timezone.now())).values(
+            'netInfo__country').annotate(count=Count('machine__hashed_hostname', distinct=True))
+
     # convert to JSON
     json_results = []
     for country in countryLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        # create a list for each pair because DataTables likes input in this
+        # style: [["US": 15], ["GB":7]]
+        temp = []
         temp.append(country['netInfo__country'])
         temp.append(country['count'])
         json_results.append(temp)
     json_results = json.dumps(json_results)
     json_results = '{ "countries": ' + json_results + '}'
-    
-    return HttpResponse(json_results, content_type="application/json")
 
+    return HttpResponse(json_results, content_type="application/json")
 
 
 def ajax_getDomainInfo(request):
@@ -115,25 +116,29 @@ def ajax_getDomainInfo(request):
     '''
     days = int(request.GET.get('days', '0'))
     results = {}
-    
+
     if days == 0:
-        domainLog = LogEvent.objects.values('netInfo__domain').annotate(count=Count('netInfo__domain'))
+        domainLog = LogEvent.objects.values(
+            'netInfo__domain').annotate(count=Count('netInfo__domain'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('netInfo__domain').annotate(count=Count('netInfo__domain'))
-        
+        date_from = (
+            timezone.now() - timezone.timedelta(days=days)).strftime("%Y-%m-%d")
+        domainLog = LogEvent.objects.filter(date__range=(date_from, timezone.now())).values(
+            'netInfo__domain').annotate(count=Count('netInfo__domain'))
+
     # convert to JSON
     json_results = []
     for domain in domainLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        # create a list for each pair because DataTables likes input in this
+        # style: [["US": 15], ["GB":7]]
+        temp = []
         temp.append(domain['netInfo__domain'])
         temp.append(domain['count'])
         json_results.append(temp)
     json_results = json.dumps(json_results)
     json_results = '{ "domains": ' + json_results + '}'
-    
+
     return HttpResponse(json_results, content_type="application/json")
-   
 
 
 def ajax_getPlatformInfo(request):
@@ -153,26 +158,31 @@ def ajax_getPlatformInfo(request):
     '''
     days = int(request.GET.get('days', '0'))
     results = {}
-    
+
     if days == 0:
-        platformLog = Machine.objects.values('hashed_hostname').distinct().values('platform').annotate(count=Count('platform'))
+        platformLog = Machine.objects.values('hashed_hostname').distinct().values(
+            'platform').annotate(count=Count('platform'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        recentMachines = Machine.objects.values('hashed_hostname').distinct().filter(logevent__date__range = (date_from, timezone.now()))
-        platformLog = Machine.objects.filter(hashed_hostname__in=recentMachines).values('platform').annotate(count=Count('platform'))
-        
+        date_from = (
+            timezone.now() - timezone.timedelta(days=days)).strftime("%Y-%m-%d")
+        recentMachines = Machine.objects.values('hashed_hostname').distinct().filter(
+            logevent__date__range=(date_from, timezone.now()))
+        platformLog = Machine.objects.filter(hashed_hostname__in=recentMachines).values(
+            'platform').annotate(count=Count('platform'))
+
     # convert to JSON
     json_results = []
     for platform in platformLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        # create a list for each pair because DataTables likes input in this
+        # style: [["US": 15], ["GB":7]]
+        temp = []
         temp.append(platform['platform'])
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = json.dumps(json_results)
     json_results = '{ "platforms": ' + json_results + '}'
-    
+
     return HttpResponse(json_results, content_type="application/json")
-    
 
 
 def ajax_getDetailedPlatformInfo(request):
@@ -193,27 +203,32 @@ def ajax_getDetailedPlatformInfo(request):
     '''
     days = int(request.GET.get('days', '0'))
     results = {}
-    
+
     if days == 0:
-        platformLog = Machine.objects.values('hashed_hostname').distinct().values('platform', 'platform_version').annotate(count=Count('platform'))
+        platformLog = Machine.objects.values('hashed_hostname').distinct().values(
+            'platform', 'platform_version').annotate(count=Count('platform'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        recentMachines = Machine.objects.values('hashed_hostname').distinct().filter(logevent__date__range = (date_from, timezone.now()))
-        platformLog = Machine.objects.filter(hashed_hostname__in=recentMachines).values('platform', 'platform_version').annotate(count=Count('platform'))
-        
+        date_from = (
+            timezone.now() - timezone.timedelta(days=days)).strftime("%Y-%m-%d")
+        recentMachines = Machine.objects.values('hashed_hostname').distinct().filter(
+            logevent__date__range=(date_from, timezone.now()))
+        platformLog = Machine.objects.filter(hashed_hostname__in=recentMachines).values(
+            'platform', 'platform_version').annotate(count=Count('platform'))
+
     # convert to JSON
     json_results = []
     for platform in platformLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        # create a list for each pair because DataTables likes input in this
+        # style: [["US": 15], ["GB":7]]
+        temp = []
         temp.append(platform['platform'])
         temp.append(platform['platform_version'])
         temp.append(platform['count'])
         json_results.append(temp)
     json_results = json.dumps(json_results)
     json_results = '{ "detailedPlatforms": ' + json_results + '}'
-    
-    return HttpResponse(json_results, content_type="application/json")
 
+    return HttpResponse(json_results, content_type="application/json")
 
 
 def ajax_getSourceInfo(request):
@@ -233,25 +248,29 @@ def ajax_getSourceInfo(request):
     '''
     days = int(request.GET.get('days', '0'))
     results = {}
-    
+
     if days == 0:
-        domainLog = LogEvent.objects.values('source__name').annotate(count=Count('source__name'))
+        domainLog = LogEvent.objects.values(
+            'source__name').annotate(count=Count('source__name'))
     else:
-        date_from = (timezone.now() - timezone.timedelta(days = days)).strftime("%Y-%m-%d")
-        domainLog = LogEvent.objects.filter(date__range = (date_from, timezone.now())).values('source__name').annotate(count=Count('source__name'))
-        
+        date_from = (
+            timezone.now() - timezone.timedelta(days=days)).strftime("%Y-%m-%d")
+        domainLog = LogEvent.objects.filter(date__range=(date_from, timezone.now())).values(
+            'source__name').annotate(count=Count('source__name'))
+
     # convert to JSON
     json_results = []
     for source in domainLog:
-        temp = [] # create a list for each pair because DataTables likes input in this style: [["US": 15], ["GB":7]]
+        # create a list for each pair because DataTables likes input in this
+        # style: [["US": 15], ["GB":7]]
+        temp = []
         temp.append(source['source__name'])
         temp.append(source['count'])
         json_results.append(temp)
     json_results = json.dumps(json_results)
     json_results = '{ "sources": ' + json_results + '}'
-    
-    return HttpResponse(json_results, content_type="application/json")
 
+    return HttpResponse(json_results, content_type="application/json")
 
 
 def ajax_getDetailedSourceInfo(request):
@@ -269,45 +288,46 @@ def ajax_getDetailedSourceInfo(request):
             ]
         }
     '''
-    
-    date_from = datetime(1970, 01, 01) # unix epoch
-    date_to = datetime.now() + timedelta(days = 1) # tomorrow
-    
+
+    date_from = datetime(1970, 01, 01)  # unix epoch
+    date_to = datetime.now() + timedelta(days=1)  # tomorrow
+
     # handle a `?days=<num>`
     days = 0
     if(request.GET.has_key('days')):
         days = int(request.GET.get('days', 99999))
-        
+
         # ?days=0 is a special case. Show stats for all time.
         if(days <= 0):
             days = 99999
-        date_from = (datetime.now() - timedelta(days = days-1))
+        date_from = (datetime.now() - timedelta(days=days-1))
     # handle a `?startdate=<num>&enddate=<num>`
     # where the date takes the form of YYYY MM DD HH MM
     # eg 201301010930 = 2013 01 01 09 30 = Jan 1st, 2013 at 09:30am
     else:
         if(request.GET.has_key('startdate')):
             try:
-                date_from = datetime.strptime(request.GET['startdate'], "%Y%m%d%H%M")
-            except ValueError:
-                #return an error
-                pass
-        if(request.GET.has_key('enddate')):
-            try:
-                date_to = datetime.strptime(request.GET['enddate'], "%Y%m%d%H%M")
+                date_from = datetime.strptime(
+                    request.GET['startdate'], "%Y%m%d%H%M")
             except ValueError:
                 # return an error
                 pass
-        
+        if(request.GET.has_key('enddate')):
+            try:
+                date_to = datetime.strptime(
+                    request.GET['enddate'], "%Y%m%d%H%M")
+            except ValueError:
+                # return an error
+                pass
+
     src_list = get_machine_count_for_sources(date_from, date_to)
     json_results = []
     for src in src_list:
         json_results.append(src)
     json_results = json.dumps(json_results)
     json_results = '{ "detailedSources": ' + json_results + '}'
-    
-    return HttpResponse(json_results, content_type="application/json")
 
+    return HttpResponse(json_results, content_type="application/json")
 
 
 def ajax_getLogEventList(request):
@@ -322,23 +342,23 @@ def ajax_getLogEventList(request):
         date
         action
 
-    eg: { 
-            "logs": 
+    eg: {
+            "logs":
             [
-                {   
-                    "domain": "llnl.gov", 
-                    "source": "debugPage v1.0.1rc2", 
-                    "country": "US", 
-                    "platform": "Windows v7 x64 SP1", 
-                    "date": "2013-03-14 16:58:21", 
+                {
+                    "domain": "llnl.gov",
+                    "source": "debugPage v1.0.1rc2",
+                    "country": "US",
+                    "platform": "Windows v7 x64 SP1",
+                    "date": "2013-03-14 16:58:21",
                     "action": "Started UV-CDAT"
-                }, 
-                {   
-                    "domain": "llnl.gov", 
-                    "source": "debugPage v1.0.1rc2", 
-                    "country": "US", 
-                    "platform": "Windows v7 x64 SP1", 
-                    "date": "2013-03-14 16:57:04", 
+                },
+                {
+                    "domain": "llnl.gov",
+                    "source": "debugPage v1.0.1rc2",
+                    "country": "US",
+                    "platform": "Windows v7 x64 SP1",
+                    "date": "2013-03-14 16:57:04",
                     "action": "Error (FATAL)"
                 }
             ]
@@ -347,41 +367,42 @@ def ajax_getLogEventList(request):
     if request.user.is_authenticated():
         # get the most recent 200 log events
         logs = LogEvent.objects.all().order_by('-date')[:200].values('date',
-                                                                    'machine__platform',
-                                                                    'machine__platform_version',
-                                                                    'netInfo__country',
-                                                                    'netInfo__city',
-                                                                    'netInfo__domain',
-                                                                    'source__name',
-                                                                    'source__version',
-                                                                    'action__name')
+                                                                     'machine__platform',
+                                                                     'machine__platform_version',
+                                                                     'netInfo__country',
+                                                                     'netInfo__city',
+                                                                     'netInfo__domain',
+                                                                     'source__name',
+                                                                     'source__version',
+                                                                     'action__name')
         results = []
         for l in logs:
             # create a dictionary for each record. Resulting JSON will look like [{"A": B}, {"C": D}]
-            # this will allow DataTables to show information in an order-independent manner, making it easy to extend later
+            # this will allow DataTables to show information in an
+            # order-independent manner, making it easy to extend later
             r = {}
             r['date'] = l['date'].strftime("%Y-%m-%d %H:%M:%S")
             r['platform'] = l['machine__platform']
-            r['location'] = "%s, %s" % (l['netInfo__city'], l['netInfo__country'])
+            r['location'] = "%s, %s" % (
+                l['netInfo__city'], l['netInfo__country'])
             r['domain'] = l['netInfo__domain']
             r['source'] = l['source__name']
             r['action'] = l['action__name']
-            
+
             # add version numbers for source and action if there is one
-            if l['machine__platform_version'] != None and l['machine__platform_version'] != "":
+            if l['machine__platform_version'] is not None and l['machine__platform_version'] != "":
                 r['platform'] += " v" + l['machine__platform_version']
-            if l['source__version'] != None and l['source__version'] != "":
+            if l['source__version'] is not None and l['source__version'] != "":
                 r['source'] += " v" + l['source__version']
-                
+
             results.append(r)
-        
+
         # convert to JSON
         json_results = json.dumps(results)
         json_results = '{ "logs":' + json_results + '}'
         return HttpResponse(json_results, content_type="application/json")
     else:
         return HttpResponse('Unauthenticated')
-
 
 
 def ajax_getErrorList(request):
@@ -400,28 +421,30 @@ def ajax_getErrorList(request):
     if request.user.is_authenticated():
         # get the most recent 200 log events
         logs = Error.objects.all().order_by('-date')[:100].values('id',
-                                                                    'date',
-                                                                    'logEvent__machine__platform',
-                                                                    'logEvent__machine__platform_version',
-                                                                    'logEvent__netInfo__country',
-                                                                    'logEvent__netInfo__city',
-                                                                    'logEvent__netInfo__domain',
-                                                                    'logEvent__source__name',
-                                                                    'logEvent__source__version',
-                                                                    'description',
-                                                                    'severity',
-                                                                    'stackTrace',
-                                                                    'userComments',
-                                                                    'executionLog',)
+                                                                  'date',
+                                                                  'logEvent__machine__platform',
+                                                                  'logEvent__machine__platform_version',
+                                                                  'logEvent__netInfo__country',
+                                                                  'logEvent__netInfo__city',
+                                                                  'logEvent__netInfo__domain',
+                                                                  'logEvent__source__name',
+                                                                  'logEvent__source__version',
+                                                                  'description',
+                                                                  'severity',
+                                                                  'stackTrace',
+                                                                  'userComments',
+                                                                  'executionLog',)
         results = []
         for l in logs:
             # create a dictionary for each record. Resulting JSON will look like [{"A": B}, {"C": D}]
-            # this will allow DataTables to show information in an order-independent manner, making it easy to extend later
+            # this will allow DataTables to show information in an
+            # order-independent manner, making it easy to extend later
             r = {}
             r['id'] = l['id']
             r['date'] = l['date'].strftime("%Y-%m-%d %H:%M:%S")
             r['platform'] = l['logEvent__machine__platform']
-            r['location'] = "%s, %s" % (l['logEvent__netInfo__city'], l['logEvent__netInfo__country'])
+            r['location'] = "%s, %s" % (
+                l['logEvent__netInfo__city'], l['logEvent__netInfo__country'])
             r['domain'] = l['logEvent__netInfo__domain']
             r['source'] = l['logEvent__source__name']
             r['description'] = l['description']
@@ -429,15 +452,16 @@ def ajax_getErrorList(request):
             r['stacktrace'] = l['stackTrace']
             r['usercomments'] = l['userComments']
             r['executionlog'] = l['executionLog']
-            
+
             # add version numbers for source and action if there is one
-            if l['logEvent__machine__platform_version'] != None and l['logEvent__machine__platform_version'] != "":
-                r['platform'] += " v" + l['logEvent__machine__platform_version']
-            if l['logEvent__source__version'] != None and l['logEvent__source__version'] != "":
+            if l['logEvent__machine__platform_version'] is not None and l['logEvent__machine__platform_version'] != "":
+                r['platform'] += " v" + \
+                    l['logEvent__machine__platform_version']
+            if l['logEvent__source__version'] is not None and l['logEvent__source__version'] != "":
                 r['source'] += " v" + l['logEvent__source__version']
-                
+
             results.append(r)
-        
+
         # convert to JSON
         json_results = json.dumps(results)
         json_results = '{ "errors":' + json_results + '}'
@@ -446,15 +470,21 @@ def ajax_getErrorList(request):
         return HttpResponse('Unauthenticated')
 
 
+def retrieve_session(data, request):
+    try:
+        platform = data["platform"]
+        platform_version = data["platform_version"]
+        hashed_hostname = data["hashed_hostname"]
+        hashed_username = data["hashed_username"]
+    except KeyError:
+        return None
 
-# exempt logEvent from CSRF protection, or programs will not be able to submit their statistics!
-@csrf_exempt
-def log_event(request, returnLogObject=False):
-    '''
-    Creates a LogEvent.
-    '''
+    machine = get_or_make_machine(platform, platform_version, hashed_hostname)
+    user = get_or_make_user(hashed_username)
+
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
-    # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR key instead
+    # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR
+    # key instead
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
         uncensored_ip = request.META.get('HTTP_X_FORWARDED_FOR', '0.0.0.0')
 
@@ -462,26 +492,13 @@ def log_event(request, returnLogObject=False):
 
     domain = request.META.get('REMOTE_HOST', 'Unknown')
     if domain == '' or 'Unknown':
-        domain =_censored_reverse_dns(uncensored_ip)
+        domain = _censored_reverse_dns(uncensored_ip)
 
-    # if the request is missing some fields, it means someone or something probably just stumbled here by accident, so 404
+    # NETINFO
     try:
-        platform = request.POST['platform']
-        platform_version = request.POST['platform_version']
-        source = request.POST['source']
-        source_version = request.POST['source_version']
-        action = request.POST['action']
-        username = request.POST['hashed_username']
-        hostname = request.POST['hashed_hostname']
-    except MultiValueDictKeyError as e:
-        raise Http404
-
-    ####### NETINFO #######
-    try:
-        netInfo_obj = NetInfo.objects.get(ip = censored_ip)
+        netInfo_obj = NetInfo.objects.get(ip=censored_ip)
     except ObjectDoesNotExist as err:
         netInfo_obj = NetInfo()
-        # GeoIP stuff (tested with IPv4 only!)
         try:
             geoIpInfo = gic.record_by_addr(uncensored_ip)
             netInfo_obj.country = geoIpInfo['country_code']
@@ -490,12 +507,12 @@ def log_event(request, returnLogObject=False):
                 netInfo_obj.city = 'Unknown'
             netInfo_obj.latitude = str(geoIpInfo['latitude'])
             netInfo_obj.longitude = str(geoIpInfo['longitude'])
-        except (GeoIPError, KeyError, AttributeError) as e:
+        except (GeoIPError, KeyError, AttributeError, TypeError) as e:
             netInfo_obj.country = '--'
             netInfo_obj.city = "Unknown"
             netInfo_obj.latitude = 0.0
             netInfo_obj.longitude = 0.0
-        if gio != None:
+        if gio is not None:
             try:
                 netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
             except GeoIPError as e:
@@ -504,75 +521,71 @@ def log_event(request, returnLogObject=False):
         netInfo_obj.domain = domain
         netInfo_obj.save()
 
-    ####### MACHINE #######
     try:
-        machine_obj = Machine.objects.get(hashed_hostname = hostname)
-    except ObjectDoesNotExist as err:
-        machine_obj = Machine()
-        machine_obj.hashed_hostname = hostname
-        machine_obj.platform = platform
-        machine_obj.platform_version = platform_version
-        machine_obj.save()
+        session = Session.objects.get(user=user, machine=machine, netInfo=netInfo_obj)
+    except Session.DoesNotExist:
+        session = Session()
+        session.user = user
+        session.machine = machine
+        session.netInfo = netInfo_obj
+        session.startDate = datetime.now()
+        session.lastDate = session.startDate
+        session.token = generate_session_token()
+        session.save()
+    return session
 
-    ####### USER #######
-    try:
-        user_obj = User.objects.get(hashed_username = username)
-    except ObjectDoesNotExist as err:
-        user_obj = User()
-        user_obj.hashed_username = username
-        user_obj.save()
 
-    ####### SOURCE #######
+@csrf_exempt
+def get_session(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest("GET Only")
+
+    session = retrieve_session(request.GET, request)
+
+    return JsonResponse({"token": session.token})
+
+
+# exempt logEvent from CSRF protection, or programs will not be able to
+# submit their statistics!
+@csrf_exempt
+def log_event(request, returnLogObject=False):
+    '''
+    Creates a LogEvent.
+    '''
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST Only")
+
+    # Need to allow for old-style analytics to still get logged.
+    # We can construct the token manually using that info.
+    if "token" not in request.POST:
+        session = retrieve_session(request.POST, request)
+    else:
+        try:
+            session = Session.objects.get(token=request.POST["token"])
+        except Session.DoesNotExist:
+            return HttpResponseBadRequest("No matching session")
+
     try:
-        source_obj = Source.objects.get(name = source, version = source_version)
-    except ObjectDoesNotExist as err:
+        source_obj = Source.objects.get(name=source, version=source_version)
+    except Source.DoesNotExist:
         source_obj = Source()
         source_obj.name = source
         source_obj.version = source_version
         source_obj.save()
 
-    ####### ACTION #######
+    # ACTION
     try:
-        action_obj = Action.objects.get(name = action)
-    except ObjectDoesNotExist as err:
+        action_obj = Action.objects.get(name=action)
+    except Action.DoesNotExist:
         action_obj = Action()
         action_obj.name = action
         action_obj.save()
 
-    ####### CREATE LOG EVENT #######
-    # first, check if this user has logged the same event within the last default_sleep_minutes.
-    # if they have, ignore this log event.
-    try:
-        sleepTime = int(request.POST.get('sleep', default_sleep_minutes))
-    except ValueError:
-        sleepTime = default_sleep_minutes
-
-    # get most recent log event with same user/machine/action/etc
-    try:
-        prevLogEvent = LogEvent.objects.filter(user = user_obj,
-                                               machine = machine_obj,
-                                               netInfo = netInfo_obj,
-                                               source = source_obj,
-                                               action = action_obj).latest('date')
-    except ObjectDoesNotExist as e:
-        prevLogEvent = None
-        
-    if sleepTime <= 0 or prevLogEvent == None or prevLogEvent.date < (timezone.now() - timezone.timedelta(minutes=sleepTime)):
-        log = LogEvent()
-        log.user = user_obj
-        log.machine = machine_obj
-        log.netInfo = netInfo_obj
-        log.source = source_obj
-        log.action = action_obj
-        try:
-            log.save()
-            responseMsg = "Thank you for participating!"
-        except IntegrityError:
-            responseMsg = "Ignoring attempted duplicate log addition."
-        
-    else:
-        log = prevLogEvent
-        responseMsg = "I'm ignoring you because you already sent this event within the last %i minutes!" % sleepTime
+    log = LogEvent()
+    log.session = session
+    log.source = source_obj
+    log.action = action_obj
+    log.save()
 
     if returnLogObject:
         return log
@@ -580,8 +593,8 @@ def log_event(request, returnLogObject=False):
         return HttpResponse(responseMsg)
 
 
-
-# exempt logError from CSRF protection, or programs will not be able to submit their statistics!
+# exempt logError from CSRF protection, or programs will not be able to
+# submit their statistics!
 @csrf_exempt
 def log_error(request):
     '''
@@ -589,16 +602,19 @@ def log_error(request):
     '''
     try:
         # get info from the POST
-        description = request.POST.get('description', 'No description provided.')
+        description = request.POST.get(
+            'description', 'No description provided.')
         severity = request.POST.get('severity', 'Unknown').upper()
         stackTrace = request.POST.get('stack_trace', '')
         userComments = request.POST.get('comments', '')
         executionLog = request.POST.get('execution_log', '')
 
         # create a LogEntry with the appropriate action
-        request.POST = request.POST.copy() # to make it mutable
-        request.POST['sleep'] = 0 # force it to create unique log events for errors.
-        request.POST['action'] = "Error (%s) - %s" % (severity, description[:30])
+        request.POST = request.POST.copy()  # to make it mutable
+        # force it to create unique log events for errors.
+        request.POST['sleep'] = 0
+        request.POST[
+            'action'] = "Error (%s) - %s" % (severity, description[:30])
         log_obj = log_event(request, returnLogObject=True)
 
         # create our Error object and save it
@@ -615,18 +631,15 @@ def log_error(request):
         except IntegrityError:
             return HttpResponse('Ignoring attempted duplicate error report addition.')
 
-
-
     except Exception as e:
         sys.stderr.write("Fatal Exception in uvcdat usage: " + str(e))
         status_code = 500
         response = render_to_response('error.html', {
             'error_msg': str(e),
             'status_code': status_code
-        }, context_instance = RequestContext(request))
+        }, context_instance=RequestContext(request))
         response.status_code = status_code
         return response
-
 
 
 def _censored_reverse_dns(ip):
@@ -642,16 +655,15 @@ def _censored_reverse_dns(ip):
         return 'unknown'
 
 
-
 def _censor_ip(ip):
     '''
     Returns a censored IPv4 address by zeroing-out the last octet.
     eg 12.34.56.78 --> 12.34.56.0
     '''
-    # from beginning of string, matches the first three sets of 1-3 digits separated by a period
-    m = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3})', ip) 
+    # from beginning of string, matches the first three sets of 1-3 digits
+    # separated by a period
+    m = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3})', ip)
     return m.group(1) + ".0"
-
 
 
 # fills the DB with randomly generated records
@@ -666,25 +678,29 @@ def _fill_db(num_entries_to_add):
     i = 0
     while i < num_entries_to_add:
         i += 1
-        uncensored_ip = "%s.%s.%s.%s" % (randint(1,255), randint(0, 255), randint(0,255), randint(1,254))
+        uncensored_ip = "%s.%s.%s.%s" % (
+            randint(1, 255), randint(0, 255), randint(0, 255), randint(1, 254))
         censored_ip = _censor_ip(uncensored_ip)
         domain = _censored_reverse_dns(uncensored_ip)
         hostname = "testMachine " + str(randint(0, 10000))
-        platform = choice(['Linux', 'Windows', 'OSX', 'FreeBSD', 'OpenBSD', 'AIX', 'Solaris', 'OpenSolaris', 'Linux']) # Linux included 2x so it comes-up more frequently
-        platform_version = "%s.%s.%s" % (randint(1,4), randint(0,3), randint(0,15))
+        # Linux included 2x so it comes-up more frequently
+        platform = choice(['Linux', 'Windows', 'OSX', 'FreeBSD',
+                           'OpenBSD', 'AIX', 'Solaris', 'OpenSolaris', 'Linux'])
+        platform_version = "%s.%s.%s" % (
+            randint(1, 4), randint(0, 3), randint(0, 15))
         username = "user " + str(randint(0, 10000))
         source = choice(['Build', 'CDAT', 'UV-CDAT', 'ESGF'])
-        if randint(0,1) == 1:
-            source_version = "%s.%s" % (randint(1,8), randint(0,9))
+        if randint(0, 1) == 1:
+            source_version = "%s.%s" % (randint(1, 8), randint(0, 9))
         else:
             source_version = ''
         if source == 'Build':
             action = 'Build'
         else:
-            action = choice(['FirstRun', 'Start', 'LoadModule', 'Exit', 'Other thing', 'Something', 'Stuff'])
-        
-        
-        ####### NETINFO #######
+            action = choice(
+                ['FirstRun', 'Start', 'LoadModule', 'Exit', 'Other thing', 'Something', 'Stuff'])
+
+        # NETINFO
         netInfo_obj = NetInfo()
         # GeoIP stuff (tested with IPv4 only!)
         try:
@@ -700,7 +716,7 @@ def _fill_db(num_entries_to_add):
             netInfo_obj.city = "Unknown"
             netInfo_obj.latitude = 0.0
             netInfo_obj.longitude = 0.0
-        if gio != None:
+        if gio is not None:
             try:
                 netInfo_obj.organization = gio.org_by_addr(uncensored_ip)
                 if netInfo_obj.organization == '':
@@ -710,43 +726,44 @@ def _fill_db(num_entries_to_add):
         netInfo_obj.ip = censored_ip
         netInfo_obj.domain = domain
         netInfo_obj.save()
-        
-        ####### MACHINE #######
+
+        # MACHINE
         try:
-            machine_obj = Machine.objects.get(hashed_hostname = hostname)
+            machine_obj = Machine.objects.get(hashed_hostname=hostname)
         except ObjectDoesNotExist as err:
             machine_obj = Machine()
             machine_obj.hashed_hostname = hostname
             machine_obj.platform = platform
             machine_obj.platform_version = platform_version
             machine_obj.save()
-    
-        ####### USER #######
+
+        # USER
         try:
-            user_obj = User.objects.get(hashed_username = username)
+            user_obj = User.objects.get(hashed_username=username)
         except ObjectDoesNotExist as err:
             user_obj = User()
             user_obj.hashed_username = username
             user_obj.save()
-    
-        ####### SOURCE #######
+
+        # SOURCE
         try:
-            source_obj = Source.objects.get(name = source, version = source_version)
+            source_obj = Source.objects.get(
+                name=source, version=source_version)
         except ObjectDoesNotExist as err:
             source_obj = Source()
             source_obj.name = source
             source_obj.version = source_version
             source_obj.save()
-    
-        ####### ACTION #######
+
+        # ACTION
         try:
-            action_obj = Action.objects.get(name = action)
+            action_obj = Action.objects.get(name=action)
         except ObjectDoesNotExist as err:
             action_obj = Action()
             action_obj.name = action
             action_obj.save()
-            
-        ####### CREATE LOG EVENT #######
+
+        # CREATE
         log = LogEvent()
         log.user = user_obj
         log.machine = machine_obj
