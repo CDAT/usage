@@ -1,5 +1,5 @@
 from django.db import models
-from uuid import UUID
+from uuid import uuid4
 
 class User(models.Model):
 
@@ -146,7 +146,7 @@ class Session(models.Model):
 
 
 def generate_session_token():
-    return UUID().hex()
+    return uuid4()
 
 
 
@@ -169,7 +169,7 @@ class LogEvent(models.Model):
 
     def __unicode__(self):
         return "%s by User %s in Session %s" % (self.action.name,
-                                                self.user.hashed_username,
+                                                self.session.user.hashed_username,
                                                 self.session.token)
 
     class Meta:
