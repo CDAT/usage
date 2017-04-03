@@ -11,9 +11,23 @@
             <ul class="nav navbar-nav">
                 {% if user.is_authenticated %}
                     <li><a href="/">Home</a></li>
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+
                     <li><a href="{% url 'statsPage.views.show_error_log' %}">Errors</a></li>
                     <li><a href="{% url 'stats.views.log_event' %}">Add log</a></li>
+
+                    <li><a href="{% url 'statsPage.views.show_debug' %}">Debug</a></li>
+                    <li><a href="{% url 'statsPage.views.show_debug_error' %}">Debug Error</a></li>
+
+                    <li><a href="{% url 'admin:stats_user_changelist' %}">User Stats</a></li>
+                    <li><a href="{% url 'admin:stats_source_changelist' %}">Source Stats</a></li>
+                    <li><a href="{% url 'admin:stats_machine_changelist' %}">Machine Stats</a></li>
+                    <li><a href="{% url 'admin:stats_logevent_changelist' %}">Changelist Stats</a></li>
+                    <li><a href="{% url 'admin:stats_error_changelist' %}">Error Stats</a></li>
+                    <li><a href="{% url 'admin:stats_action_changelist' %}">Action Stats</a></li>
+
+                    <li><a href="{% url 'admin:sites_site_changelist' %}">Sites</a></li>
+
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="/">Home</a></li>
                     <li><a href="/login">Login</a></li>
