@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'login/', include('login.urls')),
     (r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
     url(r'^', include('statsPage.urls')), # match everything else...
+    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout', kwargs={'next_page': '/'}),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

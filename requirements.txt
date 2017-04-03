@@ -1,3 +1,1 @@
-Django==1.8.3
-pygeoip==0.3.2
-wsgiref==0.1.2
+virtualenv==15.0.3
