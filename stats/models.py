@@ -200,3 +200,5 @@ class Error(models.Model):
 
     class Meta:
         db_table = u'error'
+
+

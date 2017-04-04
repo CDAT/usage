@@ -51,6 +51,30 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'OPTIONS': {
+#             'read_default_file': '~/export/kuivenhoven1/usage/uvcdat_usage.sql',
+#         },
+#     }
+# }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',# Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'uvcdat_usage',  # Or path to database file if using sqlite3.
+        'USER': 'uvcdat_usage',                            # Not used with sqlite3.
+        'PASSWORD': '1b29e7fe6839569bd408d29642e40f39e5f75c8f112b53a8414d7a2c9f569972',
+        'HOST': '',                            # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                            # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+
+
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,6 +109,8 @@ INSTALLED_APPS = (
     'login',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    'twitter_bootstrap',
+    'django_extensions',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

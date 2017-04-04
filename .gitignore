@@ -18,3 +18,4 @@ env/
 /static
 db.sqlite3
 migrations
+.idea/

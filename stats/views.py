@@ -1,22 +1,17 @@
-from customsql import get_machine_count_for_sources
 from datetime import datetime, timedelta
 from pygeoip import GeoIP, GeoIPError
-from random import choice, randint
 import re
 import socket
 import sys
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Count
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-import json
-from django.utils import timezone
-from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
+from django.contrib.sessions.models import Session
 
 if not settings.configured:
     settings.configure()
@@ -57,10 +52,15 @@ if hasattr(socket, 'setdefaulttimeout'):
 
 def retrieve_session(data, request):
     try:
-        platform = data["platform"]
-        platform_version = data["platform_version"]
-        hashed_hostname = data["hashed_hostname"]
-        hashed_username = data["hashed_username"]
+        thiss = request.environ
+        hashed_hostname = request.GET.get('hashed_hostname', '')
+        hashed_username = thiss["USER"]
+        sesh_key = data
+        details = request.META.get('HTTP_USER_AGENT', '')
+        hello = details.partition(' ')
+        browser = hello[0].partition('/')
+        platform = browser[0]
+        platform_version = browser[2]
     except KeyError:
         return None
 
@@ -68,8 +68,7 @@ def retrieve_session(data, request):
     user = get_or_make_user(hashed_username)
 
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
-    # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR
-    # key instead
+
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
         uncensored_ip = request.META.get('HTTP_X_FORWARDED_FOR', '0.0.0.0')
 
@@ -107,7 +106,7 @@ def retrieve_session(data, request):
         netInfo_obj.save()
 
     try:
-        session = Session.objects.get(user=user, machine=machine, netInfo=netInfo_obj)
+        session = Session.objects.get(pk=sesh_key)
     except Session.DoesNotExist:
         session = Session()
         session.user = user
@@ -116,6 +115,7 @@ def retrieve_session(data, request):
         session.startDate = datetime.now()
         session.lastDate = session.startDate
         session.token = generate_session_token()
+        session.expire_date = datetime.now() + timedelta(days=1)
         session.save()
     return session
 
@@ -126,8 +126,7 @@ def get_session(request):
         return HttpResponseBadRequest("GET Only")
 
     session = retrieve_session(request.GET, request)
-
-    return JsonResponse({"token": session.token})
+    return JsonResponse({"token": str(session.token)})
 
 
 # exempt logEvent from CSRF protection, or programs will not be able to
