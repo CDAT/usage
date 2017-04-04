@@ -1,26 +1,17 @@
-from customsql import get_machine_count_for_sources
 from datetime import datetime, timedelta
 from pygeoip import GeoIP, GeoIPError
-from random import choice, randint
 import re
 import socket
 import sys
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Count
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-import json
-from django.utils import timezone
-from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from models import *
-
-import logging
 from django.contrib.sessions.models import Session
-from django.contrib.sessions.backends.db import SessionStore
 
 if not settings.configured:
     settings.configure()
@@ -61,41 +52,23 @@ if hasattr(socket, 'setdefaulttimeout'):
 
 def retrieve_session(data, request):
     try:
-        ##platform = data["platform"]
-        ##platform_version = data["platform_version"]
-        ##hashed_hostname = data["hashed_hostname"]
-        ##hashed_username = data["hashed_username"]
         thiss = request.environ
-        #print thiss["HTTP_COOKIE"]
-        #cookies = thiss["CSRF_COOKIE"]
-        cookies = thiss["CSRF_COOKIE"]
-        hashed_hostname = thiss["HOSTNAME"]
+        hashed_hostname = request.GET.get('hashed_hostname', '')
         hashed_username = thiss["USER"]
         sesh_key = data
-        #print request.POST.keys()
         details = request.META.get('HTTP_USER_AGENT', '')
-        #print request.META.get('HTTP_USER_AGENT', '')
-        #print request.META.keys()
         hello = details.partition(' ')
         browser = hello[0].partition('/')
-        #print hello[0]
-        #print browser[0]
-        #print browser[2]
         platform = browser[0]
         platform_version = browser[2]
-        ## print request.environ
-        #print data
     except KeyError:
-        #print data
-        #print request
         return None
 
     machine = get_or_make_machine(platform, platform_version, hashed_hostname)
     user = get_or_make_user(hashed_username)
 
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
-    # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR
-    # key instead
+
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
         uncensored_ip = request.META.get('HTTP_X_FORWARDED_FOR', '0.0.0.0')
 
@@ -133,26 +106,8 @@ def retrieve_session(data, request):
         netInfo_obj.save()
 
     try:
-        print "WE ARE INSIDE THIS THING HELLLLOOOOOOOOOOO"
-        print machine
-        print "Prior to printing Session()"
-        print Session()
-        print "After printing Session()"
-        #session = Session.objects.get(user=user, machine=machine, netInfo=netInfo_obj)
-        #session = Session.objects.get(session_key = sesh_key)
-        session = Session.objects.get(pk = sesh_key)
-        print session.expire_date
-        #session = Session.objects.get(pk=data)
-        print "prior to printing session"
-        stuff = session.get_decoded()
-        print session.get_decoded()
-        print "after printing session"
-        print "stuff prior to print"
-        # Note: the below method doesn't work even though it should because it's a key at least that's what I thought 
-        print stuff["django.contrib.auth.backends.ModelBackend"]
-        print "print after printing stuff"
+        session = Session.objects.get(pk=sesh_key)
     except Session.DoesNotExist:
-        print "Inside Session.DoesNotExist"
         session = Session()
         session.user = user
         session.machine = machine
@@ -160,6 +115,7 @@ def retrieve_session(data, request):
         session.startDate = datetime.now()
         session.lastDate = session.startDate
         session.token = generate_session_token()
+        session.expire_date = datetime.now() + timedelta(days=1)
         session.save()
     return session
 
@@ -169,16 +125,8 @@ def get_session(request):
     if request.method != "GET":
         return HttpResponseBadRequest("GET Only")
 
-    the_cookies = request.COOKIES
-    #print "printing the_cookies"
-    #print the_cookies.values()[1]
-    # session = retrieve_session(request.GET, request)
-    session = retrieve_session(the_cookies.values()[1], request)
-    print "upon return of retrieve_session function"
-
-    # return JsonResponse({"token": session.token})
-    print session.token
-    return JsonResponse({"token": session.token})
+    session = retrieve_session(request.GET, request)
+    return JsonResponse({"token": str(session.token)})
 
 
 # exempt logEvent from CSRF protection, or programs will not be able to
