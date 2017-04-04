@@ -83,6 +83,9 @@ def hello_world(request):
             m_count += 1
 
 
+    sl_graph = l_count*2
+    sm_graph = m_count*2
+    sd_graph = d_count*2
     l_graph = l_count*4
     m_graph = m_count*4
     d_graph = d_count*4
@@ -95,7 +98,7 @@ def hello_world(request):
 
     #return render_to_response('hello_world.html', {'data': 'Hello World'}, context_instance=RequestContext(request))
     #return render_to_response('hello_world.html', {'data': whatsthis}, context_instance=RequestContext(request))
-    return render_to_response('hello_world.html', {'source': source, 'net_info': net_info, 'action': action, 'session': session, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph }, context_instance=RequestContext(request))
+    return render_to_response('hello_world.html', {'source': source, 'net_info': net_info, 'action': action, 'session': session, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
     # return HttpResponse("Hello, World")
 
 def show_log(request):

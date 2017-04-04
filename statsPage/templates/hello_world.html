@@ -22,16 +22,41 @@
 <br-->
 <style>
 
-.chart div {
-  font: 9px sans-serif;
-  background-color: steelblue;
-  text-align: right;
-  padding: 25px;
-  margin: 1px;
-  color: white;
+@media (max-width: 876px) {
+    .small_chart div {
+      font: 8px sans-serif;
+      background-color: steelblue;
+      text-align: right;
+      padding: 10px;
+      margin: 1px;
+      color: white;
+    }
+    .chart div {
+      display: none;
+    }
+}
+
+@media screen and (min-width: 877px) {
+    .chart div {
+      font: 9px sans-serif;
+      background-color: steelblue;
+      text-align: right;
+      padding: 25px;
+      margin: 1px;
+      color: white;
+    }
+    .small_chart div {
+      display: none;
+    }
 }
 
 </style>
+
+<div class="small_chart">
+  <div style="width: {{d_count}}px;">Darwin {{d_count}}</div>
+  <div style="width: {{l_count}}px;">Linux {{l_count}}</div>
+  <div style="width: {{m_count}}px;">Moz. {{m_count}}</div>
+</div>
 
 <div class="chart">
   <div style="width: {{d_graph}}px;">Darwin {{d_count}}</div>
