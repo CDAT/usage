@@ -3,6 +3,7 @@
 <!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
 <!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
 
 <nav class="navbar navbar-default">
@@ -10,27 +11,86 @@
         <div class="navbar-header">
             <ul class="nav navbar-nav">
                 {% if user.is_authenticated %}
-                    <li><a href="/">Home</a></li>
+<div class="container">
+    <div class="row">
 
+        <div class="btn-group">
+                <li><a style="color:black; font-size:125%" href="/stats">Home</a></li>
+                <!--li><a style="color:black; font-size: 125%;" href="/">Home</a></li-->
+        </div>
+
+        &nbsp;
+        <div class="btn-group">
+          <!--button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"-->
+          <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%;">
+            Log <span class="caret"></span>
+          </li>
+          <ul class="dropdown-menu" role="menu">
                     <li><a href="{% url 'statsPage.views.show_error_log' %}">Errors</a></li>
                     <li><a href="{% url 'stats.views.log_event' %}">Add log</a></li>
+          </ul>
+        </div>
 
-                    <li><a href="{% url 'statsPage.views.show_debug' %}">Debug</a></li>
-                    <li><a href="{% url 'statsPage.views.show_debug_error' %}">Debug Error</a></li>
 
+        &nbsp;
+        <div class="btn-group">
+          <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
+            Debug <span class="caret"></span>
+          </li>
+          <ul class="dropdown-menu">
+                <li><a href="{% url 'statsPage.views.show_debug' %}">Debug</a></li>
+                <li><a href="{% url 'statsPage.views.show_debug_error' %}">Debug Error</a></li>
+          </ul>
+        </div>
+
+        &nbsp;
+        <div class="btn-group">
+          <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
+            Stats <span class="caret"></span>
+          </li>
+          <ul class="dropdown-menu">
                     <li><a href="{% url 'admin:stats_user_changelist' %}">User Stats</a></li>
                     <li><a href="{% url 'admin:stats_source_changelist' %}">Source Stats</a></li>
                     <li><a href="{% url 'admin:stats_machine_changelist' %}">Machine Stats</a></li>
                     <li><a href="{% url 'admin:stats_logevent_changelist' %}">Changelist Stats</a></li>
                     <li><a href="{% url 'admin:stats_error_changelist' %}">Error Stats</a></li>
                     <li><a href="{% url 'admin:stats_action_changelist' %}">Action Stats</a></li>
+          </ul>
+        </div>
+            
 
-                    <li><a href="{% url 'admin:sites_site_changelist' %}">Sites</a></li>
+        &nbsp;
+        <div class="btn-group">
+            <li><a style="color:black; font-size:125%" href="{% url 'admin:sites_site_changelist' %}">Sites</a></li>
+        </div>
 
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+        &nbsp;
+        <div class="btn-group">
+            <li><a style="color:black; font-size:125%" href="/logout/">Logout</a></li>
+            <!--li><a style="color:black; font-size:125%" href="{% url 'logout' %}">Logout</a></li-->
+        </div>
+
+        &nbsp;
+        <div class="btn-group">
+            <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform stats</a></li>
+            <!--li><a style="color:black; font-size:125%" href="{% url 'statsPage.views.hello_world' %}">Hello world</a></li-->
+        </div>
+
+
+    </div>
+</div>
                 {% else %}
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/login">Login</a></li>
+
+                    <div class="btn-group">
+                        <li><a style="color:black; font-size:125%" href="/stats">Home</a></li>
+                        <!--li><a style="color:black; font-size:125%" href="/">Home</a></li-->
+                    </div>
+
+                    &nbsp;
+                    <div class="btn-group">
+                        <li><a style="color:black; font-size:125%" href="/login">Log in</a></li>
+                    </div>
+
                 {% endif %}
            </ul>
         </div>

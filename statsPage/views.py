@@ -22,6 +22,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from stats.models import *
 from django.conf import settings
+
+
+
 if not settings.configured:
     settings.configure()
 
@@ -58,7 +61,42 @@ def show_sign_in_page(request):
         login(request, user)
         return HttpResponseRedirect('../')
 
+def hello_world(request):
+    source = Source.objects.all()
+    net_info = NetInfo.objects.all()
+    action = Action.objects.all()
+    session = Session.objects.all()
+    log_event = LogEvent.objects.all()
+    error = Error.objects.all()
+    machine = Machine.objects.all()
+    user = User.objects.all()
 
+    d_count = 0
+    l_count = 0
+    m_count = 0
+    for mach in machine:
+        if mach.platform == 'Darwin':
+            d_count += 1
+        elif mach.platform == 'Linux':
+            l_count += 1
+        elif mach.platform == 'Mozilla':
+            m_count += 1
+
+
+    l_graph = l_count*4
+    m_graph = m_count*4
+    d_graph = d_count*4
+    mach_meta = Machine._meta
+    user_meta = User._meta
+    netinfo_meta = NetInfo._meta
+    source_meta = Source._meta
+    action_meta = Action._meta
+    logevent_meta = LogEvent._meta
+
+    #return render_to_response('hello_world.html', {'data': 'Hello World'}, context_instance=RequestContext(request))
+    #return render_to_response('hello_world.html', {'data': whatsthis}, context_instance=RequestContext(request))
+    return render_to_response('hello_world.html', {'source': source, 'net_info': net_info, 'action': action, 'session': session, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph }, context_instance=RequestContext(request))
+    # return HttpResponse("Hello, World")
 
 def show_log(request):
     '''

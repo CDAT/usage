@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+
 {% block content %}
 <!DOCTYPE html>
 <html>
 <head>
 <!-- css -->
 <link rel="icon" type="image/png" href="http://uvcdat.llnl.gov/media/images/favicon.ico">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
+<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css"-->
 
 <!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!--script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 
 
@@ -22,9 +23,10 @@
         <center>
             <h1>Analytics data stored here.</h1>
             {% if user.is_authenticated %}
-                <h5>You are already logged in.</h5>
+                <a class="btn btn-default" href="/logout">Logout</a>
             {% else %}
-                <h5>Please login to see the data.</h5>
+                <a class="btn btn-default" href="/login">Login</a>
+                <!--a href="url 'login.show_login' %}">Click here</a-->
             {% endif %}
         </center>
     </div>

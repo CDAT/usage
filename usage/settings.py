@@ -67,7 +67,7 @@ DATABASES = {
         'NAME': 'uvcdat_usage',  # Or path to database file if using sqlite3.
         'USER': 'uvcdat_usage',                            # Not used with sqlite3.
         'PASSWORD': '1b29e7fe6839569bd408d29642e40f39e5f75c8f112b53a8414d7a2c9f569972',
-        'HOST': '',                            # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'localhost',                            # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                            # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -111,6 +111,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'twitter_bootstrap',
     'django_extensions',
+    # http://django-mysql.readthedocs.io/en/latest/installation.html
+    'django_mysql'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
