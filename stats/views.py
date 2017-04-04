@@ -61,41 +61,34 @@ if hasattr(socket, 'setdefaulttimeout'):
 
 def retrieve_session(data, request):
     try:
-        ##platform = data["platform"]
-        ##platform_version = data["platform_version"]
-        ##hashed_hostname = data["hashed_hostname"]
-        ##hashed_username = data["hashed_username"]
+        # data = request.GET
         thiss = request.environ
-        #print thiss["HTTP_COOKIE"]
-        #cookies = thiss["CSRF_COOKIE"]
-        cookies = thiss["CSRF_COOKIE"]
-        hashed_hostname = thiss["HOSTNAME"]
+        print '1' # ONLY PRINTED 1 so had to find the hashed_hostname
+        hashed_hostname = request.GET.get('hashed_hostname', '')
+        print '2'
         hashed_username = thiss["USER"]
+        print '3'
         sesh_key = data
-        #print request.POST.keys()
+        print '4'
         details = request.META.get('HTTP_USER_AGENT', '')
-        #print request.META.get('HTTP_USER_AGENT', '')
-        #print request.META.keys()
+        print '5'
         hello = details.partition(' ')
+        print '6'
         browser = hello[0].partition('/')
-        #print hello[0]
-        #print browser[0]
-        #print browser[2]
+        print '7'
         platform = browser[0]
+        print '8'
         platform_version = browser[2]
-        ## print request.environ
-        #print data
+        print 'leaving first try'
     except KeyError:
-        #print data
-        #print request
+        print 'in first try error'
         return None
 
     machine = get_or_make_machine(platform, platform_version, hashed_hostname)
     user = get_or_make_user(hashed_username)
 
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
-    # in case we're behind a proxy, get the IP from the HTTP_X_FORWARDED_FOR
-    # key instead
+
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
         uncensored_ip = request.META.get('HTTP_X_FORWARDED_FOR', '0.0.0.0')
 
@@ -107,8 +100,11 @@ def retrieve_session(data, request):
 
     # NETINFO
     try:
+        print 'in netinfo try'
         netInfo_obj = NetInfo.objects.get(ip=censored_ip)
     except ObjectDoesNotExist as err:
+        print 'in netinfo error'
+        print err
         netInfo_obj = NetInfo()
         try:
             geoIpInfo = gic.record_by_addr(uncensored_ip)
@@ -133,11 +129,7 @@ def retrieve_session(data, request):
         netInfo_obj.save()
 
     try:
-        print "WE ARE INSIDE THIS THING HELLLLOOOOOOOOOOO"
-        print machine
-        print "Prior to printing Session()"
-        print Session()
-        print "After printing Session()"
+        print "in session try"
         #session = Session.objects.get(user=user, machine=machine, netInfo=netInfo_obj)
         #session = Session.objects.get(session_key = sesh_key)
         session = Session.objects.get(pk = sesh_key)
@@ -160,6 +152,7 @@ def retrieve_session(data, request):
         session.startDate = datetime.now()
         session.lastDate = session.startDate
         session.token = generate_session_token()
+        session.expire_date = datetime.now() + timedelta(days=1)
         session.save()
     return session
 
@@ -172,13 +165,13 @@ def get_session(request):
     the_cookies = request.COOKIES
     #print "printing the_cookies"
     #print the_cookies.values()[1]
-    # session = retrieve_session(request.GET, request)
-    session = retrieve_session(the_cookies.values()[1], request)
+    session = retrieve_session(request.GET, request)
+    # session = retrieve_session(the_cookies.values()[1], request)
     print "upon return of retrieve_session function"
 
     # return JsonResponse({"token": session.token})
     print session.token
-    return JsonResponse({"token": session.token})
+    return JsonResponse({"token": str(session.token)})
 
 
 # exempt logEvent from CSRF protection, or programs will not be able to
