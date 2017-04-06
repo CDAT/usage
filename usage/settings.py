@@ -15,6 +15,17 @@
 # it from this file and make ALL changes in local_settings.py
 #
 ################################################################################
+# Documentation that helped in configuration:
+# https://code.djangoproject.com/ticket/20400
+# for getting around HTTPS: http://stackoverflow.com/questions/35536491/error-youre-accessing-the-development-server-over-https-but-it-only-supports
+# in regards to static files: http://stackoverflow.com/questions/30263701/django-1-8-and-the-ever-confusing-static-files
+import socket
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+if socket.gethostname() == "pcmdi6.llnl.gov":
+    from local_settings import *
+
 
 SITE_ID = 1
 
@@ -34,6 +45,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+  os.path.join(BASE_DIR, 'static/'),                                                
 )
 
 # List of finder classes that know how to find static files in

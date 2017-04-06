@@ -1,6 +1,11 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView, ListView
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+from django.views.generic import TemplateView
+
 urlpatterns = patterns('statsPage.views',
     # /
     url(r'^$','show_log'),
@@ -20,4 +25,4 @@ urlpatterns = patterns('statsPage.views',
 
     # /log/debugerr/
     url(r'^debugerr/$', 'show_debug_error'),
-)
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

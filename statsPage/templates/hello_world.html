@@ -5,109 +5,90 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% load staticfiles %}
+<link href="{% static 'css/platform_bar.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'js/platform_bar.js' %}"></script>
 
-<h1> Bar graph of the various platforms </h1>
+    <div class="container">
+        <div id="feature-carousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <center><h2>Bar graph of the various platforms.</h2></center>
+                </div>
+                <div class="item">
+                    <center><h2>Hover over the bars to learn more.</h2></center>
+                </div>
+            </div>
+         </div>
+    </div>
 <!--br>
-{{ d_count }}
+{ d_count }}
 <br>
-{{ m_count }}
+{ m_count }}
 <br>
-{{ l_count }}
+{ l_count }}
 <br-->
-<br>
-<!--{% for mach in machine %}
-    {{ mach.platform }}<br>
-{% endfor %}
+<!--% for mach in machine %}
+    { mach.platform }}<br>
+% endfor %}
 <br>
 <br-->
-<style>
-
-@media (max-width: 876px) {
-    .small_chart div {
-      font: 8px sans-serif;
-      background-color: steelblue;
-      text-align: right;
-      padding: 10px;
-      margin: 1px;
-      color: white;
-    }
-    .chart div {
-      display: none;
-    }
-}
-
-@media screen and (min-width: 877px) {
-    .chart div {
-      font: 9px sans-serif;
-      background-color: steelblue;
-      text-align: right;
-      padding: 25px;
-      margin: 1px;
-      color: white;
-    }
-    .small_chart div {
-      display: none;
-    }
-}
-
-</style>
 
 <div class="small_chart">
-  <div style="width: {{d_count}}px;">Darwin {{d_count}}</div>
-  <div style="width: {{l_count}}px;">Linux {{l_count}}</div>
-  <div style="width: {{m_count}}px;">Moz. {{m_count}}</div>
+  <div style="width: {{d_count}}px;" data-toggle="tooltip" title="Platform: Darwin &rarr; Count: {{d_count}}" style="width: {{d_graph}}px;"></div>
+  <div style="width: {{l_count}}px;" data-toggle="tooltip" title="Linux {{l_count}} &rarr; Count: {{l_count}}" style="width: {{l_graph}}px;"></div>
+  <div style="width: {{m_count}}px;" data-toggle="tooltip" title="Mozilla {{m_count}} &rarr; Count: {{m_count}}" style="width: {{m_graph}}px;"></div>
 </div>
 
 <div class="chart">
-  <div style="width: {{d_graph}}px;">Darwin {{d_count}}</div>
-  <div style="width: {{l_graph}}px;">Linux {{l_count}}</div>
-  <div style="width: {{m_graph}}px;">Moz. {{m_count}}</div>
+  <div style="width: {{d_graph}}px;" data-toggle="tooltip" title="Platform: Darwin &rarr; Count: {{d_count}}" style="width: {{d_graph}}px;"></div>
+  <div style="width: {{l_graph}}px;" data-toggle="tooltip" title="Linux {{l_count}} &rarr; Count: {{l_count}}" style="width: {{l_graph}}px;"></div>
+  <div style="width: {{m_graph}}px;" data-toggle="tooltip" title="Mozilla {{m_count}} &rarr; Count: {{m_count}}" style="width: {{m_graph}}px;"></div>
 </div>
 
 
 
 
-
-<!--{{ mach_meta.fields }}
+<!--{ mach_meta.fields }}
 <br>
 <br>
-{{ user_meta.fields }}
+{ user_meta.fields }}
 <br>
 <br>
-{{ netinfo_meta.fields }}
+{ netinfo_meta.fields }}
 <br>
 <br>
-{{ source_meta.fields }}
+{ source_meta.fields }}
 <br>
 <br>
-{{ action_meta.fields }}
+{ action_meta.fields }}
 <br>
 <br>
-{{ logevent_meta.fields }}
+{ logevent_meta.fields }}
 <br>
 <br>
-{{ user }}
+{ user }}
 <br>
 <br>
-{{ machine }}
+{ machine }}
 <br>
 <br>
-{{ source }}
+{ source }}
 <br>
 <br>
-{{ net_info }}
+{ net_info }}
 <br>
 <br>
-{{ action }}
+{ action }}
 <br>
 <br>
-{{ session }}
+{ session }}
 <br>
 <br>
-{{ log_event }}
+{ log_event }}
 <br>
 <br>
-{{ error }} -->
+{ error }} -->
 
 
 {% endblock content %}
