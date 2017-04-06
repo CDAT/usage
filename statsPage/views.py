@@ -22,7 +22,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from stats.models import *
 from django.conf import settings
-
+import dateutil.parser
 
 
 if not settings.configured:
@@ -65,7 +65,6 @@ def hello_world(request):
     source = Source.objects.all()
     net_info = NetInfo.objects.all()
     action = Action.objects.all()
-    session = Session.objects.all()
     log_event = LogEvent.objects.all()
     error = Error.objects.all()
     machine = Machine.objects.all()
@@ -98,14 +97,74 @@ def hello_world(request):
 
     #return render_to_response('hello_world.html', {'data': 'Hello World'}, context_instance=RequestContext(request))
     #return render_to_response('hello_world.html', {'data': whatsthis}, context_instance=RequestContext(request))
-    return render_to_response('hello_world.html', {'source': source, 'net_info': net_info, 'action': action, 'session': session, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
+    return render_to_response('hello_world.html', {'source': source, 'net_info': net_info, 'action': action, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
     # return HttpResponse("Hello, World")
+
+
+def sup_world(request):
+    session = Session.objects.all()
+
+    i = 0
+    for sesh in session:
+        if i == 0:
+            stuff = dateutil.parser.parse(str(sesh.startDate))
+            i = 1
+
+
+
+    january = 0
+    february = 0
+    march = 0
+    april = 0
+    may = 0
+    june = 0
+    july = 0
+    august = 0
+    september = 0
+    october = 0
+    november = 0
+    december = 0
+
+    for sesh in session:
+        if sesh.startDate.month == 0:
+            january += 1
+        if sesh.startDate.month == 1:
+            february += 1
+        if sesh.startDate.month == 2:
+            march += 1
+        if sesh.startDate.month == 3:
+            april += 1
+        if sesh.startDate.month == 4:
+            may += 1
+        if sesh.startDate.month == 5:
+            june += 1
+        if sesh.startDate.month == 6:
+            july += 1
+        if sesh.startDate.month == 7:
+            august += 1
+        if sesh.startDate.month == 8:
+            september += 1
+        if sesh.startDate.month == 9:
+            october += 1
+        if sesh.startDate.month == 10:
+            november += 1
+        if sesh.startDate.month == 11:
+            december += 1
+
+
+        months =[0,1,2,3,4,5,6,7,8,9,10,11]
+        monthdata = [january,february,march,april,may,june,july,august,september,october,november,december]
+        lineData = [[0,january],[1,february],[2, march],[3,april],[4, may],[5, june],[6, july],[7, august],[8, september],[9, october],[10, november],[11, december]]
+
+    return render_to_response('sup_world.html', { 'session': session, 'stuff': stuff, 'january': january, 'february': february, 'march': march, 'april': april, 'may': may, 'june': june, 'july': july, 'august': august, 'september': september, 'october': october, 'november': november, 'december': december, 'lineData': lineData, 'months': months, 'monthdata': monthdata }, context_instance=RequestContext(request))
+
 
 def show_log(request):
     '''
     Renders the logs.
     '''
-    return render_to_response('showlog.html', {
+    machine = Machine.objects
+    return render_to_response('showlog.html', {'machine': machine
     }, context_instance=RequestContext(request))
 
 

@@ -10,6 +10,7 @@ urlpatterns = patterns('statsPage.views',
     # /
     url(r'^$','show_log'),
     url(r'^hello_world/$','hello_world'),
+    url(r'^sup_world/$','sup_world'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),

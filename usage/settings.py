@@ -27,6 +27,11 @@ if socket.gethostname() == "pcmdi6.llnl.gov":
     from local_settings import *
 
 
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+
+
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -81,6 +86,9 @@ DATABASES = {
         'PASSWORD': '1b29e7fe6839569bd408d29642e40f39e5f75c8f112b53a8414d7a2c9f569972',
         'HOST': 'localhost',                            # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                            # Set to empty string for default. Not used with sqlite3.
+        'OPTIONS': {
+                    'init_command': 'SET innodb_strict_mode=1',
+                            },
     }
 }
 
@@ -124,7 +132,7 @@ INSTALLED_APPS = (
     'twitter_bootstrap',
     'django_extensions',
     # http://django-mysql.readthedocs.io/en/latest/installation.html
-    'django_mysql'
+    # 'django_mysql'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

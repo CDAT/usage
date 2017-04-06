@@ -9,51 +9,47 @@
 <link href="{% static 'css/platform_bar.css' %}" rel="stylesheet">
 <script type="text/javascript" src="{% static 'js/platform_bar.js' %}"></script>
 
-    <div class="container">
-        <div id="feature-carousel" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <center><h2>Bar graph of the various platforms.</h2></center>
-                </div>
-                <div class="item">
-                    <center><h2>Hover over the bars to learn more.</h2></center>
-                </div>
+<div class="container">
+    <div id="feature-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <center><h2>Bar graph of the various platforms.</h2></center>
             </div>
-         </div>
-    </div>
-<!--br>
-{ d_count }}
-<br>
-{ m_count }}
-<br>
-{ l_count }}
-<br-->
-<!--% for mach in machine %}
-    { mach.platform }}<br>
-% endfor %}
-<br>
-<br-->
+            <div class="item">
+                <center><h2>Hover over the bars to learn more.</h2></center>
+            </div>
+        </div>
+     </div>
+</div>
 
+
+{% for sesh in session %}
+    {{ sesh.startDate }} <br>
+{% endfor %}
+
+<br>
 <div class="small_chart">
-  <div style="width: {{d_count}}px;" data-toggle="tooltip" title="Platform: Darwin &rarr; Count: {{d_count}}" style="width: {{d_graph}}px;"></div>
-  <div style="width: {{l_count}}px;" data-toggle="tooltip" title="Linux {{l_count}} &rarr; Count: {{l_count}}" style="width: {{l_graph}}px;"></div>
-  <div style="width: {{m_count}}px;" data-toggle="tooltip" title="Mozilla {{m_count}} &rarr; Count: {{m_count}}" style="width: {{m_graph}}px;"></div>
+  <div style="width: {{d_count}}px;" data-toggle="tooltip" title="Platform: Darwin &rarr; Count: {{d_count}}"></div>
+  <div style="width: {{l_count}}px;" data-toggle="tooltip" title="Platform: Linux &rarr; Count: {{l_count}}"></div>
+  <div style="width: {{m_count}}px;" data-toggle="tooltip" title="Platform: Mozilla &rarr; Count: {{m_count}}"></div>
 </div>
 
 <div class="chart">
-  <div style="width: {{d_graph}}px;" data-toggle="tooltip" title="Platform: Darwin &rarr; Count: {{d_count}}" style="width: {{d_graph}}px;"></div>
-  <div style="width: {{l_graph}}px;" data-toggle="tooltip" title="Linux {{l_count}} &rarr; Count: {{l_count}}" style="width: {{l_graph}}px;"></div>
-  <div style="width: {{m_graph}}px;" data-toggle="tooltip" title="Mozilla {{m_count}} &rarr; Count: {{m_count}}" style="width: {{m_graph}}px;"></div>
+  <div style="width: {{d_graph}}px;" data-toggle="tooltip" title="Platform: Darwin &rarr; Count: {{d_count}}"></div>
+  <div style="width: {{l_graph}}px;" data-toggle="tooltip" title="Platform: Linux &rarr; Count: {{l_count}}"></div>
+  <div style="width: {{m_graph}}px;" data-toggle="tooltip" title="Platform: Mozilla &rarr; Count: {{m_count}}"></div>
 </div>
 
 
-
-
+<!--{{ mach_meta.fields }}
+<br>
+{ log_event }}-->
+<br>
 <!--{ mach_meta.fields }}
 <br>
 <br>
-{ user_meta.fields }}
-<br>
+{ user_meta.fields }}-->
+<!--br>
 <br>
 { netinfo_meta.fields }}
 <br>

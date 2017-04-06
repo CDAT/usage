@@ -26,16 +26,19 @@
                     <center><h2>Welcome to the UV-CDAT analytics site.</h2></center>
                 </div>
                 <div class="item">
-                    <center><h2>This site contains various statistical plots in regards to UV-CDAT.</h2></center>
+                    <center><h2>Here lives UV-CDAT usage statistical plots.</h2></center>
                 </div>
                 <div class="item">
-                    <center><h2>Feel free to poke around :)</h2></center>
+                    {% if user.is_authenticated %}
+                        <center><h2>Feel free to poke around :)</h2></center>
+                    {% else %}
+                        <center><h2>Please login to see the plots.</h2></center>
+                    {% endif %}
                 </div>   
             </div>
          </div>
     </div>
 </div>
-
 
 <!--div class="container">
   <div class="row">
