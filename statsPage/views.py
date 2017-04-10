@@ -27,6 +27,7 @@ import pycountry
 import operator
 
 
+
 if not settings.configured:
     settings.configure()
 
@@ -161,15 +162,11 @@ def sup_world(request):
     return render_to_response('sup_world.html', { 'session': session, 'stuff': stuff, 'january': january, 'february': february, 'march': march, 'april': april, 'may': may, 'june': june, 'july': july, 'august': august, 'september': september, 'october': october, 'november': november, 'december': december, 'lineData': lineData, 'months': months, 'monthdata': monthdata }, context_instance=RequestContext(request))
 
 def world_stats(request):
-    session = Session.objects.all()
     netinfo = NetInfo.objects.all()
     countries = []
     cities = []
     testing = []
     rement = 0
-    print "inside world_stats"
-    print "inside world_stats"
-    print "inside world_stats"
     for net in netinfo:
         breathe = []
         breathe.append(net.country)
@@ -189,14 +186,6 @@ def world_stats(request):
     countries.pop(0)
     testing.pop(0)
     the_size = len(countries)
-    increm = []
-    i = 0
-    ent = 25 
-    while i < the_size:
-       increm.append(ent)
-       ent += 25
-       i+=1
-
 
     cities.pop(0)
     new_cities = []
@@ -289,7 +278,114 @@ def world_stats(request):
         this_size += 67
 
     print total
-    return render_to_response('world_stats.html', {'total': total, 'testing': testing, 'data': "Hello World!", 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta, 'session': session }, context_instance = RequestContext(request))
+    return render_to_response('world_stats.html', {'total': total, 'testing': testing, 'data': "Hello World!", 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
+
+
+def new_stats(request):
+    netinfo = NetInfo.objects.all()
+    countries = []
+    cities = []
+    testing = []
+    passthis = []
+    rement = 0 
+    for net in netinfo:
+        breathe = []
+        breathe.append(net.country)
+        breathe.append(net.city)
+        cities.append(breathe)
+        if net.country not in countries: 
+            inc = []
+            countries.append(net.country)
+            # inc.append(net.country)
+            inc.append(net.country)
+            inc.append(rement)
+            passthis.append(net.country)
+            testing.append(inc)
+            rement += 25
+
+    passthis.pop(0)
+    countries.pop(0)
+    total = []
+    for country in countries:
+        la_count = 0 
+        okay = []
+        for net in netinfo:
+            if net.country == country:
+               la_count += 1 
+        okay.append(country)
+        okay.append(la_count)
+        total.append(okay)
+            
+
+    forreal = []
+    for cnty in countries:
+        c_name = pycountry.countries.get(alpha_2=cnty)
+        print c_name.name
+        cnty = c_name.name
+        forreal.append(c_name.name)
+
+    for tot in total:
+        c_name = pycountry.countries.get(alpha_2=tot[0])
+        c_the_name = str(c_name.name)
+        #tot[0] = c_name.name
+        tot[0] = c_the_name
+
+
+    total = sorted(total, key=operator.itemgetter(1), reverse=True)
+    # js_data = simplejson.dumps(my_dict)
+    forreal = json.dumps(forreal)
+    bruh = json.dumps(total)
+
+    context = {}
+    context['data'] = {'Python': 52.9, 'Jython': 1.6, 'Iron Python': 27.7}
+    context['line_data'] = list(enumerate(range(1, 20)))
+    return render_to_response('new_stats.html', { 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
+
+
+def map_world(request):
+    netinfo = NetInfo.objects.all()
+    countries = []
+    cities = []
+    testing = []
+    rement = 0 
+    for net in netinfo:
+        breathe = []
+        breathe.append(net.country)
+        breathe.append(net.city)
+        cities.append(breathe)
+        if net.country not in countries: 
+            inc = []
+            countries.append(net.country)
+            # inc.append(net.country)
+            inc.append(net.country)
+            inc.append(rement)
+            testing.append(inc)
+            rement += 25
+
+    countries.pop(0)
+    total = []
+    for country in countries:
+        la_count = 0 
+        okay = []
+        for net in netinfo:
+            if net.country == country:
+               la_count += 1 
+        okay.append(country)
+        okay.append(la_count)
+        total.append(okay)
+            
+
+    for tot in total:
+        c_name = pycountry.countries.get(alpha_2=tot[0])
+        c_the_name = str(c_name.name)
+        #tot[0] = c_name.name
+        tot[0] = c_the_name
+
+
+    total = sorted(total, key=operator.itemgetter(1), reverse=True)
+    bruh = json.dumps(total)
+
+    return render_to_response('map_world.html', { 'total': total, 'data': "Hello" }, context_instance = RequestContext(request))
 
 
 def show_log(request):

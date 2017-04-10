@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load staticfiles %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="http://www.google.com/jsapi"></script>
+<!--script src="https://github.com/mher/chartkick.py/blob/master/chartkick/js/chartkick.js"></script-->
+<!--script src="static/chartkick.js"></script-->
+<script type="text/javascript" src="{% static 'js/new_stats.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/chartkick.js' %}"></script>
+
+
+<h1> hiiii </h1>
+<p id="nums">{{ total }}</p>
+<br>
+<span id="forreal">{{ forreal }}</span>
+<br>
+<span id="pass">{{ passthis }}</span>
+<br>
+<span id="bro">{{ bruh }}</span>
+<br><br>
+
+
+
+<div id="regions_div" style="width: 900px; height: 500px;"></div>
+
+
+
+<!--% load chartkick %}
+% pie_chart data with height='400px' %}
+% line_chart line_data %}-->
+
+<!--div id="chart-1" style="height: 600px"></div>
+
+<body onload="getthis({bruh}})"></body>
+
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?v=3
+    &key="AIzaSyA60-tAeW8AhtWgu2K9Dim-jcdz9UJMPU8"&callback=initMap"-->
+
+{% endblock content %}
