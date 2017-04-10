@@ -23,6 +23,8 @@ from django.views.decorators.csrf import csrf_exempt
 from stats.models import *
 from django.conf import settings
 import dateutil.parser
+import pycountry
+import operator
 
 
 if not settings.configured:
@@ -157,6 +159,137 @@ def sup_world(request):
         lineData = [[0,january],[1,february],[2, march],[3,april],[4, may],[5, june],[6, july],[7, august],[8, september],[9, october],[10, november],[11, december]]
 
     return render_to_response('sup_world.html', { 'session': session, 'stuff': stuff, 'january': january, 'february': february, 'march': march, 'april': april, 'may': may, 'june': june, 'july': july, 'august': august, 'september': september, 'october': october, 'november': november, 'december': december, 'lineData': lineData, 'months': months, 'monthdata': monthdata }, context_instance=RequestContext(request))
+
+def world_stats(request):
+    session = Session.objects.all()
+    netinfo = NetInfo.objects.all()
+    countries = []
+    cities = []
+    testing = []
+    rement = 0
+    print "inside world_stats"
+    print "inside world_stats"
+    print "inside world_stats"
+    for net in netinfo:
+        breathe = []
+        breathe.append(net.country)
+        breathe.append(net.city)
+        cities.append(breathe)
+        if net.country not in countries: 
+            inc = []
+            countries.append(net.country)
+            # inc.append(net.country)
+            inc.append(net.country)
+            inc.append(rement)
+            testing.append(inc)
+            rement += 25
+
+
+    netinfo_meta = NetInfo._meta
+    countries.pop(0)
+    testing.pop(0)
+    the_size = len(countries)
+    increm = []
+    i = 0
+    ent = 25 
+    while i < the_size:
+       increm.append(ent)
+       ent += 25
+       i+=1
+
+
+    cities.pop(0)
+    new_cities = []
+    no_reps = []
+
+    the_length = len(countries);
+    print the_length
+    sub_city = float(1000)/the_length
+    mini_sub_city = 10
+    print sub_city
+
+    for cit in cities:
+        if cit[1] != "Unknown":
+            if cit[1] not in no_reps:
+                no_reps.append(cit[1])
+                c_name = pycountry.countries.get(alpha_2=cit[0])
+                cit[0] = c_name.name
+                new_c = []
+                new_c.append(cit[0])
+                new_c.append(cit[1])
+                new_c.append(mini_sub_city)
+                mini_sub_city += 14
+                new_cities.append(new_c)
+
+
+    # print cities
+    # print new_cities
+    for test in testing:
+        c_name = pycountry.countries.get(alpha_2=test[0])
+        test[0] = c_name.name
+
+
+    total = []
+    la_size = 25
+    sub_num = sub_city
+    for country in countries:
+        la_count = 0
+        okay = []
+        for net in netinfo:
+            if net.country == country:
+               la_count += 1 
+        okay.append(country)
+        okay.append(la_count)
+        okay.append(la_size)
+        stuff = "Hello"
+        okay.append(stuff)
+        okay.append(sub_num)
+        sub_num += sub_city
+        la_size += 25
+        total.append(okay)
+        
+
+    for tot in total:
+        c_name = pycountry.countries.get(alpha_2=tot[0])
+        tot[0] = c_name.name
+
+
+    for tot in total:
+        ciu = []
+        #ciudad =[]
+        for city in new_cities:
+            ciudad =[]
+            if city[0] == tot[0]:
+                ciudad.append(city[1])
+                ciudad.append(city[2])
+                ciu.append(ciudad)
+        tot[3] = ciu
+        # print len(tot[3])
+        
+
+    for tot in total:
+        if isinstance(tot, list):
+            for to in tot:
+                if isinstance(to, list):
+                    la_length = len(to)
+                    #should = float(sub_city)/la_length
+                    #increm = float(sub_city)/la_length
+                    #print to
+                    #print to
+                    #print to
+                    #to[1] = increm
+                    #increm += increm
+
+
+    total = sorted(total, key=operator.itemgetter(1), reverse=True)
+
+    this_size = 67
+    for tot in total:
+        tot[2] = this_size
+        this_size += 67
+
+    print total
+    return render_to_response('world_stats.html', {'total': total, 'testing': testing, 'data': "Hello World!", 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta, 'session': session }, context_instance = RequestContext(request))
 
 
 def show_log(request):
