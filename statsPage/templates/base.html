@@ -1,9 +1,14 @@
 
+{% load staticfiles%}
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
+<link href="{% static 'css/footer.css' %}" rel="stylesheet">
+<link href="{% static 'css/social.css' %}" rel="stylesheet">
 
 <!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static 'js/social.js' %}"></script>
+<!-- http://bootsnipp.com/snippets/featured/easy-sticky-footer -->
 <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
 <!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
 
@@ -53,14 +58,8 @@
                     <li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly stats</a></li>
                     <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform stats</a></li>
                     <li><a style="color:black; font-size:125%" href="/stats/world_stats/">World stats</a></li>
-                    <li><a style="color:black; font-size:125%" href="/stats/new_stats/">New stats</a></li>
-                    <li><a style="color:black; font-size:125%" href="/stats/map_world/">Map world</a></li>
-                    <!--li><a href="{% url 'admin:stats_user_changelist' %}">User Stats</a></li>
-                    <li><a href="{% url 'admin:stats_source_changelist' %}">Source Stats</a></li>
-                    <li><a href="{% url 'admin:stats_machine_changelist' %}">Machine Stats</a></li>
-                    <li><a href="{% url 'admin:stats_logevent_changelist' %}">Changelist Stats</a></li>
-                    <li><a href="{% url 'admin:stats_error_changelist' %}">Error Stats</a></li>
-                    <li><a href="{% url 'admin:stats_action_changelist' %}">Action Stats</a></li>-->
+                    <li><a style="color:black; font-size:125%" href="/stats/new_stats/">Geo stats</a></li>
+                    <li><a style="color:black; font-size:125%" href="/stats/calendar_data/">Session stats</a></li>
           </ul>
         </div>
             
@@ -73,22 +72,7 @@
         &nbsp;
         <div class="btn-group">
             <li><a style="color:black; font-size:125%" href="/logout/">Logout</a></li>
-            <!--li><a style="color:black; font-size:125%" href="{% url 'logout' %}">Logout</a></li-->
         </div>
-
-        <!--&nbsp;
-        <div class="btn-group">
-            <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform stats</a></li>-->
-            <!--li><a style="color:black; font-size:125%" href="{% url 'statsPage.views.hello_world' %}">Hello world</a></li-->
-        <!--/div>
-
-        &nbsp;
-        <div class="btn-group">
-            <li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly stats</a></li-->
-            <!--li><a style="color:black; font-size:125%" href="{% url 'statsPage.views.hello_world' %}">Hello world</a></li-->
-        <!--/div-->
-
-
     </div>
 </div>
                 {% else %}
@@ -112,8 +96,23 @@
 <div class="container">
     {% block content %}
 
-
-
-
     {% endblock content %}
+</div>
+
+
+<!-- http://bootsnipp.com/snippets/featured/social-buttons-for-bootstrap -->
+<!-- http://lipis.github.io/bootstrap-social/ -->
+        <!--span class="fa fa-github"></span-->
+
+ <div class="navbar navbar-default navbar-fixed-bottom">
+
+    <!--{% if request.get_full_path != "/stats/" %}-->
+        <a href="https://uvcdat.llnl.gov/index.html">
+            <img class="pull-left" id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
+        </a>
+        &nbsp;
+        <!--a href="https://github.com/UV-CDAT/uvcdat" role="button" class="btn btn-default fa fa-github"></a-->
+        <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-lg btn-github"><i class="fa fa-github"></i></a>
+    <!--{% endif %}-->
+
 </div>

@@ -13,7 +13,7 @@ urlpatterns = patterns('statsPage.views',
     url(r'^sup_world/$','sup_world'),
     url(r'^world_stats/$','world_stats'),
     url(r'^new_stats/$','new_stats'),
-    url(r'^map_world/$','map_world'),
+    url(r'^calendar_data/$','calendar_data'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),

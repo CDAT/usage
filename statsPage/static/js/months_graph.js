@@ -60,7 +60,6 @@ $(document).ready(function() {
             "pieOuterRadius": "90%"
         },
         "data": {
-            "sortOrder": "value-desc",
             "content": [
                 {
                     "label": "January",

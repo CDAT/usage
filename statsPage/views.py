@@ -328,7 +328,7 @@ def new_stats(request):
         c_name = pycountry.countries.get(alpha_2=tot[0])
         c_the_name = str(c_name.name)
         #tot[0] = c_name.name
-        tot[0] = c_the_name
+        tot[0] = str(c_the_name)
 
 
     total = sorted(total, key=operator.itemgetter(1), reverse=True)
@@ -336,56 +336,54 @@ def new_stats(request):
     forreal = json.dumps(forreal)
     bruh = json.dumps(total)
 
+    array = [['X', 'Y', 'Z'], [1, 2, 3], [4, 5, 6]]
     context = {}
     context['data'] = {'Python': 52.9, 'Jython': 1.6, 'Iron Python': 27.7}
     context['line_data'] = list(enumerate(range(1, 20)))
-    return render_to_response('new_stats.html', { 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
+    return render_to_response('new_stats.html', { 'array': json.dumps(array), 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
 
 
-def map_world(request):
-    netinfo = NetInfo.objects.all()
-    countries = []
-    cities = []
-    testing = []
-    rement = 0 
-    for net in netinfo:
-        breathe = []
-        breathe.append(net.country)
-        breathe.append(net.city)
-        cities.append(breathe)
-        if net.country not in countries: 
-            inc = []
-            countries.append(net.country)
-            # inc.append(net.country)
-            inc.append(net.country)
-            inc.append(rement)
-            testing.append(inc)
-            rement += 25
+def calendar_data(request):
+    session = Session.objects.all()
+    user = User.objects.all()
+    start_sesh = []
+    end_sesh = []
+    total_sesh = []
+    duration = []
+    stuff_care = []
+    la_strings = []
+    sup_strings = []
+    for sesh in session:
+        nested_sesh = []
+        start_sesh.append(sesh.startDate)
+        end_sesh.append(sesh.lastDate)
+        nested_sesh.append(sesh.startDate)
+        nested_sesh.append(sesh.lastDate)
+        total_sesh.append(nested_sesh)
+        duration.append(nested_sesh)
+        duration.append(sesh.lastDate - sesh.startDate)
+        duration.append(sesh.netInfo)
+        stuff_care.append(nested_sesh)
+        # print(sesh.lastDate - sesh.startDate)
+        start_s = sesh.startDate
+        end_s = sesh.lastDate
+        # la_strings.append(start_s.strftime('%m/%d/%Y')) 
+        # la_strings.append(end_s.strftime('%m/%d/%Y')) 
+        the_strings = []
+        # the_strings.append("SUP")
+        # the_strings.append(start_s.strftime('%Y, %-m, %-d')) 
+        # the_strings.append(end_s.strftime('%Y, %-m, %-d')) 
+        the_strings.append(start_s.strftime('%b, %-d, %Y, %I:%M %p')) 
+        the_strings.append(end_s.strftime('%b, %-d, %Y, %I:%M %p')) 
+        sup_strings.append(the_strings);
+        la_strings.append("SUP")
+        la_strings.append(start_s.strftime('%Y, %-m, %-d')) 
+        la_strings.append(end_s.strftime('%Y, %-m, %-d')) 
 
-    countries.pop(0)
-    total = []
-    for country in countries:
-        la_count = 0 
-        okay = []
-        for net in netinfo:
-            if net.country == country:
-               la_count += 1 
-        okay.append(country)
-        okay.append(la_count)
-        total.append(okay)
-            
+    mmkay = json.dumps(la_strings)
+    cool_strings = json.dumps(sup_strings)
 
-    for tot in total:
-        c_name = pycountry.countries.get(alpha_2=tot[0])
-        c_the_name = str(c_name.name)
-        #tot[0] = c_name.name
-        tot[0] = c_the_name
-
-
-    total = sorted(total, key=operator.itemgetter(1), reverse=True)
-    bruh = json.dumps(total)
-
-    return render_to_response('map_world.html', { 'total': total, 'data': "Hello" }, context_instance = RequestContext(request))
+    return render_to_response('calendar_data.html', { 'cool_strings': cool_strings, 'mmkay': mmkay, 'la_strings': la_strings, 'stuff_care': stuff_care, 'duration': duration, 'total_sesh': total_sesh, 'start_sesh': start_sesh, 'end_sesh': end_sesh, 'session': session, 'data': "Hello" }, context_instance = RequestContext(request))
 
 
 def show_log(request):
