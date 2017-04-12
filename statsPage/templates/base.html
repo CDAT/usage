@@ -24,16 +24,25 @@
                                 <li><a style="color:black; font-size:125%" href="/stats">Home</a></li>
                             </div>&nbsp;
                             <div class="btn-group">
-                              <!--button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"-->
                               <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%;">
-                                Log <span class="caret"></span>
+                                Global Stats <span class="caret"></span>
                               </li>
                               <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{% url 'statsPage.views.show_error_log' %}">Errors</a></li>
-                                    <li><a href="{% url 'stats.views.log_event' %}">Add log</a></li>
+                                    <li><a style="color:black; font-size:125%" href="/stats/world_stats/">World Stats</a></li>
+                                    <li><a style="color:black; font-size:125%" href="/stats/new_stats/">Geo Stats</a></li>
                               </ul>
                             </div>&nbsp;
                             <div class="btn-group">
+                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%;">
+                                Time Stats <span class="caret"></span>
+                              </li>
+                              <ul class="dropdown-menu" role="menu">
+                                    <li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly Stats</a></li>
+                                    <!--li><a href="{% url 'statsPage.views.show_error_log' %}">Errors</a></li>
+                                    <li><a href="{% url 'stats.views.log_event' %}">Add log</a></li-->
+                              </ul>
+                            </div>&nbsp;
+                            <!--div class="btn-group">
                               <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
                                 Debug <span class="caret"></span>
                               </li>
@@ -41,22 +50,22 @@
                                     <li><a href="{% url 'statsPage.views.show_debug' %}">Debug</a></li>
                                     <li><a href="{% url 'statsPage.views.show_debug_error' %}">Debug Error</a></li>
                               </ul>
-                            </div>&nbsp;
+                            </div>&nbsp;-->
                             <div class="btn-group">
                               <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
-                                Stats <span class="caret"></span>
+                                Session Stats <span class="caret"></span>
                               </li>
                               <ul class="dropdown-menu">
-                                        <li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly stats</a></li>
-                                        <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform stats</a></li>
-                                        <li><a style="color:black; font-size:125%" href="/stats/world_stats/">World stats</a></li>
-                                        <li><a style="color:black; font-size:125%" href="/stats/new_stats/">Geo stats</a></li>
-                                        <li><a style="color:black; font-size:125%" href="/stats/calendar_data/">Session stats</a></li>
+                                        <!--li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly stats</a></li-->
+                                        <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform Stats</a></li>
+                                        <!--li><a style="color:black; font-size:125%" href="/stats/world_stats/">World stats</a></li>
+                                        <li><a style="color:black; font-size:125%" href="/stats/new_stats/">Geo stats</a></li-->
+                                        <li><a style="color:black; font-size:125%" href="/stats/calendar_data/">Duration Stats</a></li>
                               </ul>
                             </div>&nbsp;
-                            <div class="btn-group">
+                            <!--div class="btn-group">
                                 <li><a style="color:black; font-size:125%" href="{% url 'admin:sites_site_changelist' %}">Sites</a></li>
-                            </div>&nbsp;
+                            </div>&nbsp;-->
                             <div class="btn-group">
                                 <li><a style="color:black; font-size:125%" href="/logout/">Logout</a></li>
                             </div>
