@@ -30,12 +30,17 @@ $(document).ready(function() {
     var max = Math.max.apply(Math,sparsedTest);
     console.log(max);
 
+    var all_users = 0;
+    for(var j=0; j<total.length; j++)
+    {
+        all_users += total[j][1];
+    }
 //});
 
 
 //$(document).ready(function() {
     var pie = new d3pie("pieChart", {
-        "header": {
+        /*"header": {
             "title": {
                 "text": "Percentage of session start dates by month",
                 "fontSize": 24,
@@ -48,78 +53,80 @@ $(document).ready(function() {
                 "font": "open sans"
             },
             "titleSubtitlePadding": 9
-        },
+        },*/
         "footer": {
-            "color": "#999999",
-            "fontSize": 10,
+            "text":  "Out of a total of " + all_users + " active user sessions.",
+            "color": "#000000",
+            "fontSize": 17,
+            "location": "bottom-center",/*
             "font": "open sans",
-            "location": "bottom-left"
+            "location": "bottom-left"*/
         },
         "size": {
-            "canvasWidth": 590,
-            "pieOuterRadius": "90%"
+            "canvasWidth": 1000,
+            "pieOuterRadius": "100%"
         },
         "data": {
             "content": [
                 {
-                    "label": "January",
+                    "label": "January, " + total[0][1] + " active users",
                     "value": total[0][1],
-                    "color": "#69969C"
+                    "color": "#c0dfd9"
                 },
                 {
-                    "label": "February",
+                    "label": "February, " + total[1][1] + " active users",
                     "value": total[1][1],
-                    "color": "#427A82"
+                    "color": "#e9ece5"
                 },
                 {
-                    "label": "March",
+                    "label": "March, " + total[2][1] + " active users",
                     "value": total[2][1],
-                    "color": "#246068"
+                    "color": "#b3c2bf"
                 },
                 {
-                    "label": "April",
+                    "label": "April, " + total[3][1] + " active users",
                     "value": total[3][1],
-                    "color": "#0E464E"
+                    "color": "#3b3a36"
                 },
                 {
-                    "label": "May",
+                    "label": "May, " + total[4][1] + " active users",
                     "value": total[4][1],
-                    "color": "#012E34"
+                    "color": "#edd9c0"
                 },
                 {
-                    "label": "June",
+                    "label": "June, " + total[5][1] + " active users",
                     "value": total[5][1],
-                    "color": "#6E91A1"
+                    "color": "#c9d8c5"
                 },
                 {
-                    "label": "July",
+                    "label": "July, " + total[6][1] + " active users",
                     "value": total[6][1],
-                    "color": "#467386"
+                    "color": "#a8b6bf"
                 },
                 {
-                    "label": "August",
+                    "label": "August, " + total[7][1] + " active users",
                     "value": total[7][1],
-                    "color": "#27576B"
+                    "color": "#7d4627"
                 },
                 {
-                    "label": "September",
+                    "label": "September, " + total[8][1] + " active users",
                     "value": total[8][1],
-                    "color": "#103D50"
+                    "color": "#e8edf3"
                 },
                 {
-                    "label": "October",
+                    "label": "October, " + total[9][1] + " active users",
                     "value": total[9][1],
-                    "color": "#022636"
+                    "color": "#e6cf8b"
                 },
                 {
-                    "label": "November",
+                    "label": "November, " + total[10][1] + " active users",
                     "value": total[10][1],
-                    "color": "#69969C"
+                    "color": "#b56969"
                 },
                 {
-                    "label": "December",
+                    "label": "December, " + total[11][1] + " active users",
                     "value": total[11][1],
-                    "color": "#427A82"
+                    "color": "#22264b"
                 }
             ]
         },
@@ -131,15 +138,15 @@ $(document).ready(function() {
                 "hideWhenLessThanPercentage": 3
             },
             "mainLabel": {
-                "fontSize": 11
+                "fontSize": 15
             },
             "percentage": {
                 "color": "#ffffff",
-                "decimalPlaces": 0
+                "decimalPlaces": 2
             },
             "value": {
                 "color": "#adadad",
-                "fontSize": 11
+                "fontSize": 15
             },
             "lines": {
                 "enabled": true

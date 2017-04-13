@@ -7,8 +7,6 @@
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{% static 'js/social.js' %}"></script>
-<!-- http://bootsnipp.com/snippets/featured/easy-sticky-footer -->
-<!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
 <!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
 <!-- http://bootsnipp.com/snippets/featured/social-buttons-for-bootstrap -->
 <!-- http://lipis.github.io/bootstrap-social/ -->
@@ -38,34 +36,20 @@
                               </li>
                               <ul class="dropdown-menu" role="menu">
                                     <li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly Stats</a></li>
-                                    <!--li><a href="{% url 'statsPage.views.show_error_log' %}">Errors</a></li>
-                                    <li><a href="{% url 'stats.views.log_event' %}">Add log</a></li-->
+                                    <li><a style="color:black; font-size:125%" href="/stats/sesh_by_year/">Sesh Stats</a></li>
+                                    <li><a style="color:black; font-size:125%" href="/stats/two_sesh_by_year/">Two Sesh Stats</a></li>
                               </ul>
                             </div>&nbsp;
-                            <!--div class="btn-group">
-                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
-                                Debug <span class="caret"></span>
-                              </li>
-                              <ul class="dropdown-menu">
-                                    <li><a href="{% url 'statsPage.views.show_debug' %}">Debug</a></li>
-                                    <li><a href="{% url 'statsPage.views.show_debug_error' %}">Debug Error</a></li>
-                              </ul>
-                            </div>&nbsp;-->
                             <div class="btn-group">
                               <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
                                 Session Stats <span class="caret"></span>
                               </li>
                               <ul class="dropdown-menu">
-                                        <!--li><a style="color:black; font-size:125%" href="/stats/sup_world/">Monthly stats</a></li-->
-                                        <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform Stats</a></li>
-                                        <!--li><a style="color:black; font-size:125%" href="/stats/world_stats/">World stats</a></li>
-                                        <li><a style="color:black; font-size:125%" href="/stats/new_stats/">Geo stats</a></li-->
-                                        <li><a style="color:black; font-size:125%" href="/stats/calendar_data/">Duration Stats</a></li>
+                                    <li><a style="color:black; font-size:125%" href="/stats/hello_world/">Platform Stats</a></li>
+                                    <li><a style="color:black; font-size:125%" href="/stats/calendar_data/">Duration Stats</a></li>
+                                    <li><a style="color:black; font-size:125%" href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
                               </ul>
                             </div>&nbsp;
-                            <!--div class="btn-group">
-                                <li><a style="color:black; font-size:125%" href="{% url 'admin:sites_site_changelist' %}">Sites</a></li>
-                            </div>&nbsp;-->
                             <div class="btn-group">
                                 <li><a style="color:black; font-size:125%" href="/logout/">Logout</a></li>
                             </div>
@@ -74,7 +58,6 @@
                 {% else %}
                     <div class="btn-group">
                         <li><a style="color:black; font-size:125%" href="/stats">Home</a></li>
-                        <!--li><a style="color:black; font-size:125%" href="/">Home</a></li-->
                     </div>&nbsp;
                     <div class="btn-group">
                         <li><a style="color:black; font-size:125%" href="/login">Log in</a></li>

@@ -1,4 +1,5 @@
 import datetime
+import numpy
 import hashlib
 from pygeoip import GeoIP, GeoIPError
 from random import choice, randint
@@ -106,14 +107,11 @@ def hello_world(request):
 
 def sup_world(request):
     session = Session.objects.all()
-
     i = 0
     for sesh in session:
         if i == 0:
             stuff = dateutil.parser.parse(str(sesh.startDate))
             i = 1
-
-
 
     january = 0
     february = 0
@@ -386,6 +384,84 @@ def calendar_data(request):
     return render_to_response('calendar_data.html', { 'cool_strings': cool_strings, 'mmkay': mmkay, 'la_strings': la_strings, 'stuff_care': stuff_care, 'duration': duration, 'total_sesh': total_sesh, 'start_sesh': start_sesh, 'end_sesh': end_sesh, 'session': session, 'data': "Hello" }, context_instance = RequestContext(request))
 
 
+def bar_sesh(request):
+    session = Session.objects.all()
+    user = User.objects.all()
+    sup_strings = []
+    the_diff = []
+    big_cool_diff = []
+    cool_diff = []
+    for sesh in session:
+        # cool_diff = []
+        nested_sesh = []
+        start_s = sesh.startDate
+        end_s = sesh.lastDate
+        the_strings = []
+        the_strings.append(start_s.strftime('%b, %-d, %Y, %I:%M %p')) 
+        the_strings.append(end_s.strftime('%b, %-d, %Y, %I:%M %p')) 
+        time_diff = end_s-start_s
+        # time_diff = time_diff.strftime('%B, %-d, %Y, %Y:%M %p')
+        if time_diff != datetime.timedelta(seconds=0):
+            time_vars = []
+            the_diff.append(str(time_diff))
+            time_vars.append(start_s.strftime('%Y'))
+            time_vars.append(start_s.strftime('%B'))
+            time_vars.append(start_s.strftime('%-m'))
+            time_vars.append(start_s.strftime('%-I %p'))
+            #cool_diff.append(start_s.strftime('%b, %-d, %Y, %I:%M %p'))
+            # cool_diff.append(str(time_diff))
+            time_str = str(time_diff)
+            cool_diff.append(time_str)
+            cool_diff.append(time_vars)
+            big_cool_diff.append(cool_diff)
+            sup_strings.append(the_strings)
+
+
+    la_diff = []
+    for each in the_diff:
+        # if ('days' or 'day') not in each:
+        if 'day' not in each:
+            zero = '0 day, '
+            zero += each
+            la_diff.append(zero)
+        else:
+            la_diff.append(each)
+
+        # the_diff.append(start_s-end_s)
+        # sup_strings.append(the_strings)
+
+
+    twelve_am = 0 
+    one_am = 0 
+    two_am = 0 
+    three_am = 0 
+    four_am = 0 
+    five_am = 0 
+    six_am = 0 
+    seven_am = 0 
+    eight_am = 0 
+    nine_am = 0 
+    ten_am = 0 
+    eleven_am = 0 
+    twelve_pm = 0 
+    one_pm = 0 
+    two_pm = 0 
+    three_pm = 0 
+    four_pm = 0 
+    five_pm = 0 
+    six_pm = 0 
+    seven_pm = 0 
+    eight_pm = 0 
+    nine_pm = 0 
+    ten_pm = 0 
+    eleven_pm = 0 
+
+    # cool_diff = json.dumps(cool_diff)
+    cool_strings = json.dumps(sup_strings)
+
+    return render_to_response('bar_sesh.html', { 'cool_diff': cool_diff, 'big_cool_diff': big_cool_diff, 'la_diff': la_diff, 'sup_strings': sup_strings, 'the_diff': the_diff, 'cool_strings': cool_strings, 'session': session }, context_instance = RequestContext(request))
+
+
 def show_log(request):
     '''
     Renders the logs.
@@ -442,7 +518,6 @@ def show_debug(request):
         raise Http404
 
 
-
 def show_debug_error(request):
     '''
     For debugging use only, will show a form where you can submit errors to be logged.
@@ -452,3 +527,68 @@ def show_debug_error(request):
         }, context_instance=RequestContext(request))
     else:
         raise Http404
+
+
+def sesh_by_year(request):
+    session = Session.objects.all()
+    i = 0
+    for sesh in session:
+        if i == 0:
+            stuff = dateutil.parser.parse(str(sesh.startDate))
+            i = 1
+
+    years = []
+    for sesh in session:
+       years.append(sesh.startDate.year)
+
+    cool = numpy.unique(years)
+    all_the_years = []
+    total_years = []
+    todo = []
+
+    for year in cool:
+        all_the_years.append(year)
+        total_years.append(year)
+        the_coolest = []
+        for sesh in session:
+            if year == sesh.startDate.year:
+                the_months = []
+                the_months.append(sesh.startDate.month)
+                the_coolest.append(the_months)
+        all_the_years.append(the_coolest)
+        todo.append(year)
+        todo.append(all_the_years)
+
+    tot_size = len(total_years)
+    return render_to_response('sesh_by_year.html', { 'todo': todo, 'total_size': tot_size, 'total_years': total_years, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
+
+
+def two_sesh_by_year(request):
+    session = Session.objects.all()
+    i = 0
+    for sesh in session:
+        if i == 0:
+            stuff = dateutil.parser.parse(str(sesh.startDate))
+            i = 1
+
+    years = []
+    for sesh in session:
+       years.append(sesh.startDate.year)
+
+    cool = numpy.unique(years)
+    all_the_years = []
+
+    for year in cool:
+        all_the_years.append(year)
+        the_coolest = []
+        for sesh in session:
+            if year == sesh.startDate.year:
+                the_months = []
+                the_months.append(sesh.startDate.month)
+                the_coolest.append(the_months)
+        all_the_years.append(the_coolest)
+
+    return render_to_response('two_sesh_by_year.html', { 'all_the_years': all_the_years }, context_instance=RequestContext(request))
+
+
+

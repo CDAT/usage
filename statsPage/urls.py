@@ -14,6 +14,9 @@ urlpatterns = patterns('statsPage.views',
     url(r'^world_stats/$','world_stats'),
     url(r'^new_stats/$','new_stats'),
     url(r'^calendar_data/$','calendar_data'),
+    url(r'^sesh_by_year/$','sesh_by_year'),
+    url(r'^two_sesh_by_year/$','two_sesh_by_year'),
+    url(r'^bar_sesh/$','bar_sesh'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),

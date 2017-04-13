@@ -14,9 +14,20 @@
 <!-- this tutorial is important https://www.dashingd3js.com/d3js-axes -->
 <!-- http://d3pie.org/#generator-misc -->
 
-<!--% for sesh in session %}
-    { sesh.startDate.month }} <br>
-% endfor %}-->
+<div class="container">
+    <div id="feature-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <center><h2>Pie chart of session start dates by month.</h2></center>
+            </div>
+            <div class="item">
+                <center><h2>If a month is not displayed, there were 0 active user sessions for that month.</h2></center>
+            </div>
+        </div>
+     </div>
+</div>
+
+<br>
 
 <span id="months">{{months}}</span><br>
 <span id="monthdata">{{monthdata}}</span><br>
