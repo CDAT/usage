@@ -559,8 +559,19 @@ def sesh_by_year(request):
         todo.append(year)
         todo.append(all_the_years)
 
+
+    deck = {}
+    for year in cool:
+        la_coolest = []
+        for sesh in session:
+            if year == sesh.startDate.year:
+                la_months = []
+                la_months.append(sesh.startDate.month)
+                la_coolest.append(la_months)
+                deck[year] = la_coolest
+
     tot_size = len(total_years)
-    return render_to_response('sesh_by_year.html', { 'todo': todo, 'total_size': tot_size, 'total_years': total_years, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
+    return render_to_response('sesh_by_year.html', { 'deck': deck, 'todo': todo, 'total_size': tot_size, 'total_years': total_years, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
 
 
 def two_sesh_by_year(request):
@@ -588,7 +599,19 @@ def two_sesh_by_year(request):
                 the_coolest.append(the_months)
         all_the_years.append(the_coolest)
 
-    return render_to_response('two_sesh_by_year.html', { 'all_the_years': all_the_years }, context_instance=RequestContext(request))
+
+    deck = {}
+    for year in cool:
+        la_coolest = []
+        for sesh in session:
+            if year == sesh.startDate.year:
+                la_months = []
+                la_months.append(sesh.startDate.month)
+                la_coolest.append(la_months)
+                deck[year] = la_coolest
+
+
+    return render_to_response('two_sesh_by_year.html', { 'deck': deck, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
 
 
 

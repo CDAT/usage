@@ -4,7 +4,11 @@
 {% load staticfiles %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-{{todo}}<br>
+<!--% for key, values in deck.items %}
+    {key}} - 
+    {values}}
+% endfor %}-->
+
 
 <div class="dropdown show">
   <button class="btn btn-secondary dropdown-toggle" href="https://example.com" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -12,25 +16,22 @@
   </button>
 
   <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-      {% for i in total_years %}
-            <li><a class="dropdown-item" href="#" onclick="hey({{all_the_years.1}})">For {{all_the_years.0}} data</a></li>
-      {% endfor %}
+      <!--% for i in total_years %}
+            <li><a class="dropdown-item" href="#" onclick="hey({all_the_years.1}})">For {all_the_years.0}} data</a></li>
+      % endfor %}-->
+     {% for key, values in deck.items %}
+            <li><a class="dropdown-item" href="#" onclick="loadpiechart({{values}})">For {{key}} data</a></li>
+     {% endfor %}
       
-        <!--li><a class="dropdown-item" href="#" onclick="hey({all_the_years.1}})">For {all_the_years.0}} data</a></li>
-        <li><a class="dropdown-item" href="#" onclick="hey({all_the_years.3}})">For {all_the_years.2}} data</a></li-->
   </ul>
 </div>
 
 
-{% for i in total_years %}
-    {{i}}
-{% endfor %}
-<br><br>
 
 <div id="piechart" style="width: 900px; height: 500px;"></div>
 
 <script type="text/javascript">
-function hey(thiso){
+function loadpiechart(thiso){
 
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
