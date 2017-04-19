@@ -8,6 +8,7 @@ import re
 import socket
 import sys
 import threading
+import random
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core import serializers
@@ -17,6 +18,7 @@ from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Context, loader, RequestContext
+import requests
 import json
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -26,7 +28,8 @@ from django.conf import settings
 import dateutil.parser
 import pycountry
 import operator
-
+# from geopy.geocoders import Nominatim
+import reverse_geocoder as rg
 
 
 if not settings.configured:
@@ -190,10 +193,8 @@ def world_stats(request):
     no_reps = []
 
     the_length = len(countries);
-    print the_length
     sub_city = float(1000)/the_length
     mini_sub_city = 10
-    print sub_city
 
     for cit in cities:
         if cit[1] != "Unknown":
@@ -209,8 +210,6 @@ def world_stats(request):
                 new_cities.append(new_c)
 
 
-    # print cities
-    # print new_cities
     for test in testing:
         c_name = pycountry.countries.get(alpha_2=test[0])
         test[0] = c_name.name
@@ -220,6 +219,10 @@ def world_stats(request):
     la_size = 25
     sub_num = sub_city
     for country in countries:
+        rgb_num = random.randint(112, 220)
+        sec_rgb_num = random.randint(79, 220)
+        third_rgb_num = random.randint(79, 220)
+        # print rgb_num
         la_count = 0
         okay = []
         for net in netinfo:
@@ -231,52 +234,77 @@ def world_stats(request):
         stuff = "Hello"
         okay.append(stuff)
         okay.append(sub_num)
+        okay.append(rgb_num)
+        okay.append(sec_rgb_num)
+        okay.append(third_rgb_num)
         sub_num += sub_city
         la_size += 25
         total.append(okay)
         
+    # print total
+    # cool_cities = new_cities
+    for city in new_cities:
+        cool_count = 0
+        for net in netinfo:
+            if city[1] == net.city:
+                cool_count += 1
+        city.append(cool_count)
+        # print city
 
     for tot in total:
         c_name = pycountry.countries.get(alpha_2=tot[0])
         tot[0] = c_name.name
 
-
     for tot in total:
         ciu = []
-        #ciudad =[]
         for city in new_cities:
             ciudad =[]
             if city[0] == tot[0]:
                 ciudad.append(city[1])
                 ciudad.append(city[2])
+                ciudad.append(city[3])
                 ciu.append(ciudad)
         tot[3] = ciu
-        # print len(tot[3])
         
 
-    for tot in total:
-        if isinstance(tot, list):
-            for to in tot:
-                if isinstance(to, list):
-                    la_length = len(to)
-                    #should = float(sub_city)/la_length
-                    #increm = float(sub_city)/la_length
-                    #print to
-                    #print to
-                    #print to
-                    #to[1] = increm
-                    #increm += increm
-
-
     total = sorted(total, key=operator.itemgetter(1), reverse=True)
+
+    temp_list = []
+    by_list = []
+    dicts = {}
+    for tot in total:
+        all_of_it = []
+        by_country = []
+        by_country.append(tot[0])
+        sway = []
+        for each in tot[3]:
+            # by_country.append(each[0])
+            temp_list.append(each[0])
+            sway.append(each[0])
+            by_country.append(sway)
+        # by_list.append(by_country)
+        by_list.append(by_country)
+        all_of_it.append(tot[1])
+        all_of_it.append(tot[2])
+        all_of_it.append(tot[3])
+        # dicts[tot[0]] = tot[3]
+        dicts[tot[0]] = all_of_it
 
     this_size = 67
     for tot in total:
         tot[2] = this_size
         this_size += 67
 
-    print total
-    return render_to_response('world_stats.html', {'total': total, 'testing': testing, 'data': "Hello World!", 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
+    la_mini_sub_city = 10
+    for tot in total:
+        tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
+        print tot
+        for each in tot[3]:
+            each[1] = la_mini_sub_city
+            la_mini_sub_city += 14
+
+    # print total
+    return render_to_response('world_stats.html', {'dicts': dicts, 'by_list': by_list, 'temp_list': temp_list, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
 
 
 def new_stats(request):
@@ -417,6 +445,81 @@ def bar_sesh(request):
             sup_strings.append(the_strings)
 
 
+    one_min_sesh = []
+    one_hour_sesh = []
+    half_day_sesh = []
+    one_day_sesh = []
+    one_week_sesh = []
+    few_weeks_sesh = []
+    one_month_sesh = []
+    two_month_sesh = []
+    three_plus_sesh = []
+
+    one_min = 0
+    one_hour = 0
+    half_day = 0
+    one_day = 0 
+    one_week = 0
+    few_weeks = 0
+    one_month = 0
+    two_month = 0
+    three_plus = 0
+
+    for sesh in session:
+        start_s = sesh.startDate
+        end_s = sesh.lastDate
+        time_diff = end_s-start_s
+        if time_diff >= datetime.timedelta(weeks=12):
+            three_plus_sesh.append(str(time_diff))
+            three_plus += 1
+        if time_diff < datetime.timedelta(weeks=12) and time_diff >= datetime.timedelta(weeks=8):
+            two_month_sesh.append(str(time_diff))
+            two_month += 1
+        if time_diff < datetime.timedelta(weeks=8) and time_diff >= datetime.timedelta(weeks=4):
+            one_month_sesh.append(str(time_diff))
+            one_month += 1
+        if time_diff <= datetime.timedelta(weeks=4) and time_diff > datetime.timedelta(weeks=1):
+            few_weeks_sesh.append(str(time_diff))
+            few_weeks += 1
+        if time_diff <= datetime.timedelta(weeks=1) and time_diff > datetime.timedelta(days=1):
+            one_week_sesh.append(str(time_diff))
+            one_week += 1
+        if time_diff <= datetime.timedelta(days=1) and time_diff > datetime.timedelta(hours=12):
+            one_day_sesh.append(str(time_diff))
+            one_day += 1
+        if time_diff <= datetime.timedelta(hours=12) and time_diff > datetime.timedelta(hours=1):
+            half_day_sesh.append(str(time_diff))
+            half_day += 1
+        if time_diff <= datetime.timedelta(hours=1) and time_diff > datetime.timedelta(minutes=1):
+            one_hour_sesh.append(str(time_diff))
+            one_hour += 1
+        if time_diff <= datetime.timedelta(minutes=1) and time_diff > datetime.timedelta(seconds=0):
+            one_min_sesh.append(str(time_diff))
+            one_min += 1
+
+
+    all_the_seshs = {}
+    all_the_seshs['one_min_sesh'] = one_min_sesh
+    all_the_seshs['one_hour_sesh'] = one_hour_sesh
+    all_the_seshs['half_day_sesh'] = half_day_sesh
+    all_the_seshs['one_day_sesh'] = one_day_sesh
+    all_the_seshs['one_week_sesh'] = one_week_sesh
+    all_the_seshs['few_weeks_sesh'] = few_weeks_sesh
+    all_the_seshs['one_month_sesh'] = one_month_sesh
+    all_the_seshs['two_month_sesh'] = two_month_sesh
+    all_the_seshs['three_plus_sesh'] = three_plus_sesh
+
+    all_seshs = {}
+    all_seshs['one_min'] = one_min
+    all_seshs['one_hour'] = one_hour
+    all_seshs['half_day'] = half_day
+    all_seshs['one_day'] = one_day
+    all_seshs['one_week'] = one_week
+    all_seshs['few_weeks'] = few_weeks
+    all_seshs['one_month'] = one_month
+    all_seshs['two_month'] = two_month
+    all_seshs['three_plus'] = three_plus
+
     la_diff = []
     for each in the_diff:
         # if ('days' or 'day') not in each:
@@ -427,39 +530,11 @@ def bar_sesh(request):
         else:
             la_diff.append(each)
 
-        # the_diff.append(start_s-end_s)
-        # sup_strings.append(the_strings)
-
-
-    twelve_am = 0 
-    one_am = 0 
-    two_am = 0 
-    three_am = 0 
-    four_am = 0 
-    five_am = 0 
-    six_am = 0 
-    seven_am = 0 
-    eight_am = 0 
-    nine_am = 0 
-    ten_am = 0 
-    eleven_am = 0 
-    twelve_pm = 0 
-    one_pm = 0 
-    two_pm = 0 
-    three_pm = 0 
-    four_pm = 0 
-    five_pm = 0 
-    six_pm = 0 
-    seven_pm = 0 
-    eight_pm = 0 
-    nine_pm = 0 
-    ten_pm = 0 
-    eleven_pm = 0 
 
     # cool_diff = json.dumps(cool_diff)
     cool_strings = json.dumps(sup_strings)
 
-    return render_to_response('bar_sesh.html', { 'cool_diff': cool_diff, 'big_cool_diff': big_cool_diff, 'la_diff': la_diff, 'sup_strings': sup_strings, 'the_diff': the_diff, 'cool_strings': cool_strings, 'session': session }, context_instance = RequestContext(request))
+    return render_to_response('bar_sesh.html', { 'all_seshs': all_seshs, 'all_the_seshs': all_the_seshs, 'cool_diff': cool_diff, 'big_cool_diff': big_cool_diff, 'la_diff': la_diff, 'sup_strings': sup_strings, 'the_diff': the_diff, 'cool_strings': cool_strings, 'session': session }, context_instance = RequestContext(request))
 
 
 def show_log(request):
@@ -576,42 +651,115 @@ def sesh_by_year(request):
 
 def two_sesh_by_year(request):
     session = Session.objects.all()
-    i = 0
-    for sesh in session:
-        if i == 0:
-            stuff = dateutil.parser.parse(str(sesh.startDate))
-            i = 1
+    send_url = 'http://freegeoip.net/json'
+    r = requests.get(send_url)
+    j = json.loads(r.text)
+    lat = j['latitude']
+    lon = j['longitude']
 
-    years = []
-    for sesh in session:
-       years.append(sesh.startDate.year)
+    latlon = []
+    latlon.append(lat)
+    latlon.append(lon)
+    omg = rg.search(latlon)
+    la_state = omg[0]['admin1']
+    la_country = omg[0]['cc']
+    all_the_info = pycountry.countries.get(alpha_2=la_country)
+    country_name = all_the_info.name
+    print omg[0]['name']
+    print la_state
+    print la_country
+    print all_the_info
+    print country_name
+    print omg
+    # geolocator = Nominatim()
+    # location = geolocator.reverse(latlon)
+    # print(location.address)
 
-    cool = numpy.unique(years)
-    all_the_years = []
+    actions = Action.objects.all()
+    action_meta = Action._meta
 
-    for year in cool:
-        all_the_years.append(year)
-        the_coolest = []
-        for sesh in session:
-            if year == sesh.startDate.year:
-                the_months = []
-                the_months.append(sesh.startDate.month)
-                the_coolest.append(the_months)
-        all_the_years.append(the_coolest)
-
-
-    deck = {}
-    for year in cool:
-        la_coolest = []
-        for sesh in session:
-            if year == sesh.startDate.year:
-                la_months = []
-                la_months.append(sesh.startDate.month)
-                la_coolest.append(la_months)
-                deck[year] = la_coolest
+    act_names = []
+    for act in actions:
+       if ' ' in act.name:
+           # act_names.append(act.name)
+           stuff = act.name
+           new_stuff = stuff.split()
+           act_names.append(new_stuff[0])
+       if ' ' not in act.name:
+           act_names.append(act.name)
 
 
-    return render_to_response('two_sesh_by_year.html', { 'deck': deck, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
+    # first = True
+    cool = numpy.unique(act_names)
+    # all_names = {} 
+    all_names = []
+    for name in cool:
+        func_names = []
+        # if first == True:
+        #     func_names.append("Function")
+        #     func_names.append("Count")
+        #     all_names.append(func_names)
+        #     func_names = []
+        #     first = False
+
+        func_names.append(name)
+        count = 0
+        for act in act_names:
+            if name == act:
+               count += 1 
+        func_names.append(count)
+        all_names.append(func_names)
+        # all_names[name] = func_names
+
+    all_names = json.dumps(all_names)
+
+    return render_to_response('two_sesh_by_year.html', { 'all_names': all_names, 'req': request, 'lon': lon, 'lat': lat }, context_instance=RequestContext(request))
+
+
+
+def late_april_stats(request):
+    actions = Action.objects.all()
+    action_meta = Action._meta
+
+    act_names = []
+    for act in actions:
+       if 'Error' not in act.name:
+           if ' ' in act.name:
+               # act_names.append(act.name)
+               stuff = act.name
+               new_stuff = stuff.split()
+               act_names.append(new_stuff[0])
+           if ' ' not in act.name:
+               act_names.append(act.name)
+
+
+    # first = True
+    cool = numpy.unique(act_names)
+    # all_names = {} 
+    all_names = []
+    for name in cool:
+        func_names = []
+        # if first == True:
+        #     func_names.append("Function")
+        #     func_names.append("Count")
+        #     all_names.append(func_names)
+        #     func_names = []
+        #     first = False
+
+        func_names.append(name)
+        count = 0
+        for act in act_names:
+            if name == act:
+               count += 1 
+        func_names.append(count)
+        all_names.append(func_names)
+        # all_names[name] = func_names
+
+    all_names = json.dumps(all_names)
+
+    return render_to_response('late_april_stats.html', { 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
+    
+    
 
 
 

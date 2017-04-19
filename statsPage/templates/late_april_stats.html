@@ -2,63 +2,37 @@
 
 {% block content %}
 {% load staticfiles %}
-<!--script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<h1>two sesh by year</h1>
-
-<p>Click the button to get your coordinates.</p>
-
-<button onclick="getLocation()">Try It</button>
-<br>
-{req}}
-<br>
-
-{lat}} || {lon}}
-
-<p id="demo"></p>
-
-<script>
-var x = document.getElementById("demo");
-
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else { 
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
-
-function showPosition(position) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude;
-}
-</script-->
-
-
-
-    <!--Load the AJAX API-->
-<!--https://groups.google.com/forum/#!topic/google-visualization-api/mUKrh8I5Tng-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
 
-<div id="chart_div" style="width:1000; height:500; border:1px solid;"></div>
+<div class="container">
+    <div id="feature-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <center><h2>Pie chart of the most used actions.</h2></center>
+            </div>
+            <div class="item">
+                <center><h2>Click a slice to learn more.</h2></center>
+            </div>
+        </div>
+     </div>
+</div>
 
-<script type="text/javascript">
 
 
-  // Load the Visualization API and the piechart package.
+<div id="chart_div" style="width:1000; height:500;"></div>
+
+<script>
+
+  /* Load the Visualization API and the piechart package. */
   google.load('visualization', '1.0', {'packages':['corechart']});
 
-  // Set a callback to run when the Google Visualization API is loaded.
+  /* Set a callback to run when the Google Visualization API is loaded. */
   google.setOnLoadCallback(drawChart);
-  
-  
+  var cool_data = {{all_names|safe}};
 
- var cool_data = {{all_names|safe}};
-  // Callback that creates and populates a data table,
-  // instantiates the pie chart, passes in the data and
-  // draws it.
   function drawChart() {
-
 
     var outer_len = cool_data.length;
     var inner_len = cool_data[0].length;
@@ -75,22 +49,17 @@ function showPosition(position) {
         outer_array.push(inner_array);
     }
 
-    // Create the data table.
+    /* Create the data table. */
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Function Name');
     data.addColumn('number', 'Number of Uses');
     data.addRows(outer_array);
 
-    // Set chart options
-    var options = {    'title':'Most Used Actions',
-                    'titleTextStyle':{
-                        color:'black',
-                        fontSize:'40',
-                        bold: 'true'},
-                    'legend':'none',
-                    'pieSliceText':'none',
-                    'is3D':'false',
+    /* Set chart options */
+    var options = { 'pieSliceText':'none',
+                    'is3D':'true',
                     'tooltip':{
+                        trigger: 'focus',
                         showColorCode:'true',
                         text:'percentage'
                     },
@@ -137,9 +106,41 @@ function showPosition(position) {
     */
     $("text:contains(" + "Retirement Investments" + ")").attr({'x':'276', 'y':'67'})
       }
-    </script>
 
 
+
+      /*google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var outer_len = cool_data.length;
+        var inner_len = cool_data[0].length;
+        var outer_array = [];
+        var i;
+        var j;
+        for(i = 0; i < outer_len; i++)
+        {
+            var inner_array = [];
+            for(j = 0; j < inner_len; j++)
+            {
+                inner_array.push(cool_data[i][j]);
+            }
+            outer_array.push(inner_array);
+        }
+            
+        var data = google.visualization.arrayToDataTable(outer_array);
+
+        var options = {
+          title: 'Action functions'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }*/
+
+
+</script>
 
 {% endblock content %}
-

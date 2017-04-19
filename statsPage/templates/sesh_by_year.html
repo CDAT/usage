@@ -16,9 +16,6 @@
   </button>
 
   <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-      <!--% for i in total_years %}
-            <li><a class="dropdown-item" href="#" onclick="hey({all_the_years.1}})">For {all_the_years.0}} data</a></li>
-      % endfor %}-->
      {% for key, values in deck.items %}
             <li><a class="dropdown-item" href="#" onclick="loadpiechart({{values}})">For {{key}} data</a></li>
      {% endfor %}

@@ -21,55 +21,58 @@
      </div>
 </div>
 
-<!--% for key, values in dicts.items %}
-    { key }} &rarr; {values.0}}, {values.1}}, {values.2}} &rarr; &rarr; {values.2.0}} <br-->
-    <!--% for cake in values.2 %}
-        {cake.0}} &diams; {cake.1}} &copy;
-    % endfor %}-->
-<!--% endfor %}
+{% for key, values in dicts.items %}
+    {{ key }} &rarr; {{values}}<br>
+{% endfor %}
+<!--{ dicts }}-->
+<br><br>
+<br><br>
+{% for tot in total %}
+   {{ tot.3 }}<br><br>
+{% endfor %}
 <br>
-% for tot in total %}
-   { tot }}<br>
-% endfor %}
 <br>
-<br-->
 
 <div class="container">
     <center>
         <svg width="1000" height="1500" xmlns="http://www.w3.org/2000/svg" version="1.1">
             <g transform="translate(40,0)">
+                <!--g class="node" transform="translate(0,250)"-->
                 <g class="node" transform="translate(0,750)">
                     <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
                     <text dx="-8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: end;"></text>
                 </g>
-                <!--% for key, values in dicts.items %}
-                    <path class="link" d="M0,750C171.875,750 343.75,{values.1}} 343.75,{values.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
-                    <g class="node" transform="translate(343.75,{values.1}})">
+                {% for count in total %}
+                    <path class="link" d="M0,750C171.875,750 343.75,{{count.2}} 343.75,{{count.2}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                    <!--path class="link" d="M0,250C171.875,250 343.75,{{count.2}} 343.75,{{count.2}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path-->
+                    <!--path class="link" d="M0,250C343.75,250 343.75,{count.2}} 687.5,{count.2}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                    <g class="node" transform="translate(687.5,{count.2}})"-->
+                    <g class="node" transform="translate(343.75,{{count.2}})">
                         <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
-                        <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{key}}, {values.0}}</text>
+                        <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{count.0}}, {{count.1}}</text>
                     </g>
-                    % for city in values.2 %}
-                        <path class="link" d="M348.75,{{values.1}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                    {% for city in count.3 %}
+                        <!--g class="node" transform="translate(687.5,83.33333333333333)"-->
+                        <!--path class="link" d="M348.75,{count.2}}C515.625,125 515.625,83.33333333333333 687.5,{city.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path-->
+                        <path class="link" d="M348.75,{{count.2}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                        <!--path class="link" d="M348.75,900 C515.625, 515.625,83.33333333333333 687.5,{city.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path-->
                         <g class="node" transform="translate(687.5,{{city.1}})">
                             <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
                             <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{city.0}}</text>
                         </g>
-                    % endfor %}
-                % endfor %}-->
-                {% for count in total %}
-                    <path class="link" d="M0,750C171.875,750 343.75,{{count.2}} 343.75,{{count.2}}" style="fill: none; stroke: rgb({{count.5}}, {{count.6}}, {{count.7}}); stroke-width: 1px;"></path>
-                    <g class="node" transform="translate(343.75,{{count.2}})">
-                        <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
-                        <text dx="8" dy="3" style="font-size: 12px; font-family: Arial, Helvetica; text-anchor: start;">{{count.0}}, {{count.1}}</text>
-                    </g>
-                    {% for city in count.3 %}
-                        <path class="link" d="M348.75,{{count.2}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb({{count.5}}, {{count.6}}, {{count.7}} ); stroke-width: 1px;"></path>
-                        <g class="node" transform="translate(687.5,{{city.1}})">
-                            <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
-                            <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{city.0}}, {{city.2}}</text>
-                        </g>
                     {% endfor %}
                 {% endfor %}
+
+                <!--path class="link" d="M348.75,125C515.625,125 515.625,83.33333333333333 687.5,83.33333333333333" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                <path class="link" d="M348.75,125C515.625,125 515.625,166.66666666666666 687.5,166.66666666666666" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path-->
+                <!--g class="node" transform="translate(687.5,83.33333333333333)">
+                    <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                    <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">Nigeria</text>
+                </g>
+                <g class="node" transform="translate(687.5,166.66666666666666)">
+                    <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                    <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">Egypt</text>
+                </g-->
             </g>
         </svg>
     </center>
