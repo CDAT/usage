@@ -9,15 +9,17 @@ from django.views.generic import TemplateView
 urlpatterns = patterns('statsPage.views',
     # /
     url(r'^$','show_log'),
-    url(r'^hello_world/$','hello_world'),
-    url(r'^sup_world/$','sup_world'),
+    url(r'^platform_bar/$','platform_bar'),
+    url(r'^all_years_pie/$','all_years_pie'),
     url(r'^world_stats/$','world_stats'),
-    url(r'^new_stats/$','new_stats'),
+    url(r'^geo_stats/$','geo_stats'),
     url(r'^calendar_data/$','calendar_data'),
-    url(r'^sesh_by_year/$','sesh_by_year'),
-    url(r'^two_sesh_by_year/$','two_sesh_by_year'),
+    url(r'^pie_by_year/$','pie_by_year'),
+    url(r'^testing/$','testing'),
     url(r'^bar_sesh/$','bar_sesh'),
-    url(r'^late_april_stats/$','late_april_stats'),
+
+    # url(r'^late_april_stats/$','late_april_stats'),
+    url(r'^most_used_pie/$','most_used_pie'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),

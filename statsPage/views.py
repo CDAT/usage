@@ -68,7 +68,9 @@ def show_sign_in_page(request):
         login(request, user)
         return HttpResponseRedirect('../')
 
-def hello_world(request):
+
+# def hello_world(request):
+def platform_bar(request):
     source = Source.objects.all()
     net_info = NetInfo.objects.all()
     action = Action.objects.all()
@@ -102,13 +104,13 @@ def hello_world(request):
     action_meta = Action._meta
     logevent_meta = LogEvent._meta
 
-    #return render_to_response('hello_world.html', {'data': 'Hello World'}, context_instance=RequestContext(request))
-    #return render_to_response('hello_world.html', {'data': whatsthis}, context_instance=RequestContext(request))
-    return render_to_response('hello_world.html', {'source': source, 'net_info': net_info, 'action': action, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
-    # return HttpResponse("Hello, World")
+    if request.user.is_authenticated:
+        print "WE ARE AUTHED"
+
+    return render_to_response('session_stats/platform_bar.html', {'source': source, 'net_info': net_info, 'action': action, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
 
 
-def sup_world(request):
+def all_years_pie(request):
     session = Session.objects.all()
     i = 0
     for sesh in session:
@@ -160,7 +162,7 @@ def sup_world(request):
         monthdata = [january,february,march,april,may,june,july,august,september,october,november,december]
         lineData = [[0,january],[1,february],[2, march],[3,april],[4, may],[5, june],[6, july],[7, august],[8, september],[9, october],[10, november],[11, december]]
 
-    return render_to_response('sup_world.html', { 'session': session, 'stuff': stuff, 'january': january, 'february': february, 'march': march, 'april': april, 'may': may, 'june': june, 'july': july, 'august': august, 'september': september, 'october': october, 'november': november, 'december': december, 'lineData': lineData, 'months': months, 'monthdata': monthdata }, context_instance=RequestContext(request))
+    return render_to_response('time_stats/all_years_pie.html', { 'session': session, 'stuff': stuff, 'january': january, 'february': february, 'march': march, 'april': april, 'may': may, 'june': june, 'july': july, 'august': august, 'september': september, 'october': october, 'november': november, 'december': december, 'lineData': lineData, 'months': months, 'monthdata': monthdata }, context_instance=RequestContext(request))
 
 def world_stats(request):
     netinfo = NetInfo.objects.all()
@@ -298,16 +300,16 @@ def world_stats(request):
     la_mini_sub_city = 10
     for tot in total:
         tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
-        print tot
+        # print tot
         for each in tot[3]:
             each[1] = la_mini_sub_city
             la_mini_sub_city += 14
 
     # print total
-    return render_to_response('world_stats.html', {'dicts': dicts, 'by_list': by_list, 'temp_list': temp_list, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
+    return render_to_response('global_stats/world_stats.html', {'dicts': dicts, 'by_list': by_list, 'temp_list': temp_list, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
 
 
-def new_stats(request):
+def geo_stats(request):
     netinfo = NetInfo.objects.all()
     countries = []
     cities = []
@@ -366,7 +368,7 @@ def new_stats(request):
     context = {}
     context['data'] = {'Python': 52.9, 'Jython': 1.6, 'Iron Python': 27.7}
     context['line_data'] = list(enumerate(range(1, 20)))
-    return render_to_response('new_stats.html', { 'array': json.dumps(array), 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
+    return render_to_response('global_stats/geo_stats.html', { 'array': json.dumps(array), 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
 
 
 def calendar_data(request):
@@ -409,7 +411,7 @@ def calendar_data(request):
     mmkay = json.dumps(la_strings)
     cool_strings = json.dumps(sup_strings)
 
-    return render_to_response('calendar_data.html', { 'cool_strings': cool_strings, 'mmkay': mmkay, 'la_strings': la_strings, 'stuff_care': stuff_care, 'duration': duration, 'total_sesh': total_sesh, 'start_sesh': start_sesh, 'end_sesh': end_sesh, 'session': session, 'data': "Hello" }, context_instance = RequestContext(request))
+    return render_to_response('session_stats/calendar_data.html', { 'cool_strings': cool_strings, 'mmkay': mmkay, 'la_strings': la_strings, 'stuff_care': stuff_care, 'duration': duration, 'total_sesh': total_sesh, 'start_sesh': start_sesh, 'end_sesh': end_sesh, 'session': session, 'data': "Hello" }, context_instance = RequestContext(request))
 
 
 def bar_sesh(request):
@@ -534,7 +536,7 @@ def bar_sesh(request):
     # cool_diff = json.dumps(cool_diff)
     cool_strings = json.dumps(sup_strings)
 
-    return render_to_response('bar_sesh.html', { 'all_seshs': all_seshs, 'all_the_seshs': all_the_seshs, 'cool_diff': cool_diff, 'big_cool_diff': big_cool_diff, 'la_diff': la_diff, 'sup_strings': sup_strings, 'the_diff': the_diff, 'cool_strings': cool_strings, 'session': session }, context_instance = RequestContext(request))
+    return render_to_response('session_stats/bar_sesh.html', { 'all_seshs': all_seshs, 'all_the_seshs': all_the_seshs, 'cool_diff': cool_diff, 'big_cool_diff': big_cool_diff, 'la_diff': la_diff, 'sup_strings': sup_strings, 'the_diff': the_diff, 'cool_strings': cool_strings, 'session': session }, context_instance = RequestContext(request))
 
 
 def show_log(request):
@@ -604,7 +606,7 @@ def show_debug_error(request):
         raise Http404
 
 
-def sesh_by_year(request):
+def pie_by_year(request):
     session = Session.objects.all()
     i = 0
     for sesh in session:
@@ -646,10 +648,10 @@ def sesh_by_year(request):
                 deck[year] = la_coolest
 
     tot_size = len(total_years)
-    return render_to_response('sesh_by_year.html', { 'deck': deck, 'todo': todo, 'total_size': tot_size, 'total_years': total_years, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
+    return render_to_response('time_stats/pie_by_year.html', { 'deck': deck, 'todo': todo, 'total_size': tot_size, 'total_years': total_years, 'all_the_years': all_the_years }, context_instance=RequestContext(request))
 
 
-def two_sesh_by_year(request):
+def testing(request):
     session = Session.objects.all()
     send_url = 'http://freegeoip.net/json'
     r = requests.get(send_url)
@@ -713,11 +715,12 @@ def two_sesh_by_year(request):
 
     all_names = json.dumps(all_names)
 
-    return render_to_response('two_sesh_by_year.html', { 'all_names': all_names, 'req': request, 'lon': lon, 'lat': lat }, context_instance=RequestContext(request))
+    return render_to_response('testing/testing.html', { 'all_names': all_names, 'req': request, 'lon': lon, 'lat': lat }, context_instance=RequestContext(request))
 
 
 
-def late_april_stats(request):
+# def late_april_stats(request):
+def most_used_pie(request):
     actions = Action.objects.all()
     action_meta = Action._meta
 
@@ -757,7 +760,7 @@ def late_april_stats(request):
 
     all_names = json.dumps(all_names)
 
-    return render_to_response('late_april_stats.html', { 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
+    return render_to_response('action_stats/most_used_pie.html', { 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
     
     
 

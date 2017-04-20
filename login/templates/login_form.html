@@ -9,14 +9,12 @@
 
 <!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<!DOCTYPE html>
 <br>
-<html>
+<!--html>
     <head>
         <title>Log-in</title>
-    </head>
+    </head-->
 <div class="container">
   <div class="row">
     <div class="jumbotron">
@@ -31,7 +29,7 @@
   </div>
 </div>
   <center>
-    <body>
+    <!--body-->
         {% if error_message %}<p><strong><font color="#ff0000">{{ error_message }}</font></strong></p>{% endif %}
     {% if user.is_authenticated %}
         <!--h1>It appears that you are already logged in.</h1>
@@ -76,9 +74,9 @@
        </div>
       </div>
     {% endif %}
-    </body>
+    <!--/body-->
   </center>
-</html>
+<!--/html-->
 
 
 {% endblock content %}
