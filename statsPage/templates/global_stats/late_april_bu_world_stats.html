@@ -2,25 +2,10 @@
 
 {% block content %}
 {% load staticfiles %}
-<script type="text/javascript" src="{% static 'js/world_stats.js' %}"></script>
+
 <!-- this helps for learning: http://app.rawgraphs.io -->
 <!-- this to: http://rawgraphs.io -->
 <!-- http://d3-generator.com -->
-
-<script type="text/javascript">
-var all_it;
-function get_val(elegance){
-    all_it = elegance;
-    return elegance;
-}
-
-$(document).ready(function() {
-    $('.initlaclass').hide()
-    $('.big_cities').on('click', function(){
-        $('.hide_cities' + all_it).show()
-    });
-});
-</script>
 
 <div class="container">
     <div id="feature-carousel" class="carousel slide" data-ride="carousel">
@@ -44,17 +29,32 @@ $(document).ready(function() {
                     <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
                     <text dx="-8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: end;"></text>
                 </g>
+                <!--% for key, values in dicts.items %}
+                    <path class="link" d="M0,750C171.875,750 343.75,{values.1}} 343.75,{values.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                    <g class="node" transform="translate(343.75,{values.1}})">
+                        <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                        <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{key}}, {values.0}}</text>
+                    </g>
+                    % for city in values.2 %}
+                        <path class="link" d="M348.75,{{values.1}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb(204, 204, 204); stroke-width: 1px;"></path>
+                        <g class="node" transform="translate(687.5,{{city.1}})">
+                            <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                            <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{city.0}}</text>
+                        </g>
+                    % endfor %}
+                % endfor %}-->
                 {% for count in total %}
                     <path class="link" d="M0,750C171.875,750 343.75,{{count.2}} 343.75,{{count.2}}" style="fill: none; stroke: rgb({{count.5}}, {{count.6}}, {{count.7}}); stroke-width: 1px;"></path>
                     <g class="node" transform="translate(343.75,{{count.2}})">
-                        <circle class="big_cities" onclick='should_hide("{{count.2}}"); get_val("{{count.2}}");' r="{{count.8}}" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                        <!--circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle-->
+                        <circle r="{{count.8}}" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
                         <text dx="8" dy="3" style="font-size: 12px; font-family: Arial, Helvetica; text-anchor: start;">{{count.0}}, {{count.1}}</text>
                     </g>
                     {% for city in count.3 %}
-                        <path class="hide_cities{{count.2}} initlaclass" class="link" d="M348.75,{{count.2}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb({{count.5}}, {{count.6}}, {{count.7}} ); stroke-width: 1px;"></path>
-                        <g class="hide_cities{{count.2}} initlaclass" class="node" transform="translate(687.5,{{city.1}})">
+                        <path class="link" d="M348.75,{{count.2}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb({{count.5}}, {{count.6}}, {{count.7}} ); stroke-width: 1px;"></path>
+                        <g class="node" transform="translate(687.5,{{city.1}})">
                             <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
-                            <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{city.0}}, {{city.2}} -- {{count.2}} </text>
+                            <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{city.0}}, {{city.2}}</text>
                         </g>
                     {% endfor %}
                 {% endfor %}
@@ -63,29 +63,6 @@ $(document).ready(function() {
     </center>
 </div>
 
-<script type="text/javascript">
-var truth;
-
-function should_hide(abundant) {
-    var brightness = document.getElementsByClassName('hide_cities' + abundant);
-    if(truth != 1){
-        for(var i = 0; i != brightness.length; ++i)
-        {
-            brightness[i].style.visibility = "visible"; // hidden has to be a string
-            truth=1;
-        }
-    }
-    else if(truth == 1){
-        for(var i = 0; i != brightness.length; ++i)
-        {
-            brightness[i].style.visibility = "hidden"; // hidden has to be a string
-            truth=0;
-        }
-    }
-}
-
-</script>
 
 {% endblock content %}
-
 

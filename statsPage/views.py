@@ -30,6 +30,7 @@ import pycountry
 import operator
 # from geopy.geocoders import Nominatim
 import reverse_geocoder as rg
+import math
 
 
 if not settings.configured:
@@ -69,7 +70,6 @@ def show_sign_in_page(request):
         return HttpResponseRedirect('../')
 
 
-# def hello_world(request):
 def platform_bar(request):
     source = Source.objects.all()
     net_info = NetInfo.objects.all()
@@ -77,7 +77,7 @@ def platform_bar(request):
     log_event = LogEvent.objects.all()
     error = Error.objects.all()
     machine = Machine.objects.all()
-    user = User.objects.all()
+    # user = User.objects.all()
 
     d_count = 0
     l_count = 0
@@ -98,16 +98,16 @@ def platform_bar(request):
     m_graph = m_count*4
     d_graph = d_count*4
     mach_meta = Machine._meta
-    user_meta = User._meta
+    # user_meta = User._meta
     netinfo_meta = NetInfo._meta
     source_meta = Source._meta
     action_meta = Action._meta
     logevent_meta = LogEvent._meta
 
-    if request.user.is_authenticated:
-        print "WE ARE AUTHED"
+    current_path = request.get_full_path()
 
-    return render_to_response('session_stats/platform_bar.html', {'source': source, 'net_info': net_info, 'action': action, 'log_event': log_event, 'error': error, 'machine': machine, 'user': user, 'mach_meta': mach_meta, 'user_meta': user_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
+
+    return render_to_response('session_stats/platform_bar.html', {'current_path': current_path, 'source': source, 'net_info': net_info, 'action': action, 'log_event': log_event, 'error': error, 'machine': machine, 'mach_meta': mach_meta, 'netinfo_meta': netinfo_meta, 'source_meta': source_meta, 'action_meta': action_meta, 'logevent_meta': logevent_meta, 'd_count': d_count, 'l_count': l_count, 'm_count': m_count, 'l_graph': l_graph, 'm_graph': m_graph, 'd_graph': d_graph, 'sl_graph': sl_graph, 'sm_graph': sm_graph, 'sd_graph': sd_graph }, context_instance=RequestContext(request))
 
 
 def all_years_pie(request):
@@ -220,6 +220,7 @@ def world_stats(request):
     total = []
     la_size = 25
     sub_num = sub_city
+    circle_num = 0
     for country in countries:
         rgb_num = random.randint(112, 220)
         sec_rgb_num = random.randint(79, 220)
@@ -239,10 +240,25 @@ def world_stats(request):
         okay.append(rgb_num)
         okay.append(sec_rgb_num)
         okay.append(third_rgb_num)
+        okay.append(circle_num)
         sub_num += sub_city
         la_size += 25
         total.append(okay)
         
+
+    all_hits = 0
+    for tot in total:
+        all_hits += tot[1]
+
+
+    print all_hits
+    for tot in total:
+        num_circ = float(tot[1])/all_hits
+        num_circ = num_circ * 100
+        num_circ = math.ceil(num_circ)
+        num_circ += 3.5
+        tot[8] = num_circ
+
     # print total
     # cool_cities = new_cities
     for city in new_cities:
@@ -305,7 +321,7 @@ def world_stats(request):
             each[1] = la_mini_sub_city
             la_mini_sub_city += 14
 
-    # print total
+    
     return render_to_response('global_stats/world_stats.html', {'dicts': dicts, 'by_list': by_list, 'temp_list': temp_list, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
 
 
@@ -348,7 +364,7 @@ def geo_stats(request):
     forreal = []
     for cnty in countries:
         c_name = pycountry.countries.get(alpha_2=cnty)
-        print c_name.name
+        # print c_name.name
         cnty = c_name.name
         forreal.append(c_name.name)
 
@@ -543,8 +559,9 @@ def show_log(request):
     '''
     Renders the logs.
     '''
+    current_path = request.get_full_path()
     machine = Machine.objects
-    return render_to_response('showlog.html', {'machine': machine
+    return render_to_response('showlog.html', {'current_path': current_path, 'machine': machine
     }, context_instance=RequestContext(request))
 
 

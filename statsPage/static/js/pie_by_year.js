@@ -1,29 +1,3 @@
-{% extends "base.html" %}
-
-{% block content %}
-{% load staticfiles %}
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" src="{% static 'js/pie_by_year.js' %}"></script>
-
-<div class="dropdown show">
-  <button class="btn btn-secondary dropdown-toggle" href="https://example.com" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Please pick a year
-  </button>
-
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-     {% for key, values in deck.items %}
-            <li><a class="dropdown-item" href="#" onclick="loadpiechart({{values}})">For {{key}} data</a></li>
-            <!--li><a class="dropdown-item" href="#" onclick='loadpiechart("{values|safe}}")'>For {key}} data</a></li-->
-     {% endfor %}
-      
-  </ul>
-</div>
-
-
-
-<div id="piechart" style="width: 900px; height: 500px;"></div>
-
-<script type="text/javascript">
 function loadpiechart(thiso){
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
@@ -44,6 +18,10 @@ function loadpiechart(thiso){
     var oct = 0;
     var nov = 0;
     var dec = 0;
+
+    /*for(var j = 0; j < all_data.length; j+=2) {
+        all_it.push(all_data[j];
+    } */   
 
     for(var i = 0; i < okay.length; i++) {
        if(okay[i] == 1){
@@ -84,6 +62,8 @@ function loadpiechart(thiso){
        }
     }
 
+    alert("this stuff: " + sept + " " + oct + " " + nov + " " + dec);
+
     var data = google.visualization.arrayToDataTable([
       ['Month', 'Number of Sessions'],
       ['January',     Number(jan)],
@@ -108,8 +88,3 @@ function loadpiechart(thiso){
     chart.draw(data, options);
   }
 }
-</script>
-
-
-{% endblock content %}
-

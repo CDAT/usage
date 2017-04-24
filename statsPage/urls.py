@@ -17,8 +17,6 @@ urlpatterns = patterns('statsPage.views',
     url(r'^pie_by_year/$','pie_by_year'),
     url(r'^testing/$','testing'),
     url(r'^bar_sesh/$','bar_sesh'),
-
-    # url(r'^late_april_stats/$','late_april_stats'),
     url(r'^most_used_pie/$','most_used_pie'),
 
     # /log/errors
