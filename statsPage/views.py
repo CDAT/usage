@@ -31,6 +31,7 @@ import operator
 # from geopy.geocoders import Nominatim
 import reverse_geocoder as rg
 import math
+from world_regions.models import Region
 
 
 if not settings.configured:
@@ -169,6 +170,7 @@ def world_stats(request):
     countries = []
     cities = []
     testing = []
+    dup_testing = []
     rement = 0
     for net in netinfo:
         breathe = []
@@ -182,13 +184,23 @@ def world_stats(request):
             inc.append(net.country)
             inc.append(rement)
             testing.append(inc)
+            dup_region = []
+            d_region = "duplicate"
+            dup_region.append(d_region)
+            dup_region.append(inc)
+            dup_testing.append(dup_region)
             rement += 25
 
 
     netinfo_meta = NetInfo._meta
     countries.pop(0)
     testing.pop(0)
+    dup_testing.pop(0)
     the_size = len(countries)
+
+    for test in dup_testing:
+        region = Region.objects.get(countries__country=test[1][0])
+        test[0] = region.name
 
     cities.pop(0)
     new_cities = []
@@ -218,6 +230,8 @@ def world_stats(request):
 
 
     total = []
+    dup_total = []
+    dup_size = 25
     la_size = 25
     sub_num = sub_city
     circle_num = 0
@@ -228,12 +242,17 @@ def world_stats(request):
         # print rgb_num
         la_count = 0
         okay = []
+        dup_okay = []
         for net in netinfo:
             if net.country == country:
                la_count += 1 
         okay.append(country)
         okay.append(la_count)
         okay.append(la_size)
+
+        dup_okay.append(country)
+        dup_okay.append(la_count)
+        dup_okay.append(la_size)
         stuff = "Hello"
         okay.append(stuff)
         okay.append(sub_num)
@@ -241,8 +260,29 @@ def world_stats(request):
         okay.append(sec_rgb_num)
         okay.append(third_rgb_num)
         okay.append(circle_num)
+
+        dup_okay.append(stuff)
+        dup_okay.append(sub_num)
+        dup_okay.append(rgb_num)
+        dup_okay.append(sec_rgb_num)
+        dup_okay.append(third_rgb_num)
+        dup_okay.append(circle_num)
         sub_num += sub_city
         la_size += 25
+        la_future_region = "shred"
+        region = Region.objects.get(countries__country=country)
+        la_region = region.name
+        dup_all = []
+        dup_region = []
+        dup_region.append(la_region)
+        dup_region.append(dup_size)
+        dup_all.append(dup_region)
+        # dup_all.append(la_region)
+        dup_all.append(dup_okay)
+        dup_total.append(dup_all)
+        # dup_total.append(la_region)
+        # dup_total.append(dup_okay)
+        dup_size += 25
         total.append(okay)
         
 
@@ -250,14 +290,25 @@ def world_stats(request):
     for tot in total:
         all_hits += tot[1]
 
+    # dup_all_hits = 0
+    # for dup_tot in dup_total:
+    #     print dup_tot
+    #     # dup_all_hits += dup_tot[1]
 
-    print all_hits
+
     for tot in total:
         num_circ = float(tot[1])/all_hits
         num_circ = num_circ * 100
         num_circ = math.ceil(num_circ)
         num_circ += 3.5
         tot[8] = num_circ
+
+    for dup_tot in dup_total:
+        num_circ = float(dup_tot[1][1])/all_hits
+        num_circ = num_circ * 100
+        num_circ = math.ceil(num_circ)
+        num_circ += 3.5
+        dup_tot[1][8] = num_circ
 
     # print total
     # cool_cities = new_cities
@@ -273,6 +324,21 @@ def world_stats(request):
         c_name = pycountry.countries.get(alpha_2=tot[0])
         tot[0] = c_name.name
 
+    for dup_tot in dup_total:
+        c_name = pycountry.countries.get(alpha_2=dup_tot[1][0])
+        dup_tot[1][0] = c_name.name
+
+    for dup_tot in dup_total:
+        ciu = []
+        for city in new_cities:
+            ciudad =[]
+            if city[0] == dup_tot[1][0]:
+                ciudad.append(city[1])
+                ciudad.append(city[2])
+                ciudad.append(city[3])
+                ciu.append(ciudad)
+        dup_tot[1][3] = ciu
+        
     for tot in total:
         ciu = []
         for city in new_cities:
@@ -284,34 +350,31 @@ def world_stats(request):
                 ciu.append(ciudad)
         tot[3] = ciu
         
-
     total = sorted(total, key=operator.itemgetter(1), reverse=True)
+    dup_total = sorted(dup_total, key=operator.itemgetter(1), reverse=True)
+    # dup_total = sorted(dup_total, key=lambda x : x[1][0])
 
-    temp_list = []
-    by_list = []
-    dicts = {}
-    for tot in total:
-        all_of_it = []
-        by_country = []
-        by_country.append(tot[0])
-        sway = []
-        for each in tot[3]:
-            # by_country.append(each[0])
-            temp_list.append(each[0])
-            sway.append(each[0])
-            by_country.append(sway)
-        # by_list.append(by_country)
-        by_list.append(by_country)
-        all_of_it.append(tot[1])
-        all_of_it.append(tot[2])
-        all_of_it.append(tot[3])
-        # dicts[tot[0]] = tot[3]
-        dicts[tot[0]] = all_of_it
+    dupregion_size = 67
+    for duptot in dup_total:
+        duptot[0][1] = dupregion_size
+        dupregion_size += 67
+
+    dupthis_size = 67
+    for duptot in dup_total:
+        duptot[1][2] = dupthis_size
+        dupthis_size += 67
 
     this_size = 67
     for tot in total:
         tot[2] = this_size
         this_size += 67
+
+    dupla_mini_sub_city = 10
+    for tot in dup_total:
+         tot[1][3] = sorted(tot[1][3], key=operator.itemgetter(2), reverse=True)
+         for each in tot[1][3]:
+             each[1] = dupla_mini_sub_city
+             dupla_mini_sub_city += 14
 
     la_mini_sub_city = 10
     for tot in total:
@@ -322,7 +385,22 @@ def world_stats(request):
             la_mini_sub_city += 14
 
     
-    return render_to_response('global_stats/world_stats.html', {'dicts': dicts, 'by_list': by_list, 'temp_list': temp_list, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
+    # all_regions = []
+    # for duptot in dup_total:
+    #     the_regs = []
+    #     all_regions.append(the_regs)
+    #     all_regions.append(duptot[0][0])
+
+    # new_list = []
+    # for all_r in all_regions:
+    #     print all_r
+    #     for duptot in dup_total:
+    #         if duptot[0][0] in all_r:
+    #             new_list.append(duptot[1])
+    #         if duptot[0][0] not in all_r:
+    #             new_list.append(duptot)
+
+    return render_to_response('global_stats/world_stats.html', {'dup_total': dup_total, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
 
 
 def geo_stats(request):

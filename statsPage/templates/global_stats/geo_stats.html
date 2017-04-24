@@ -53,7 +53,26 @@ function drawRegionsMap() {
     }
 
     var data = google.visualization.arrayToDataTable(overall);
-    var options = {};
+    var options = {
+            legend: {
+                textStyle: {
+                    color: '#b56969',
+                    fontSize: 16
+                }         
+            },
+            magnifyingGlass: {
+                enable: true,
+                zoomFactor: 5.0
+            },
+            colors: '#b56969',
+            tooltip: {
+               textStyle: {
+                    color: '#22264b'
+                },
+                showColorCode: true,
+                trigger: 'focus', 
+            }, 
+        };
 
     var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
 

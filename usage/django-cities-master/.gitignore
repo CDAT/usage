@@ -1,0 +1,15 @@
+# Compiled Python files
+*.pyc
+__pycache__
+
+*.egg-info
+.tox
+build
+dist
+
+# WebDAV file system cache
+.DAV/
+.env
+
+# Data files
+/cities/data/*
