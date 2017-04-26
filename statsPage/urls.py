@@ -19,6 +19,8 @@ urlpatterns = patterns('statsPage.views',
     url(r'^bar_sesh/$','bar_sesh'),
     url(r'^most_used_pie/$','most_used_pie'),
 
+    url(r'^nested_chart/$','nested_chart'),
+
     # /log/errors
     url(r'^errors/$','show_error_log'),
 

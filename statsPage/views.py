@@ -826,15 +826,6 @@ def testing(request):
     la_country = omg[0]['cc']
     all_the_info = pycountry.countries.get(alpha_2=la_country)
     country_name = all_the_info.name
-    print omg[0]['name']
-    print la_state
-    print la_country
-    print all_the_info
-    print country_name
-    print omg
-    # geolocator = Nominatim()
-    # location = geolocator.reverse(latlon)
-    # print(location.address)
 
     actions = Action.objects.all()
     action_meta = Action._meta
@@ -842,7 +833,6 @@ def testing(request):
     act_names = []
     for act in actions:
        if ' ' in act.name:
-           # act_names.append(act.name)
            stuff = act.name
            new_stuff = stuff.split()
            act_names.append(new_stuff[0])
@@ -850,18 +840,10 @@ def testing(request):
            act_names.append(act.name)
 
 
-    # first = True
     cool = numpy.unique(act_names)
-    # all_names = {} 
     all_names = []
     for name in cool:
         func_names = []
-        # if first == True:
-        #     func_names.append("Function")
-        #     func_names.append("Count")
-        #     all_names.append(func_names)
-        #     func_names = []
-        #     first = False
 
         func_names.append(name)
         count = 0
@@ -870,7 +852,6 @@ def testing(request):
                count += 1 
         func_names.append(count)
         all_names.append(func_names)
-        # all_names[name] = func_names
 
     all_names = json.dumps(all_names)
 
@@ -878,7 +859,118 @@ def testing(request):
 
 
 
-# def late_april_stats(request):
+def nested_chart(request):
+    actions = Action.objects.all()
+    action_meta = Action._meta
+
+    act_names = []
+    for act in actions:
+       if 'Error' not in act.name:
+           if ' ' in act.name:
+               stuff = act.name
+               new_stuff = stuff.split()
+               act_names.append(new_stuff[0])
+           if ' ' not in act.name:
+               act_names.append(act.name)
+
+    cool = numpy.unique(act_names)
+    all_names = []
+    for name in cool:
+        func_names = []
+        sub_list = []
+
+        func_names.append(name)
+        count = 0 
+        for act in act_names:
+            if name == act:
+               count += 1 
+        func_names.append(count)
+        func_names.append(sub_list)
+        all_names.append(func_names)
+
+    dup_all = copy.deepcopy(all_names)
+    faith = []
+    hope = []
+    sub_states = []
+    fake = 0
+    for fade in dup_all:
+        if '.' in fade[0]:
+            states = fade[0].split('.')
+            fade[0] = states[0]
+            # fade.append(states[0])
+            que_bueno = []
+            nested_bueno = []
+            # for each in states:
+            #     if each != states[0]:
+            #        que_bueno.append(each) 
+            try:
+                que_bueno.append(states[1])
+                try:
+                    nested_bueno.append(states[2])
+                    try: 
+                        super_nested = []
+                        super_nested.append(states[3])
+                        nested_bueno.append(super_nested)
+                        # nested_bueno.append(states[3])
+                    except IndexError:
+                        print 'sorry, no 3'
+                except IndexError:
+                    print 'sorry, no 2'
+            except IndexError:
+                print 'sorry, no 1'
+            que_bueno.append(nested_bueno)
+            fade[2].append(que_bueno)
+
+    top_hier = []
+    for dup in dup_all:
+        print "print DUP yo"
+        print "print DUP yo"
+        print dup
+        if dup[0] not in top_hier:
+            nested_hier = []
+            nested_hier.append(dup[0])
+            nested_hier.append([])
+            top_hier.append(nested_hier)
+            # top_hier.append(dup[0])
+        for d in dup[2]:
+            for e in d:
+                print "PRINT E YO"
+                print e
+
+    print "TOP_HIER"
+    print "TOP_HIER"
+    print "TOP_HIER"
+    print top_hier
+    # for fade in dup_all:
+    #     # print fade
+    #     # sub_states = []
+    #     count = 0
+    #     tapout = []
+    #     if '.' in fade[0]:
+    #        # print fade[0]
+    #        states = fade[0].split('.')
+    #        # print states
+    #         if states[0] not in faith:
+    #             faith.append(states[0])
+    #         if states[1] not in sub_states:
+    #             sub_states.append(states[1])
+    #             tapout.append(states[1])
+    #             tapout.append(count)
+    #             perku.append(tapout)
+    #         if states[1] in sub_states:
+    #             for perk in perku:
+    #                 if perk[0] == states[1]:
+    #                     count += 1
+    #                 perk[1] = count
+    #             # count += 1
+    #     if '.' not in fade[0]:
+    #         hope.append(fade)
+
+    # print hope
+    all_names = json.dumps(all_names)
+    return render_to_response('testing/nested_chart.html', { 'dup_all': dup_all, 'sub_states': sub_states, 'faith': faith, 'hope': hope, 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
+
+
 def most_used_pie(request):
     actions = Action.objects.all()
     action_meta = Action._meta
@@ -887,26 +979,16 @@ def most_used_pie(request):
     for act in actions:
        if 'Error' not in act.name:
            if ' ' in act.name:
-               # act_names.append(act.name)
                stuff = act.name
                new_stuff = stuff.split()
                act_names.append(new_stuff[0])
            if ' ' not in act.name:
                act_names.append(act.name)
 
-
-    # first = True
     cool = numpy.unique(act_names)
-    # all_names = {} 
     all_names = []
     for name in cool:
         func_names = []
-        # if first == True:
-        #     func_names.append("Function")
-        #     func_names.append("Count")
-        #     all_names.append(func_names)
-        #     func_names = []
-        #     first = False
 
         func_names.append(name)
         count = 0
@@ -915,13 +997,8 @@ def most_used_pie(request):
                count += 1 
         func_names.append(count)
         all_names.append(func_names)
-        # all_names[name] = func_names
 
     all_names = json.dumps(all_names)
-
     return render_to_response('action_stats/most_used_pie.html', { 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
     
     
-
-
-
