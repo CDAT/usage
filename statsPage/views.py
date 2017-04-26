@@ -32,6 +32,7 @@ import operator
 import reverse_geocoder as rg
 import math
 from world_regions.models import Region
+import copy
 
 
 if not settings.configured:
@@ -223,11 +224,9 @@ def world_stats(request):
                 mini_sub_city += 14
                 new_cities.append(new_c)
 
-
     for test in testing:
         c_name = pycountry.countries.get(alpha_2=test[0])
         test[0] = c_name.name
-
 
     total = []
     dup_total = []
@@ -271,7 +270,8 @@ def world_stats(request):
         la_size += 25
         la_future_region = "shred"
         region = Region.objects.get(countries__country=country)
-        la_region = region.name
+        ala_region = region.name
+        la_region = ala_region.encode('ascii', 'ignore')
         dup_all = []
         dup_region = []
         dup_region.append(la_region)
@@ -285,7 +285,6 @@ def world_stats(request):
         dup_size += 25
         total.append(okay)
         
-
     all_hits = 0
     for tot in total:
         all_hits += tot[1]
@@ -310,15 +309,12 @@ def world_stats(request):
         num_circ += 3.5
         dup_tot[1][8] = num_circ
 
-    # print total
-    # cool_cities = new_cities
     for city in new_cities:
         cool_count = 0
         for net in netinfo:
             if city[1] == net.city:
                 cool_count += 1
         city.append(cool_count)
-        # print city
 
     for tot in total:
         c_name = pycountry.countries.get(alpha_2=tot[0])
@@ -378,29 +374,97 @@ def world_stats(request):
 
     la_mini_sub_city = 10
     for tot in total:
-        tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
-        # print tot
+        # print tot[3][0]
+        # tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
+        # tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
         for each in tot[3]:
             each[1] = la_mini_sub_city
             la_mini_sub_city += 14
 
-    
-    # all_regions = []
-    # for duptot in dup_total:
-    #     the_regs = []
-    #     all_regions.append(the_regs)
-    #     all_regions.append(duptot[0][0])
+    all_regions = []
+    for duptot in dup_total:
+        all_regions.append(duptot[0][0])
 
-    # new_list = []
-    # for all_r in all_regions:
-    #     print all_r
-    #     for duptot in dup_total:
-    #         if duptot[0][0] in all_r:
-    #             new_list.append(duptot[1])
-    #         if duptot[0][0] not in all_r:
-    #             new_list.append(duptot)
+    six_jobs = []
+    usually = []
+    for duptot in dup_total:
+        if duptot[0][0] not in six_jobs:
+            six_jobs.append(duptot[0][0])
+            usually.append(duptot)
+        if duptot[0][0] in six_jobs:
+            for ush in usually:
+                if ush[0][0] == duptot[0][0]:
+                    if ush[1][0] != duptot[1][0]:
+                        ush.append(duptot[1])
 
-    return render_to_response('global_stats/world_stats.html', {'dup_total': dup_total, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
+
+    tijuana = copy.deepcopy(usually)
+    rollie = copy.deepcopy(dup_total)
+    better = []
+    tots = 0
+    for roll in rollie:
+       dup_rgb_num = random.randint(112, 220)
+       dup_sec_rgb_num = random.randint(79, 220)
+       dup_third_rgb_num = random.randint(79, 220)
+       que_bueno = len(roll)
+       bro = []
+       ice = []
+       i = 1
+       while i < que_bueno:
+           ice.append(roll[i])
+           i = i+1 
+       bro.append(roll[0][0])
+       bro.append(roll[0][1])
+       bro.append(ice)
+       bro.append(dup_rgb_num)
+       bro.append(dup_sec_rgb_num)
+       bro.append(dup_third_rgb_num)
+       bro.append(tots)
+       better.append(bro)
+
+
+    change_this = 107
+    dont_lose = copy.deepcopy(better)
+    checked = []
+    gaame = []
+    for dont in dont_lose:
+        if dont[0] not in gaame:
+            thiiis = copy.deepcopy(dont)
+            thiiis.pop(0)
+            thiiis.pop(0)
+            que = thiiis[0]
+            que_length = len(que)
+            total = 0
+            for each in que:
+                total += each[1]
+            dont[6] = total
+            gaame.append(dont[0])
+            checked.append(dont)
+
+    for cp in tijuana:
+        cp.pop(0)
+
+    checked = sorted(checked, key=operator.itemgetter(6), reverse=True)
+
+    for each in checked:
+        each[1] = change_this
+        change_this += 106
+
+    switch = 67
+    for each in checked:
+        for each_country in each[2]:
+            each_country[2] = switch
+            switch += 67
+
+    chase = 10
+    for perk in checked:
+        for switch in perk[2]:
+           for proof in switch[3]:
+                proof[1] = chase
+                print proof[1]
+                chase += 14
+
+    return render_to_response('global_stats/world_stats.html', {'checked': checked, 'better': better, 'tijuana': tijuana, 'usually': usually, 'dup_total': dup_total, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
 
 
 def geo_stats(request):
