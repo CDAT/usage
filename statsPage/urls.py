@@ -9,6 +9,8 @@ from django.views.generic import TemplateView
 urlpatterns = patterns('statsPage.views',
     # /
     url(r'^$','show_log'),
+    url(r'^help/$','help'),
+    url(r'^survey/$','survey'),
     url(r'^platform_bar/$','platform_bar'),
     url(r'^all_years_pie/$','all_years_pie'),
     url(r'^world_stats/$','world_stats'),
@@ -19,6 +21,7 @@ urlpatterns = patterns('statsPage.views',
     url(r'^bar_sesh/$','bar_sesh'),
     url(r'^most_used_pie/$','most_used_pie'),
 
+    url(r'^k_bro/$','k_bro'),
     url(r'^nested_chart/$','nested_chart'),
 
     # /log/errors

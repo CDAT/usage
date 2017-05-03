@@ -33,6 +33,9 @@ import reverse_geocoder as rg
 import math
 from world_regions.models import Region
 import copy
+from ast import literal_eval
+from itertools import tee, islice, chain, izip
+from six import string_types
 
 
 if not settings.configured:
@@ -566,10 +569,9 @@ def calendar_data(request):
         la_strings.append(start_s.strftime('%Y, %-m, %-d')) 
         la_strings.append(end_s.strftime('%Y, %-m, %-d')) 
 
-    mmkay = json.dumps(la_strings)
     cool_strings = json.dumps(sup_strings)
 
-    return render_to_response('session_stats/calendar_data.html', { 'cool_strings': cool_strings, 'mmkay': mmkay, 'la_strings': la_strings, 'stuff_care': stuff_care, 'duration': duration, 'total_sesh': total_sesh, 'start_sesh': start_sesh, 'end_sesh': end_sesh, 'session': session, 'data': "Hello" }, context_instance = RequestContext(request))
+    return render_to_response('session_stats/calendar_data.html', { 'cool_strings': cool_strings, 'la_strings': la_strings, 'stuff_care': stuff_care, 'duration': duration, 'total_sesh': total_sesh, 'start_sesh': start_sesh, 'end_sesh': end_sesh, 'session': session, 'data': "Hello" }, context_instance = RequestContext(request))
 
 
 def bar_sesh(request):
@@ -706,6 +708,18 @@ def show_log(request):
     return render_to_response('showlog.html', {'current_path': current_path, 'machine': machine
     }, context_instance=RequestContext(request))
 
+
+def survey(request):
+    '''
+    Renders the help page.
+    '''
+    return render_to_response('survey.html', {}, context_instance=RequestContext(request))
+
+def help(request):
+    '''
+    Renders the help page.
+    '''
+    return render_to_response('help.html', {}, context_instance=RequestContext(request))
 
 
 def show_error_log(request):
@@ -888,6 +902,80 @@ def nested_chart(request):
         func_names.append(sub_list)
         all_names.append(func_names)
 
+    admire = []
+    for name in cool:
+        if "." not in name:
+           admire.append(name) 
+
+    for ad in admire:
+       down = []
+       for act in act_names:
+           if act in ad:
+                pass
+
+    yeah = []
+    chillin = copy.deepcopy(all_names)
+    for ad in admire:
+        infinity = []
+        colder = []
+        count = 0
+        for halo in chillin:
+            if ad == halo[0]:
+                count += halo[1]
+            if ad in halo[0]:
+                if ad != halo[0]:
+                    mask = []
+                    tumblr = halo[0].split(".")
+                    mask.append(tumblr[1])
+                    mask.append(halo[1])
+                    colder.append(mask)
+        infinity.append(ad)
+        infinity.append(count)
+        infinity.append(colder)
+        yeah.append(infinity)
+
+    plan = []
+    for fine in yeah:
+        free = []
+        yup = []
+        if len(fine[2]) != 0:
+            count = 0
+            for previous, item, nxt in previous_and_next(fine[2]):
+                if item[0] in yup:
+                    yup.append(item[1]) 
+                if item[0] not in yup:
+                    yup.append(item[0])
+                    yup.append(item[1])
+            free.append(fine[0])
+            free.append(yup)
+            plan.append(free)
+
+    growth = []
+    for elegance in plan:
+        learn = []
+        count = 0
+        for previous, item, nxt in previous_and_next(elegance[1]):
+            # print "Item is now --> ", item, " ;; next is --> ", nxt, " ;; previous is --> ", previous
+            if isinstance(item, (int, long)):
+                count += item
+                if nxt is None:
+                    learn.append(count)
+            if isinstance(item, string_types):
+                if count != 0:
+                    learn.append(count)
+                    count = 0
+                learn.append(item)
+        growth.append(learn)
+        
+    huh = []
+    for fine in yeah:
+        if len(fine[2]) != 0:
+            for grow in growth:
+                if fine[2][0][0] == grow[0]:    
+                    fine[2] = grow
+                
+
+
     dup_all = copy.deepcopy(all_names)
     faith = []
     hope = []
@@ -897,12 +985,8 @@ def nested_chart(request):
         if '.' in fade[0]:
             states = fade[0].split('.')
             fade[0] = states[0]
-            # fade.append(states[0])
             que_bueno = []
             nested_bueno = []
-            # for each in states:
-            #     if each != states[0]:
-            #        que_bueno.append(each) 
             try:
                 que_bueno.append(states[1])
                 try:
@@ -913,19 +997,19 @@ def nested_chart(request):
                         nested_bueno.append(super_nested)
                         # nested_bueno.append(states[3])
                     except IndexError:
-                        print 'sorry, no 3'
+                        pass
+                        #print 'sorry, no 3'
                 except IndexError:
-                    print 'sorry, no 2'
+                    pass
+                    #print 'sorry, no 2'
             except IndexError:
-                print 'sorry, no 1'
+                pass
+                #print 'sorry, no 1'
             que_bueno.append(nested_bueno)
             fade[2].append(que_bueno)
 
     top_hier = []
     for dup in dup_all:
-        print "print DUP yo"
-        print "print DUP yo"
-        print dup
         if dup[0] not in top_hier:
             nested_hier = []
             nested_hier.append(dup[0])
@@ -934,41 +1018,69 @@ def nested_chart(request):
             # top_hier.append(dup[0])
         for d in dup[2]:
             for e in d:
-                print "PRINT E YO"
-                print e
+                pass
 
-    print "TOP_HIER"
-    print "TOP_HIER"
-    print "TOP_HIER"
-    print top_hier
-    # for fade in dup_all:
-    #     # print fade
-    #     # sub_states = []
-    #     count = 0
-    #     tapout = []
-    #     if '.' in fade[0]:
-    #        # print fade[0]
-    #        states = fade[0].split('.')
-    #        # print states
-    #         if states[0] not in faith:
-    #             faith.append(states[0])
-    #         if states[1] not in sub_states:
-    #             sub_states.append(states[1])
-    #             tapout.append(states[1])
-    #             tapout.append(count)
-    #             perku.append(tapout)
-    #         if states[1] in sub_states:
-    #             for perk in perku:
-    #                 if perk[0] == states[1]:
-    #                     count += 1
-    #                 perk[1] = count
-    #             # count += 1
-    #     if '.' not in fade[0]:
-    #         hope.append(fade)
+    sick = []
+    idgt = []
+    bay = []
+    for dup in dup_all:
+        laugh = []
+        if dup[0] not in sick:
+            sick.append(dup[0])
+            bay.append(dup[0])
+            # laugh.append(dup[0])
+        # if any(isinstance(i, list) for i in dup):
+        try:
+            if dup[2]: 
+                if dup[2][0][0] not in idgt:
+                    idgt.append(dup[2][0][0])
+                    laugh.append(dup[0])
+                    laugh.append(dup[2][0][0])
+                    sick.append(laugh)
+        except IndexError:
+            print "NAH BRO"
+
+
+    bed = []
+    for not_sick in sick:
+        # print not_sick
+        # print type(not_sick)
+        # try:
+             #for nah in not_sick:
+             #   print nah
+        if type(not_sick) == list:
+            # print "it's a list"
+            if not_sick[0] not in bed:
+                pass
+                #bed.append(not_sick[0])
+            if not_sick[0] in bed:
+                for b in bed:
+                    if b == not_sick[0]:
+                        this = []
+                #        this.append(not_sick[1])
+                #        bed.append(this)
+                #bed.append(not_sick[0])
+        if type(not_sick) != list:
+            pass
+            # print "it's nooooot a list"
+        # except IndexError:
+         #     print "NAH BRO"
 
     # print hope
+    bay = json.dumps(bay)
+    sick = json.dumps(sick)
+    idgt = json.dumps(idgt)
     all_names = json.dumps(all_names)
-    return render_to_response('testing/nested_chart.html', { 'dup_all': dup_all, 'sub_states': sub_states, 'faith': faith, 'hope': hope, 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
+    admire = json.dumps(admire)
+    yeah = json.dumps(yeah)
+    return render_to_response('testing/nested_chart.html', { 'growth': growth, 'plan': plan, 'yeah': yeah, 'admire': admire, 'bay': bay, 'bed': bed, 'idgt': idgt, 'sick': sick, 'dup_all': dup_all, 'sub_states': sub_states, 'faith': faith, 'hope': hope, 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
+
+
+def previous_and_next(some_iterable):
+    prevs, items, nexts = tee(some_iterable, 3)
+    prevs = chain([None], prevs)
+    nexts = chain(islice(nexts, 1, None), [None])
+    return izip(prevs, items, nexts)
 
 
 def most_used_pie(request):
@@ -1001,4 +1113,6 @@ def most_used_pie(request):
     all_names = json.dumps(all_names)
     return render_to_response('action_stats/most_used_pie.html', { 'cool': cool, 'all_names': all_names, 'act_names': act_names, 'action_meta': action_meta, 'actions': actions }, context_instance=RequestContext(request))
     
-    
+   
+def k_bro(request):
+    return render_to_response('testing/k_bro.html', { 'data': "que bro" }, context_instance=RequestContext(request))

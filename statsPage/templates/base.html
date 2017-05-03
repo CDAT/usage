@@ -11,79 +11,92 @@
 <!-- http://bootsnipp.com/snippets/featured/social-buttons-for-bootstrap -->
 <!-- http://lipis.github.io/bootstrap-social/ -->
 
-<nav class="navbar navbar-default">
+<nav role="navigation" class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <ul class="nav navbar-nav">
-                {% if user.is_authenticated %}<!--or current_path == '/stats/platform_bar/' %}-->
-                    <div class="container">
-                        <div class="row">
-                            <div class="btn-group">
-                                <li><a style="color:black; font-size:125%" href="/stats">Home</a></li>
-                            </div>&nbsp;
-                            <div class="btn-group">
-                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%;">
-                                Global Stats <span class="caret"></span>
-                              </li>
-                              <ul class="dropdown-menu" role="menu">
-                                    <li><a style="color:black; font-size:125%" href="/stats/world_stats/">World Stats</a></li>
-                                    <li><a style="color:black; font-size:125%" href="/stats/geo_stats/">Geo Stats</a></li>
-                              </ul>
-                            </div>&nbsp;
-                            <div class="btn-group">
-                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%;">
-                                Time Stats <span class="caret"></span>
-                              </li>
-                              <ul class="dropdown-menu" role="menu">
-                                    <li><a style="color:black; font-size:125%" href="/stats/all_years_pie/">All Years Stats</a></li>
-                                    <li><a style="color:black; font-size:125%" href="/stats/pie_by_year/">By Year Stats</a></li>
-                              </ul>
-                            </div>&nbsp;
-                            <div class="btn-group">
-                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
-                                Session Stats <span class="caret"></span>
-                              </li>
-                              <ul class="dropdown-menu">
-                                    <li><a style="color:black; font-size:125%" href="/stats/platform_bar/">Platform Stats</a></li>
-                                    <li><a style="color:black; font-size:125%" href="/stats/calendar_data/">Duration Stats</a></li>
-                                    <li><a style="color:black; font-size:125%" href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
-                              </ul>
-                            </div>&nbsp;
-                            <div class="btn-group">
-                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
-                                Function Stats <span class="caret"></span>
-                              </li>
-                              <ul class="dropdown-menu">
-                                    <li><a style="color:black; font-size:125%" href="/stats/most_used_pie/">Actions Stats</a></li>
-                              </ul>
-                            </div>&nbsp;
-                            <div class="btn-group">
-                              <li class="dropdown-toggle" data-toggle="dropdown" style="font-size:125%">
-                                Testing Page <span class="caret"></span>
-                              </li>
-                              <ul class="dropdown-menu">
-                                    <li><a style="color:black; font-size:125%" href="/stats/testing/">Testing Page</a></li>
-                                    <li><a style="color:black; font-size:125%" href="/stats/nested_chart/">Nested Chart Page</a></li>
-                              </ul>
-                            </div>&nbsp;
-                            <div class="btn-group">
-                                <li><a style="color:black; font-size:125%" href="/logout/">Logout</a></li>
-                            </div>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="btn-group">
-                        <li><a style="color:black; font-size:125%" href="/stats">Home</a></li>
-                    </div>&nbsp;
-                    <div class="btn-group">
-                        <li><a style="color:black; font-size:125%" href="/login">Log in</a></li>
-                    </div>
-                {% endif %}
-           </ul>
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle nav</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand"><Brand</a>
         </div>
-    </div>
-</nav>
+        <!--div class="navbar-header"-->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            {% if user.is_authenticated %}<!--or current_path == '/stats/platform_bar/' %}-->
+            <ul class="nav navbar-nav">
+                    <li class="active"><a href="/stats">Home</a></li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Global Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/world_stats/">World Stats</a></li>
+                           <li><a href="/stats/geo_stats/">Geo Stats</a></li>
+                        </ul>
+                    </li>
 
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Time Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/all_years_pie/">All Years Stats</a></li>
+                           <li><a href="/stats/pie_by_year/">By Year Stats</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Session Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/platform_bar/">Platform Stats</a></li>
+                           <li><a href="/stats/calendar_data/">Duration Stats</a></li>
+                           <li><a href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Function Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/most_used_pie/">Action Stats</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Testing Page<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/testing/">Testing Page</a></li>
+                           <li><a href="/stats/nested_chart/">Nested Chart Page</a></li>
+                           <li><a href="/stats/k_bro/">K Bro Page</a></li>
+                        </ul>
+                    </li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/logout/">Logout</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/stats/survey/">Survey</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/stats/help/">Help</a></li>
+            </ul>
+            {% else %}
+
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="/stats">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/stats/survey/">Survey</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/stats/help/">Help</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/login">Login</a></li>
+            </ul>
+            {% endif %}
+        </div>
+   </div>
+</nav> 
+ 
 
 <div class="container">
     {% block content %}
