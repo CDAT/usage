@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = patterns('stats.views',
     url(r'^session/?$', 'get_session'),
+    url(r'^doesthis/?$', 'doesthis'),
 
     # /log/add/
     url(r'^add/?$', 'log_event'),

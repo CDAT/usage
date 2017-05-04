@@ -1,106 +1,122 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% load staticfiles %}
+<link href="{% static 'css/base/slideshow.css' %}" rel="stylesheet">
 <!DOCTYPE html>
 <html>
 <head>
-<!-- css -->
 <link rel="icon" type="image/png" href="http://uvcdat.llnl.gov/media/images/favicon.ico">
 <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css"-->
-
-<!-- JavaScript -->
 <!--script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
 <script src="https://d3js.org/d3.v4.min.js"></script>
-
-
 </head>
 
 <br>
-
-    <div class="container">
-        <div id="feature-carousel" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <center><h2>Welcome to the UV-CDAT analytics site.</h2></center>
-                </div>
-                <!--div class="item">
-                    <center>
-                       <h2> 
-                       <a href="https://uvcdat.llnl.gov/index.html">
-                            <img id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
-                        </a>
-                        &nbsp;
-                        <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-github"><i class="fa fa-github"></i></a> 
-                        </h2>
-                    </center>
-                </div-->
-                <div class="item">
-                    <center><h2>Here lives UV-CDAT usage statistical plots.</h2></center>
-                </div>
-                <div class="item">
-                    {% if user.is_authenticated %}
-                        <center><h2>Feel free to poke around :)</h2></center>
-                    {% else %}
-                        <center><h2>Please login to see the plots.</h2></center>
-                    {% endif %}
-                </div>   
+<div class="container">
+    <div id="feature-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <center><h2>Welcome to the UV-CDAT analytics site.</h2></center>
             </div>
-         </div>
-    </div>
+            <div class="item">
+                <center><h2>Here lives UV-CDAT usage statistical plots.</h2></center>
+            </div>
+            <div class="item">
+                {% if user.is_authenticated %}
+                    <center><h2>Feel free to poke around :)</h2></center>
+                {% else %}
+                    <center><h2>Please login to see the plots.</h2></center>
+                {% endif %}
+            </div>   
+        </div>
+     </div>
+</div>
 
 <br>
 
 <div class="container">
    <center>
        <a href="https://uvcdat.llnl.gov/index.html">
-            <img id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
-        </a>
-        &nbsp;
-        <!--a href="https://github.com/UV-CDAT/uvcdat" role="button" class="btn btn-default fa fa-github"></a-->
-        <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-github"><i class="fa fa-github"></i></a> 
+           <img id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
+       </a>&nbsp;
+       <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-github"><i class="fa fa-github"></i></a> 
     </center>
-    <!--a href="https://uvcdat.llnl.gov/index.html" class="btn btn-block btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Learn more about UV-CDAT <span class="glyphicon glyphicon-arrow-left"></span></a>
-    <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-block btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Check out our GitHub <span class="glyphicon glyphicon-arrow-left"></span></a-->
 </div>
-<!--div class="container">
-  <div class="row">
-    <div class="jumbotron">
-        <center>
-            <h1>Analytics data stored here.</h1-->
-            <!--% if user.is_authenticated %}-->
-                <!--a class="btn btn-default" href="/logout">Logout</a-->
-            <!--% else %}-->
-                <!--a class="btn btn-default" href="/login">Login</a-->
-                <!--a href="url 'login.show_login' %}">Click here</a-->
-            <!--% endif %}
-        </center>
+
+<br><br>
+
+<div id="ucarouselExampleIndicators" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="7"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="8"></li>
+  </ol>
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_cubed_sphere_volume.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_cubed_sphere_volume.png" alt="First slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_multiplot.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_multiplot.png" alt="Second slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_sphu_surface.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_sphu_surface.png" alt="Third slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_sphu_volume.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_sphu_volume.png" alt="Fourth slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_temperature_anomaly.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_temperature_anomaly.png" alt="Fifth slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_uwnd_slice.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_uwnd_slice.png" alt="Sixth slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_wnd_vector.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_wnd_vector.png" alt="Seventh slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3d_uwnd_volume.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_uwnd_volume.png" alt="Eighth slide">
+      </a>
+    </div>
+    <div class="item">
+      <a class="slide_link" href="https://uvcdat.llnl.gov/examples/BlueMarble_huss_jja_clim.html">
+        <img src="https://uvcdat.llnl.gov/gallery/fullsize/BlueMarble_huss_jja_clim.png" alt="Ninth slide">
+      </a>
     </div>
   </div>
-</div-->
-<!--center>
-    <svg width="100" height="100">
-        <circle style="stroke: #808080; fill: #F0F8FF; " r="40" cx="50" cy="50"></circle>
-    </svg>
-</center>
-<br-->
 
-<!--center>
-<svg width="720" height="120">
-  <circle cx="40" cy="60" r="5.656854249492381" style="fill:steelblue;"></circle>
-  <circle cx="80" cy="60" r="7.54983443527075" style="fill:steelblue;"></circle>
-  <circle cx="120" cy="60" r="10.583005244258363" style="fill:steelblue;"></circle>
-</svg>
+  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
 
-</center>
+<br>
 
-<script type="text/javascript">
-var svg = d3.select("svg");
-var circle = svg.selectAll("circle")
-    .data([32, 57, 112, 293]);
-var circleEnter = circle.enter().append("circle");
-circleEnter.attr("cy", 60);
-circleEnter.attr("cx", function(d, i) { return i * 100 + 30; });
-circleEnter.attr("r", function(d) { return Math.sqrt(d); });
-</script-->
 {% endblock content %} 

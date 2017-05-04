@@ -2,13 +2,13 @@
 
 {% block content %}
 {% load staticfiles %}
-<link href="{% static 'css/help.css' %}" rel="stylesheet">
+<link href="{% static 'css/help/help.css' %}" rel="stylesheet">
 
 <div class="container">
     <div id="feature-carousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="item active">
-                <center><h2>UVC-DAT Analytics Help Page</h2></center>
+                <center><h2>UV-CDAT Analytics Help Page</h2></center>
             </div>
         </div>
     </div>
@@ -16,7 +16,7 @@
 
 <br>
 <div class="container">
-    <center><p id="help_page">Please contact our support team at <span id="help_email">uvcdat-support@llnl.gov</span> if you have any questions, concerns, or comments.</p></center>
+    <center><p id="help_page">Please contact our support team at <!--span id="help_email"--><a href="mailto:uv-cdat-support@llnl.gov">uvcdat-support@llnl.gov</a><!--/span--> if you have any questions, concerns, or comments.</p></center>
 </div>
         
 

@@ -128,6 +128,8 @@ def get_session(request):
     session = retrieve_session(request.GET, request)
     return JsonResponse({"token": str(session.token)})
 
+def doesthis(request):
+    return render_to_response('doesthis.html', {}, context_instance=RequestContext(request))
 
 # exempt logEvent from CSRF protection, or programs will not be able to
 # submit their statistics!

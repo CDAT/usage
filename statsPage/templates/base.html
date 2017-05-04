@@ -1,12 +1,12 @@
 {% load staticfiles %}
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
-<link href="{% static 'css/footer.css' %}" rel="stylesheet">
-<link href="{% static 'css/social.css' %}" rel="stylesheet">
+<link href="{% static 'css/base/footer.css' %}" rel="stylesheet">
+<link href="{% static 'css/base/social.css' %}" rel="stylesheet">
 
 <!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{% static 'js/social.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/base/social.js' %}"></script>
 <!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
 <!-- http://bootsnipp.com/snippets/featured/social-buttons-for-bootstrap -->
 <!-- http://lipis.github.io/bootstrap-social/ -->
@@ -47,7 +47,7 @@
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Session Stats<b class="caret"></b></a>
                         <ul role="menu" class="dropdown-menu">
                            <li><a href="/stats/platform_bar/">Platform Stats</a></li>
-                           <li><a href="/stats/calendar_data/">Duration Stats</a></li>
+                           <!--li><a href="/stats/calendar_data/">Duration Stats</a></li-->
                            <li><a href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
                         </ul>
                     </li>
@@ -56,15 +56,16 @@
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Function Stats<b class="caret"></b></a>
                         <ul role="menu" class="dropdown-menu">
                            <li><a href="/stats/most_used_pie/">Action Stats</a></li>
+                           <li><a href="/stats/nested_chart/">Function Chart</a></li>
                         </ul>
                     </li>
 
                     <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Testing Page<b class="caret"></b></a>
                         <ul role="menu" class="dropdown-menu">
-                           <li><a href="/stats/testing/">Testing Page</a></li>
-                           <li><a href="/stats/nested_chart/">Nested Chart Page</a></li>
-                           <li><a href="/stats/k_bro/">K Bro Page</a></li>
+                           <!--li><a href="/stats/testing/">Testing Page</a></li-->
+                           <!--li><a href="/stats/nested_chart/">Nested Chart Page</a></li-->
+                           <!--li><a href="/stats/k_bro/">K Bro Page</a></li-->
                         </ul>
                     </li>
 
@@ -73,7 +74,8 @@
                 <li><a href="/logout/">Logout</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/stats/survey/">Survey</a></li>
+                <li><a href="/log/doesthis/">Survey</a></li>
+                <!--li><a href="/stats/survey/">Survey</a></li-->
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/stats/help/">Help</a></li>
@@ -84,7 +86,8 @@
                 <li><a href="/stats">Home</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/stats/survey/">Survey</a></li>
+                <li><a href="/log/doesthis/">Survey</a></li>
+                <!--li><a href="/stats/survey/">Survey</a></li-->
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/stats/help/">Help</a></li>

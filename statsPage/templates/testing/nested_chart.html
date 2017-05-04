@@ -3,12 +3,27 @@
 {% block content %}
 {% load staticfiles %}
 <!-- https://davidwalsh.name/array-insert-index -->
+<!-- http://stackoverflow.com/questions/22627791/google-chart-line-chart-turn-off-tooltip-for-a-single-column -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 <div id="hidden_div" style="display:none"></div>
 <div id="visible_div" style="height:300px"></div>
 
 <script type="text/javascript">
+  var col_1 = 0;
+  var col_2 = 0;
+  var col_3 = 0;
+  var col_4 = 0;
+  var col_5 = 0;
+  var col_6 = 0;
+  var col_7 = 0;
+  var draw_col_1 = 1;
+  var draw_col_2 = 1;
+  var draw_col_3 = 1;
+  var draw_col_4 = 1;
+  var draw_col_5 = 1;
+  var draw_col_6 = 1;
+  var draw_col_7 = 1;
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawTooltipCharts);
 
@@ -108,31 +123,45 @@
     ['picker', 0, 0, 15.0, 0, 0, 0],
     ['statis', 0, 0, 12.7, 0, 0, 0]*/
   //];
-
-  var primaryOptions = {
+  /*var primaryOptions = {
     title: 'MAIN CHART',
     is3D: 'true',
     legend: 'none',
     tooltip: {isHtml: true} // This MUST be set to true for your chart to show.
-  };
+  };*/
 
-  var tooltipOptions = {
+  /*var primaryOptions = {
+    title: 'MAIN CHART',
+    is3D: 'true',
+    legend: 'none',
+    tooltip: {isHtml: 1}, // This MUST be set to true for your chart to show.
+    series : {
+        0: { enableInteractivity: draw_col_2, tooltip: 'none'},
+        1: { enableInteractivity: draw_col_3, tooltip: 'none'},
+        2: { enableInteractivity: draw_col_4, tooltip: 'none'},
+        3: { enableInteractivity: draw_col_5, tooltip: 'none'},
+        4: { enableInteractivity: draw_col_6, tooltip: 'none'},
+        5: { enableInteractivity: draw_col_7, tooltip: 'none'},
+    }
+  };*/
+
+  /*var tooltipOptions = {
     title: 'Sub functions',
     is3D: 'true',
     legend: 'none'
-  };
+  };*/
 
   var okay = Array.from(tooltipData);
   var v;
   okay.shift();
   //alert(okay[0].length);
   //var col_1 = 0;
-  var col_2 = 0;
+  /*var col_2 = 0;
   var col_3 = 0;
   var col_4 = 0;
   var col_5 = 0;
   var col_6 = 0;
-  var col_7 = 0;
+  var col_7 = 0;*/
   var nest_length = okay[0].length;
   var i = 1;
   //alert("nest_length " + nest_length);
@@ -165,6 +194,7 @@
     i += 1;
   }
  
+  console.log(col_2 + "    " + col_3 + "   " + col_4 + "    " + col_5 + "    " + col_6 + "  " + col_7);
   //alert(/*col_1 + */"   " + col_2 + "    " + col_3 + "   " + col_4 + "    " + col_5 + "    " + col_6 + "  " + col_7);
   // Draws your charts to pull the PNGs for your tooltips.
   function drawTooltipCharts() {
@@ -183,22 +213,123 @@
 
         // Get the PNG of the chart and set is as the src of an img tag.
         var tooltipImg = '<img src="' + tooltipChart.getImageURI() + '">';
+        var hidetooltipImg = '<img style="display: none" src="' + tooltipChart.getImageURI() + '">';
 
-        //alert(primaryData[i]);
+        //alert(primaryData.length);
         // Add the new tooltip image to your data rows.
-        primaryData[i][2] = tooltipImg;
+        console.log(i);
+        if(i == 0){
+            //refers to blue slice tooltip
+            if(col_1 == 0){
+                draw_col_1 = 0; 
+                primaryData[i][2] = hidetooltipImg;
+            }
+            if(col_1 != 0){
+                draw_col_1 = 1; 
+                primaryData[i][2] = tooltipImg;
+            }
+        }
+        if(i == 1){
+            if(col_2 == 0){
+                draw_col_2 = 0; 
+                primaryData[i][2] = tooltipImg;
+            }
+            if(col_2 != 0){
+                draw_col_2 = 1; 
+                primaryData[i][2] = hidetooltipImg;
+            }
+        }
+        if(i == 2){
+            //refers to orange slice tooltip
+            if(col_3 == 0){
+                draw_col_3 = 0; 
+                primaryData[i][2] = hidetooltipImg;
+            }
+            if(col_3 != 0){
+                draw_col_3 = 1; 
+                primaryData[i][2] = tooltipImg;
+            }
+        }
+        if(i == 3){
+            //refers to green slice tooltip
+            if(col_4 == 0){
+                draw_col_4 = 0; 
+                primaryData[i][2] = tooltipImg;
+            }
+            if(col_4 != 0){
+                draw_col_4 = 1; 
+                primaryData[i][2] = hidetooltipImg;
+            }
+        }
+        if(i == 4){
+            //refers to purple slice tooltip
+            if(col_5 == 0){
+                draw_col_5 = 0; 
+                primaryData[i][2] = hidetooltipImg;
+            }
+            if(col_5 != 0){
+                draw_col_5 = 1; 
+                primaryData[i][2] = tooltipImg;
+            }
+        }
+        if(i == 5){
+            if(col_6 == 0){
+                draw_col_6 = 0; 
+                primaryData[i][2] = hidetooltipImg;
+            }
+            if(col_6 != 0){
+                draw_col_6 = 1; 
+                primaryData[i][2] = tooltipImg;
+            }
+        }
+        if(i == 6){
+            if(col_7 == 0){
+                draw_col_7 = 0; 
+                primaryData[i][2] = hidetooltipImg;
+           }
+            if(col_7 != 0){
+                draw_col_7 = 1; 
+                primaryData[i][2] = tooltipImg;
+           }
+        }
+        //primaryData[i][2] = tooltipImg;
 
       });
-      tooltipChart.draw(view, tooltipOptions);
+      //tooltipChart.draw(view, tooltipOptions);
+      tooltipChart.draw(view);
     }
     drawPrimaryChart();
   }
 
+  var primaryOptions = {
+    title: 'MAIN CHART',
+    is3D: 'true',
+    legend: 'none',
+    tooltip: {isHtml: 1}, // This MUST be set to true for your chart to show.
+    series : {
+        0: { },
+        1: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
+        2: { trigger: 'none', enableInteractivity: true, tooltip: 'none'},
+        3: { trigger: 'none', enableInteractivity: true, tooltip: 'none'},
+        4: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
+        5: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
+        6: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
+    }
+  };
+
+  /*var tooltipOptions = {
+    title: 'Sub functions',
+    is3D: 'true',
+    legend: 'none'
+  };*/
+
   function drawPrimaryChart() {
 
     var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Event');
-    data.addColumn('number', 'Highest Recent Viewership');
+    data.addColumn('string', 'Action Name');
+    data.addColumn('number', 'Number of uses');
+    //data.addColumn('string', 'Event');
+    //data.addColumn('number', 'Highest Recent Viewership');
 
     // Add a new column for your tooltips.
     data.addColumn({
