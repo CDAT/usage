@@ -11,7 +11,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from models import *
-from django.contrib.sessions.models import Session
+from django.contrib.sessions.models import Session as django_session
 
 if not settings.configured:
     settings.configure()
@@ -106,8 +106,8 @@ def retrieve_session(data, request):
         netInfo_obj.save()
 
     try:
-        session = Session.objects.get(pk=sesh_key)
-    except Session.DoesNotExist:
+        session = django_session.objects.get(pk=sesh_key)
+    except django_session.DoesNotExist:
         session = Session()
         session.user = user
         session.machine = machine
@@ -126,7 +126,7 @@ def get_session(request):
         return HttpResponseBadRequest("GET Only")
 
     session = retrieve_session(request.GET, request)
-    return JsonResponse({"token": str(session.token)})
+    return JsonResponse({"token": str(session.token.hex)})
 
 
 # exempt logEvent from CSRF protection, or programs will not be able to
@@ -184,7 +184,7 @@ def log_event(request, returnLogObject=False):
         return log
     else:
         if "token" not in request.POST:
-            return JsonResponse({"token": session.token})
+            return JsonResponse({"token": session.token.hex})
         return HttpResponse()
 
 
