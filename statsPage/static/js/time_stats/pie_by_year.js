@@ -62,7 +62,7 @@ function loadpiechart(thiso){
        }
     }
 
-    alert("this stuff: " + sept + " " + oct + " " + nov + " " + dec);
+    //alert("this stuff: " + sept + " " + oct + " " + nov + " " + dec);
 
     var data = google.visualization.arrayToDataTable([
       ['Month', 'Number of Sessions'],
