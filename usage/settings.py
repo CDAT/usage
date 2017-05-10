@@ -90,7 +90,7 @@ DATABASES = {
         'PORT': '',                            # Set to empty string for default. Not used with sqlite3.
         'OPTIONS': {
                     'init_command': 'SET innodb_strict_mode=1',
-                            },
+        },
     }
 }
 

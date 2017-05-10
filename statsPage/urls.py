@@ -20,6 +20,7 @@ urlpatterns = patterns('statsPage.views',
     url(r'^testing/$','testing'),
     url(r'^bar_sesh/$','bar_sesh'),
     url(r'^most_used_pie/$','most_used_pie'),
+    url(r'^table/$','table'),
 
     url(r'^k_bro/$','k_bro'),
     url(r'^nested_chart/$','nested_chart'),

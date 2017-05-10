@@ -12,7 +12,7 @@
 
   <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
      {% for key, values in deck.items %}
-            <li><a class="dropdown-item" href="#" onclick="loadpiechart({{values}})">For {{key}} data</a></li>
+            <li><a class="dropdown-item" href="#" onclick="loadpiechart({{values}}, {{key}})">For {{key}} data</a></li>
             <!--li><a class="dropdown-item" href="#" onclick='loadpiechart("{values|safe}}")'>For {key}} data</a></li-->
      {% endfor %}
       
@@ -21,13 +21,12 @@
 
 
 
-<div id="piechart" style="width: 900px; height: 500px;"></div>
+<div id="piechart" style="width: 1000px; height: 1000px;"></div>
 
 <script type="text/javascript">
-function loadpiechart(thiso){
+function loadpiechart(thiso, year){
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
-
   function drawChart() {
 
     var okay = thiso;
@@ -101,7 +100,12 @@ function loadpiechart(thiso){
     ]);
 
     var options = {
-      title: 'Number of sessions for 2016'
+      title: 'Number of sessions for ' + year,
+      pieHole: 0.4, 
+      legend: {position: 'top',
+               alignment: 'center',
+               textStyle: { fontSize: 16},
+               }
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('piechart'));

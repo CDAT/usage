@@ -4,10 +4,15 @@
 {% load staticfiles %}
 <!-- https://davidwalsh.name/array-insert-index -->
 <!-- http://stackoverflow.com/questions/22627791/google-chart-line-chart-turn-off-tooltip-for-a-single-column -->
+<!-- helpful for tooltip http://stackoverflow.com/questions/40250013/google-charts-tooltip-options -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<link href="{% static 'css/function_stats/nested_chart.css' %}" rel="stylesheet">
 
+<center>
+<h1>Most Used Actions</h1>
 <div id="hidden_div" style="display:none"></div>
-<div id="visible_div" style="height:300px"></div>
+<div id="visible_div" style="height:1000px"></div>
+</center>
 
 <script type="text/javascript">
   var col_1 = 0;
@@ -123,33 +128,6 @@
     ['picker', 0, 0, 15.0, 0, 0, 0],
     ['statis', 0, 0, 12.7, 0, 0, 0]*/
   //];
-  /*var primaryOptions = {
-    title: 'MAIN CHART',
-    is3D: 'true',
-    legend: 'none',
-    tooltip: {isHtml: true} // This MUST be set to true for your chart to show.
-  };*/
-
-  /*var primaryOptions = {
-    title: 'MAIN CHART',
-    is3D: 'true',
-    legend: 'none',
-    tooltip: {isHtml: 1}, // This MUST be set to true for your chart to show.
-    series : {
-        0: { enableInteractivity: draw_col_2, tooltip: 'none'},
-        1: { enableInteractivity: draw_col_3, tooltip: 'none'},
-        2: { enableInteractivity: draw_col_4, tooltip: 'none'},
-        3: { enableInteractivity: draw_col_5, tooltip: 'none'},
-        4: { enableInteractivity: draw_col_6, tooltip: 'none'},
-        5: { enableInteractivity: draw_col_7, tooltip: 'none'},
-    }
-  };*/
-
-  /*var tooltipOptions = {
-    title: 'Sub functions',
-    is3D: 'true',
-    legend: 'none'
-  };*/
 
   var okay = Array.from(tooltipData);
   var v;
@@ -212,7 +190,7 @@
       google.visualization.events.addListener(tooltipChart, 'ready', function() {
 
         // Get the PNG of the chart and set is as the src of an img tag.
-        var tooltipImg = '<img src="' + tooltipChart.getImageURI() + '">';
+        var tooltipImg = '<img style="width: 500px; height: auto;" src="' + tooltipChart.getImageURI() + '">';
         var hidetooltipImg = '<img style="display: none" src="' + tooltipChart.getImageURI() + '">';
 
         //alert(primaryData.length);
@@ -292,19 +270,25 @@
                 primaryData[i][2] = tooltipImg;
            }
         }
-        //primaryData[i][2] = tooltipImg;
 
       });
-      //tooltipChart.draw(view, tooltipOptions);
       tooltipChart.draw(view);
     }
     drawPrimaryChart();
   }
 
   var primaryOptions = {
-    title: 'MAIN CHART',
-    is3D: 'true',
-    legend: 'none',
+    title: 'Most Used Actions',
+    pieHole: 0.4,
+    pieSliceText: 'label',
+    pieSliceTextStyle: {fontSize: 16},
+    reverseCategories: true,
+    titleTextStyle: {fontSize: 25},
+    titlePosition: 'none',
+    legend: {position: 'top', 
+             alignment: 'center',
+             textStyle: { fontSize: 16},
+            },
     tooltip: {isHtml: 1}, // This MUST be set to true for your chart to show.
     series : {
         0: { },
@@ -314,14 +298,10 @@
         4: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
         5: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
         6: { trigger: 'none', enableInteractivity: false, tooltip: 'none'},
-    }
-  };
+    },
+    slices: {0: {color: '#e9ece5'}, 1: {color: '#c0dfd9'}, 2: {color: '#b3c2bf'}, 3: {color: '#e6cf8b'}, 4: {color: '#22264b'}, 5: {color: '#b56969'} },
 
-  /*var tooltipOptions = {
-    title: 'Sub functions',
-    is3D: 'true',
-    legend: 'none'
-  };*/
+  };
 
   function drawPrimaryChart() {
 
@@ -343,10 +323,8 @@
     data.addRows(primaryData);
 
     var visibleDiv = document.getElementById('visible_div');
-    // var primaryChart = new google.visualization.ColumnChart(visibleDiv);
     var primaryChart = new google.visualization.PieChart(visibleDiv);
     primaryChart.draw(data, primaryOptions);
-
   }
 
 function isOdd(num){ return num % 2; }

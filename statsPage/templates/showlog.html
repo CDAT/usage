@@ -3,6 +3,7 @@
 {% block content %}
 {% load staticfiles %}
 <link href="{% static 'css/base/slideshow.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'js/base/carousel_js.css' %}"></script>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,31 +24,228 @@
             <div class="item">
                 <center><h2>Here lives UV-CDAT usage statistical plots.</h2></center>
             </div>
-            <div class="item">
-                {% if user.is_authenticated %}
-                    <center><h2>Feel free to poke around :)</h2></center>
-                {% else %}
+            {% if user.is_authenticated %}
+            {% else %}
+                <div class="item">
+                    <!--center><h2>Feel free to poke around :)</h2></center-->
                     <center><h2>Please login to see the plots.</h2></center>
-                {% endif %}
-            </div>   
+                </div>   
+            {% endif %}
         </div>
      </div>
 </div>
 
 <br>
-
-<div class="container">
-   <center>
-       <a href="https://uvcdat.llnl.gov/index.html">
-           <img id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
-       </a>&nbsp;
-       <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-github"><i class="fa fa-github"></i></a> 
-    </center>
-</div>
-
+<center><p style="margin-right: 100px; margin-left: 100px;">
+    It is important for the developers of UVC-DAT to collect usage data for a multitude of reasons. These reasons range from improving the customer experience to allowing the developers to fine tune which functions are popular and which functions are not. This allows the developers to better prioritize their time and improves the UV-CDAT tool for better functionality and overall user experience. In other words, the developer will know which functions are popular enough to expand and improve upon for the ultimate user experience. Another reason is that it will allow developers to discover patterns when there are bug crashes – thus, developers will be able to fix issues with UCV-DAT faster because they’ll know precisely where the issue lies. These tools within UV-CDAT provide synergistic approaches to climate modeling, allowing researchers to quickly evaluate Earth system science output. 
+</p></center>
 <br><br>
 
-<div id="ucarouselExampleIndicators" class="carousel slide" data-ride="carousel">
+
+<div class="container">
+<div class="col-xs-12">
+
+    <!--div class="page-header">
+        <h3>Bootstrap 3.3.0</h3>
+        <p>Responsive Moving Box Carousel Demo</p>
+    </div-->
+        
+    <div class="carousel slide" id="myCarousel">
+        <div class="carousel-inner">
+            <div class="item active">
+                    <ul class="thumbnails">
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <!--a href="#"><img class="yourokay" style="height:240px; width: auto; display: block; margin: 0 auto;" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_cubed_sphere_volume.png" alt=""></a-->
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_cubed_sphere_volume.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_cubed_sphere_volume</h5>
+                                    <p>import vcs, cdms2, sys<br>
+                                       x = vcs.init()<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_cubed_sphere_volume.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_multiplot.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_multiplot</h5>
+                                    <p>import vcs, cdms2, sys<br>
+                                       x = vcs.init()<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_multiplot.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_sphu_surface.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_sphu_surface</h5>
+                                    <p>'''<br>
+                                       Created on Jun 18, 2014<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_sphu_surface.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_sphu_volume.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_sphu_volume</h5>
+                                    <p>'''<br>
+                                       Created on Jun 18, 2014<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_sphu_volume.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+              </div><!-- /Slide1 --> 
+            <div class="item">
+                    <ul class="thumbnails">
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_temperature_anomaly.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_temperature_anomaly</h5>
+                                    <p>'''<br>
+                                       Created on Jun 18, 2014<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_temperature_anomaly.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_uwnd_slice.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_uwnd_slice</h5>
+                                    <p>'''<br>
+                                       Created on Jun 18, 2014<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_uwnd_slice.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_wnd_vector.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_wnd_vector</h5>
+                                    <p>'''<br>
+                                       Created on Jun 18, 2014<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3D_wnd_vector.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_uwnd_volume.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>vcs3D_uwnd_volume</h5>
+                                    <p>'''<br>
+                                       Created on Jun 18, 2014<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/vcs3d_uwnd_volume.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+              </div><!-- /Slide2 --> 
+            <div class="item">
+                    <ul class="thumbnails">
+                        <li class="col-sm-3">   
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/BlueMarble_huss_jja_clim.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>BlueMarble_huss_jja_clim</h5>
+                                    <p>import vcs<br>
+                                       import cdms2 as cdms<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/BlueMarble_huss_jja_clim.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/BlueMarble_huss_satellite_view_daytimeview.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>BlueMarble_huss_satellite_view</h5>
+                                    <p>import vcs<br>
+                                       import cdms2 as cdms<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/BlueMarble_huss_satellite_view.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/BlueMarble_pr_jja_clim.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>BlueMarble_pr_jja_clim</h5>
+                                    <p>import vcs<br>
+                                       import cdms2 as cdms<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/BlueMarble_pr_jja_clim.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="col-sm-3">
+                            <div class="fff">
+                                <div class="thumbnail">
+                                    <a href="#"><img class="sl_img" src="https://uvcdat.llnl.gov/gallery/fullsize/example_200mb_wnd_ts_gph_djf_clim.png" alt=""></a>
+                                </div>
+                                <div class="caption">
+                                    <h5>Clim_DJF_200mb_wnd_ts_gph</h5>
+                                    <p>import vcs<br>
+                                       import cdms2 as cdms<br>
+                                       ...</p>
+                                    <a class="btn btn-mini" href="https://uvcdat.llnl.gov/examples/Clim_DJF_200mb_wnd_ts_gph.html">» Read More</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+              </div><!-- /Slide3 --> 
+        </div>
+       <nav>
+            <ul class="control-box pager">
+                <li><a data-slide="prev" href="#myCarousel" class=""><i class="glyphicon glyphicon-chevron-left"></i></a></li>
+                <li><a data-slide="next" href="#myCarousel" class=""><i class="glyphicon glyphicon-chevron-right"></i></li>
+            </ul>
+        </nav>
+       <!-- /.control-box -->   
+    </div><!-- /#myCarousel -->
+</div><!-- /.col-xs-12 -->          
+</div><!-- /.container -->
+
+<!--div id="ucarouselExampleIndicators" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
     <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -61,46 +259,55 @@
   </ol>
   <div class="carousel-inner" role="listbox">
     <div class="item active">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_cubed_sphere_volume.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_cubed_sphere_volume.png" alt="First slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_multiplot.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_multiplot.png" alt="Second slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_sphu_surface.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_sphu_surface.png" alt="Third slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_sphu_volume.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_sphu_volume.png" alt="Fourth slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_temperature_anomaly.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_temperature_anomaly.png" alt="Fifth slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_uwnd_slice.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_uwnd_slice.png" alt="Sixth slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3D_wnd_vector.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_wnd_vector.png" alt="Seventh slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/vcs3d_uwnd_volume.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/vcs3D_uwnd_volume.png" alt="Eighth slide">
       </a>
     </div>
     <div class="item">
+        ///included
       <a class="slide_link" href="https://uvcdat.llnl.gov/examples/BlueMarble_huss_jja_clim.html">
         <img src="https://uvcdat.llnl.gov/gallery/fullsize/BlueMarble_huss_jja_clim.png" alt="Ninth slide">
       </a>
@@ -115,8 +322,23 @@
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="sr-only">Next</span>
   </a>
-</div>
+</div-->
 
-<br>
+<br><br>
+
+<!--center><p>
+    It is important for the developers of UVC-DAT to collect user data for a multitude of reasons. These reasons range from improving the customer experience to allowing the developer to fine tune which functions are popular and which functions are not popular. This allows the developer to better prioritize their time. In other words, the developer will know which functions are popular enough to expand or improve on to truly affect the outcomes of UVC-DAT. Another reason is that it will allow developers to discover patterns when there are bug crashes – thus, developers will be able to fix issues with UCV-DAT faster because they’ll know precisely where the issue lies. Moreover, it will help developers uncover hidden patterns and unknown correlations – i.e. whether variable A affects variable B.
+</p></center>
+
+<br-->
+
+<!--div class="container">
+   <center>
+       <a href="https://uvcdat.llnl.gov/index.html">
+           <img id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
+       </a>&nbsp;
+       <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-github"><i class="fa fa-github"></i></a> 
+    </center>
+</div-->
 
 {% endblock content %} 

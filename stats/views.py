@@ -128,8 +128,26 @@ def get_session(request):
     session = retrieve_session(request.GET, request)
     return JsonResponse({"token": str(session.token)})
 
-def doesthis(request):
-    return render_to_response('doesthis.html', {}, context_instance=RequestContext(request))
+def take_survey(request):
+    json_keyfile_name = 'account_secret.json'
+    scopes = [
+        'https://www.googleapis.com/auth/surveys',
+        'https://www.googleapis.com/auth/surveys.readonly',
+        'https://www.googleapis.com/auth/userinfo.email',
+    ]
+
+    try:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile_name, scopes)
+        http = httplib2.Http()
+        auth_http = credentials.authorize(http)
+    except clientsecrets.InvalidClientSecretsError, e:
+        print ('Unable to setup authorization with the given credentials.  %s'
+               % e)
+        return
+
+    surveys_service = build('surveys', 'v2', http=auth_http)
+
+    return render_to_response('take_survey.html', {'surveys_service': surveys_service}, context_instance=RequestContext(request))
 
 # exempt logEvent from CSRF protection, or programs will not be able to
 # submit their statistics!

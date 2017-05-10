@@ -1,12 +1,30 @@
 {% load staticfiles %}
+<head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.2/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.2/css/bootstrap-select.min.css" type="text/css"/>
+
+<!--script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css" type="text/css"/-->
+
+<!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script-->
+
 <link href="{% static 'css/base/footer.css' %}" rel="stylesheet">
 <link href="{% static 'css/base/social.css' %}" rel="stylesheet">
 
-<!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{% static 'js/base/social.js' %}"></script>
+</head>
 <!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
 <!-- http://bootsnipp.com/snippets/featured/social-buttons-for-bootstrap -->
 <!-- http://lipis.github.io/bootstrap-social/ -->
@@ -32,6 +50,7 @@
                         <ul role="menu" class="dropdown-menu">
                            <li><a href="/stats/world_stats/">World Stats</a></li>
                            <li><a href="/stats/geo_stats/">Geo Stats</a></li>
+                           <li><a href="/stats/table/">Table Stats</a></li>
                         </ul>
                     </li>
 
@@ -62,10 +81,10 @@
 
                     <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Testing Page<b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu">
-                           <!--li><a href="/stats/testing/">Testing Page</a></li-->
+                        <ul role="menu" class="dropdown-menu"-->
+                           <li><a href="/stats/testing/">Testing Page</a></li>
                            <!--li><a href="/stats/nested_chart/">Nested Chart Page</a></li-->
-                           <!--li><a href="/stats/k_bro/">K Bro Page</a></li-->
+                           <li><a href="/stats/k_bro/">K Bro Page</a></li>
                         </ul>
                     </li>
 
@@ -73,10 +92,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/logout/">Logout</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="/log/doesthis/">Survey</a></li>
-                <!--li><a href="/stats/survey/">Survey</a></li-->
-            </ul>
+            <!--ul class="nav navbar-nav navbar-right">
+                <li><a href="/log/take_survey/">Survey</a></li>
+                <-li><a href="/stats/survey/">Survey</a></li->
+            </ul-->
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/stats/help/">Help</a></li>
             </ul>
@@ -85,10 +104,10 @@
             <ul class="nav navbar-nav navbar-left">
                 <li><a href="/stats">Home</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <!--ul class="nav navbar-nav navbar-right">
                 <li><a href="/log/doesthis/">Survey</a></li>
-                <!--li><a href="/stats/survey/">Survey</a></li-->
-            </ul>
+                <-li><a href="/stats/survey/">Survey</a></li->
+            </ul-->
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/stats/help/">Help</a></li>
             </ul>

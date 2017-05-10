@@ -464,7 +464,6 @@ def world_stats(request):
         for switch in perk[2]:
            for proof in switch[3]:
                 proof[1] = chase
-                print proof[1]
                 chase += 14
 
     return render_to_response('global_stats/world_stats.html', {'checked': checked, 'better': better, 'tijuana': tijuana, 'usually': usually, 'dup_total': dup_total, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
@@ -1115,4 +1114,315 @@ def most_used_pie(request):
     
    
 def k_bro(request):
-    return render_to_response('testing/k_bro.html', { 'data': "que bro" }, context_instance=RequestContext(request))
+    session = Session.objects.all()
+    start_s = []
+    end_s = []
+    for sesh in session:
+        start_s.append(sesh.startDate)
+        end_s.append(sesh.lastDate)
+    return render_to_response('testing/k_bro.html', { 'start_s': start_s, 'end_s': end_s, 'data': "que bro" }, context_instance=RequestContext(request))
+
+
+def table(request):
+    netinfo = NetInfo.objects.all()
+    countries = []
+    cities = []
+    testing = []
+    dup_testing = []
+    rement = 0
+    for net in netinfo:
+        breathe = []
+        breathe.append(net.country)
+        breathe.append(net.city)
+        cities.append(breathe)
+        if net.country not in countries: 
+            inc = []
+            countries.append(net.country)
+            # inc.append(net.country)
+            inc.append(net.country)
+            inc.append(rement)
+            testing.append(inc)
+            dup_region = []
+            d_region = "duplicate"
+            dup_region.append(d_region)
+            dup_region.append(inc)
+            dup_testing.append(dup_region)
+            rement += 25
+
+
+    netinfo_meta = NetInfo._meta
+    countries.pop(0)
+    testing.pop(0)
+    dup_testing.pop(0)
+    the_size = len(countries)
+
+    for test in dup_testing:
+        region = Region.objects.get(countries__country=test[1][0])
+        test[0] = region.name
+
+    cities.pop(0)
+    new_cities = []
+    no_reps = []
+
+    the_length = len(countries);
+    sub_city = float(1000)/the_length
+    mini_sub_city = 10
+
+    for cit in cities:
+        if cit[1] != "Unknown":
+            if cit[1] not in no_reps:
+                no_reps.append(cit[1])
+                c_name = pycountry.countries.get(alpha_2=cit[0])
+                cit[0] = c_name.name
+                new_c = []
+                new_c.append(cit[0])
+                new_c.append(cit[1])
+                new_c.append(mini_sub_city)
+                mini_sub_city += 14
+                new_cities.append(new_c)
+
+    for test in testing:
+        c_name = pycountry.countries.get(alpha_2=test[0])
+        test[0] = c_name.name
+
+    total = []
+    dup_total = []
+    dup_size = 25
+    la_size = 25
+    sub_num = sub_city
+    circle_num = 0
+    for country in countries:
+        rgb_num = random.randint(112, 220)
+        sec_rgb_num = random.randint(79, 220)
+        third_rgb_num = random.randint(79, 220)
+        # print rgb_num
+        la_count = 0
+        okay = []
+        dup_okay = []
+        for net in netinfo:
+            if net.country == country:
+               la_count += 1 
+        okay.append(country)
+        okay.append(la_count)
+        okay.append(la_size)
+
+        dup_okay.append(country)
+        dup_okay.append(la_count)
+        dup_okay.append(la_size)
+        stuff = "Hello"
+        okay.append(stuff)
+        okay.append(sub_num)
+        okay.append(rgb_num)
+        okay.append(sec_rgb_num)
+        okay.append(third_rgb_num)
+        okay.append(circle_num)
+
+        dup_okay.append(stuff)
+        dup_okay.append(sub_num)
+        dup_okay.append(rgb_num)
+        dup_okay.append(sec_rgb_num)
+        dup_okay.append(third_rgb_num)
+        dup_okay.append(circle_num)
+        sub_num += sub_city
+        la_size += 25
+        la_future_region = "shred"
+        region = Region.objects.get(countries__country=country)
+        ala_region = region.name
+        la_region = ala_region.encode('ascii', 'ignore')
+        dup_all = []
+        dup_region = []
+        dup_region.append(la_region)
+        dup_region.append(dup_size)
+        dup_all.append(dup_region)
+        # dup_all.append(la_region)
+        dup_all.append(dup_okay)
+        dup_total.append(dup_all)
+        # dup_total.append(la_region)
+        # dup_total.append(dup_okay)
+        dup_size += 25
+        total.append(okay)
+        
+    all_hits = 0
+    for tot in total:
+        all_hits += tot[1]
+
+    # dup_all_hits = 0
+    # for dup_tot in dup_total:
+    #     print dup_tot
+    #     # dup_all_hits += dup_tot[1]
+
+
+    for tot in total:
+        num_circ = float(tot[1])/all_hits
+        num_circ = num_circ * 100
+        num_circ = math.ceil(num_circ)
+        num_circ += 3.5
+        tot[8] = num_circ
+
+    for dup_tot in dup_total:
+        num_circ = float(dup_tot[1][1])/all_hits
+        num_circ = num_circ * 100
+        num_circ = math.ceil(num_circ)
+        num_circ += 3.5
+        dup_tot[1][8] = num_circ
+
+    for city in new_cities:
+        cool_count = 0
+        for net in netinfo:
+            if city[1] == net.city:
+                cool_count += 1
+        city.append(cool_count)
+
+    for tot in total:
+        c_name = pycountry.countries.get(alpha_2=tot[0])
+        tot[0] = c_name.name
+
+    for dup_tot in dup_total:
+        c_name = pycountry.countries.get(alpha_2=dup_tot[1][0])
+        dup_tot[1][0] = c_name.name
+
+    for dup_tot in dup_total:
+        ciu = []
+        for city in new_cities:
+            ciudad =[]
+            if city[0] == dup_tot[1][0]:
+                ciudad.append(city[1])
+                ciudad.append(city[2])
+                ciudad.append(city[3])
+                ciu.append(ciudad)
+        dup_tot[1][3] = ciu
+        
+    for tot in total:
+        ciu = []
+        for city in new_cities:
+            ciudad =[]
+            if city[0] == tot[0]:
+                ciudad.append(city[1])
+                ciudad.append(city[2])
+                ciudad.append(city[3])
+                ciu.append(ciudad)
+        tot[3] = ciu
+        
+    total = sorted(total, key=operator.itemgetter(1), reverse=True)
+    dup_total = sorted(dup_total, key=operator.itemgetter(1), reverse=True)
+    # dup_total = sorted(dup_total, key=lambda x : x[1][0])
+
+    dupregion_size = 67
+    for duptot in dup_total:
+        duptot[0][1] = dupregion_size
+        dupregion_size += 67
+
+    dupthis_size = 67
+    for duptot in dup_total:
+        duptot[1][2] = dupthis_size
+        dupthis_size += 67
+
+    this_size = 67
+    for tot in total:
+        tot[2] = this_size
+        this_size += 67
+
+    dupla_mini_sub_city = 10
+    for tot in dup_total:
+         tot[1][3] = sorted(tot[1][3], key=operator.itemgetter(2), reverse=True)
+         for each in tot[1][3]:
+             each[1] = dupla_mini_sub_city
+             dupla_mini_sub_city += 14
+
+    la_mini_sub_city = 10
+    for tot in total:
+        # print tot[3][0]
+        # tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
+        # tot[3] = sorted(tot[3], key=operator.itemgetter(2), reverse=True)
+        for each in tot[3]:
+            each[1] = la_mini_sub_city
+            la_mini_sub_city += 14
+
+    all_regions = []
+    for duptot in dup_total:
+        all_regions.append(duptot[0][0])
+
+    six_jobs = []
+    usually = []
+    for duptot in dup_total:
+        if duptot[0][0] not in six_jobs:
+            six_jobs.append(duptot[0][0])
+            usually.append(duptot)
+        if duptot[0][0] in six_jobs:
+            for ush in usually:
+                if ush[0][0] == duptot[0][0]:
+                    if ush[1][0] != duptot[1][0]:
+                        ush.append(duptot[1])
+
+
+    tijuana = copy.deepcopy(usually)
+    rollie = copy.deepcopy(dup_total)
+    better = []
+    tots = 0
+    for roll in rollie:
+       dup_rgb_num = random.randint(112, 220)
+       dup_sec_rgb_num = random.randint(79, 220)
+       dup_third_rgb_num = random.randint(79, 220)
+       que_bueno = len(roll)
+       bro = []
+       ice = []
+       i = 1
+       while i < que_bueno:
+           ice.append(roll[i])
+           i = i+1 
+       bro.append(roll[0][0])
+       bro.append(roll[0][1])
+       bro.append(ice)
+       bro.append(dup_rgb_num)
+       bro.append(dup_sec_rgb_num)
+       bro.append(dup_third_rgb_num)
+       bro.append(tots)
+       better.append(bro)
+
+
+    change_this = 107
+    dont_lose = copy.deepcopy(better)
+    checked = []
+    gaame = []
+    for dont in dont_lose:
+        if dont[0] not in gaame:
+            thiiis = copy.deepcopy(dont)
+            thiiis.pop(0)
+            thiiis.pop(0)
+            que = thiiis[0]
+            que_length = len(que)
+            total = 0
+            for each in que:
+                total += each[1]
+            dont[6] = total
+            gaame.append(dont[0])
+            checked.append(dont)
+
+    for cp in tijuana:
+        cp.pop(0)
+
+    checked = sorted(checked, key=operator.itemgetter(6), reverse=True)
+
+    for each in checked:
+        each[1] = change_this
+        change_this += 106
+
+    switch = 67
+    for each in checked:
+        for each_country in each[2]:
+            each_country[2] = switch
+            switch += 67
+
+    chase = 10
+    for perk in checked:
+        for switch in perk[2]:
+           for proof in switch[3]:
+                proof[1] = chase
+                chase += 14
+
+    # checked = json.dumps(checked)
+    return render_to_response('global_stats/table.html', {'checked': checked, 'better': better, 'tijuana': tijuana, 'usually': usually, 'dup_total': dup_total, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
+
+
+    # return render_to_response('global_stats/table.html', { 'new_cities': new_cities, 'countries': countries, 'cities': cities, 'data': "que bro" }, context_instance=RequestContext(request))
+    

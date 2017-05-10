@@ -19,8 +19,6 @@
      </div>
 </div>
 
-
-
 <div id="chart_div" style="width:1000; height:500;"></div>
 
 <script>
@@ -62,9 +60,9 @@
                         trigger: 'focus',
                         showColorCode:'true',
                         text:'percentage'
-                    },
+                        },
                     'slices':{}
-                    };
+                   };
 
     // Instantiate and draw our chart, passing in some options.
     var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
@@ -106,40 +104,6 @@
     */
     $("text:contains(" + "Retirement Investments" + ")").attr({'x':'276', 'y':'67'})
       }
-
-
-
-      /*google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-        var outer_len = cool_data.length;
-        var inner_len = cool_data[0].length;
-        var outer_array = [];
-        var i;
-        var j;
-        for(i = 0; i < outer_len; i++)
-        {
-            var inner_array = [];
-            for(j = 0; j < inner_len; j++)
-            {
-                inner_array.push(cool_data[i][j]);
-            }
-            outer_array.push(inner_array);
-        }
-            
-        var data = google.visualization.arrayToDataTable(outer_array);
-
-        var options = {
-          title: 'Action functions'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-        chart.draw(data, options);
-      }*/
-
 
 </script>
 
