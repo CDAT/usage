@@ -22,6 +22,9 @@ urlpatterns = patterns('statsPage.views',
     url(r'^most_used_pie/$','most_used_pie'),
     url(r'^table/$','table'),
 
+    url(r'^sessions_started_per_day', 'sessions_started_per_day'),
+    url(r'^unique_user_sesh', 'unique_user_sesh'),
+
     url(r'^k_bro/$','k_bro'),
     url(r'^nested_chart/$','nested_chart'),
 

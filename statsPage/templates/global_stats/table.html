@@ -4,51 +4,36 @@
 {% load staticfiles %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Country</th>
-            <th>Count</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for bet in checked %}
-            {% for each in bet.2 %}
-                <tr>
-                    <!--td>{{ each.0 }}</td-->
-                    <td>
-                        {{each.0}}<br>
-                        <table border="3" cellpadding="3" cellspacing="3">
-                           <td>2nd Table</td>
-                           <td>2nd Table</td>
-                           <tr>
-                           <td>2nd Table</td>
-                           <td>2nd Table</td>
-                           </tr>
-                           </table>
-                    <td>{{ each.1 }}</td>
-                </tr>
-            {% endfor %}
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <div id="feature-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <center><h2>Tables of all the regions, countries and cities that have used our software.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</h2></center>
+            </div>
+            <div class="item">
+                <center style="visibility:hidden"><h2>On the right, you'll see which countries have used our software along with how many times it's been used in that country.</h2></center>
+            </div>
+        </div>
+     </div>
+</div>
 
-            
-
-<!--table class="columns"-->
-<!--table>
-    <col width="500">
-    <col width="500">
+<table>
+    <col width="525">
+    <col width="525">
+    <col width="525">
     <tr>
+        <td><div id="regions_table_div"></div></td>
         <td><div id="country_table_div"></div></td>
         <td><div id="cities_table_div"></div></td>
     </tr>
-</table-->
+</table>
 
 <script type="text/javascript">
   google.charts.load('current', {'packages':['table']});
-  google.charts.setOnLoadCallback(drawTable);
+  google.charts.setOnLoadCallback(drawCountriesTable);
   google.charts.setOnLoadCallback(drawCitiesTable);
+  google.charts.setOnLoadCallback(drawRegionsTable);
 
   var call = {{checked|safe}};
   var countries = [];
@@ -71,13 +56,26 @@
     }
   }
 
-  function drawTable() {
+  var regions = [];
+  for(var i=0; i < call.length; i++){
+    nested = [];
+    nested.push(call[i][0]);
+    var total = 0;
+    for(var j=0; j < call[i][2].length; j++){
+        total += call[i][2][j][1];
+    }
+    nested.push(total);
+    regions.push(nested);
+  } 
+
+  function drawCountriesTable() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Country');
     data.addColumn('number', '# of Unique Users');
     data.addRows(countries);
+    data.sort({column: 1, desc: true});
     var table = new google.visualization.Table(document.getElementById('country_table_div'));
-    table.draw(data, {showRowNumber: true, width: '50%', height: '50%'});
+    table.draw(data, {showRowNumber: true, width: '250px', height: '500px'});
   }
 
   function drawCitiesTable() {
@@ -85,9 +83,21 @@
     data.addColumn('string', 'Cities');
     data.addColumn('number', '# of Unique Users');
     data.addRows(cities);
+    data.sort({column: 1, desc: true});
     var table = new google.visualization.Table(document.getElementById('cities_table_div'));
-    table.draw(data, {showRowNumber: true, width: '50%', height: '50%'});
+    table.draw(data, {showRowNumber: true, width: '250px', height: '500px'});
   }
+
+  function drawRegionsTable() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Regions');
+    data.addColumn('number', '# of Unique Users');
+    data.addRows(regions);
+    data.sort({column: 1, desc: true});
+    var table = new google.visualization.Table(document.getElementById('regions_table_div'));
+    table.draw(data, {showRowNumber: true, width: '250px', height: '500px'});
+  }
+
 </script>
 
 {% endblock content %}

@@ -36,6 +36,7 @@ import copy
 from ast import literal_eval
 from itertools import tee, islice, chain, izip
 from six import string_types
+import time
 
 
 if not settings.configured:
@@ -1420,9 +1421,89 @@ def table(request):
                 proof[1] = chase
                 chase += 14
 
-    # checked = json.dumps(checked)
+    checked = json.dumps(checked)
     return render_to_response('global_stats/table.html', {'checked': checked, 'better': better, 'tijuana': tijuana, 'usually': usually, 'dup_total': dup_total, 'ciu': ciu, 'total': total, 'testing': testing, 'countries': countries, 'netinfo': netinfo, 'netinfo_meta': netinfo_meta }, context_instance = RequestContext(request))
 
 
-    # return render_to_response('global_stats/table.html', { 'new_cities': new_cities, 'countries': countries, 'cities': cities, 'data': "que bro" }, context_instance=RequestContext(request))
     
+
+def sessions_started_per_day(request):
+    session = Session.objects.all()
+    dates = []
+    all_dates = []
+    for sesh in session:
+        nested = []
+        just_date = sesh.startDate.date()
+        str_date = sesh.startDate
+        strj_date = str_date.strftime('%Y,%-m,%d')
+        if strj_date not in dates:
+            count = 0
+            dates.append(strj_date)
+            nested.append(strj_date)
+            nested.append(count)
+        if nested:
+            all_dates.append(nested)
+
+    for sesh in session:
+        just_date = sesh.startDate.date()
+        str_date = sesh.startDate
+        strj_date = str_date.strftime('%Y,%-m,%d')
+        for all_d in all_dates:
+            if all_d[0] == strj_date:
+                all_d[1] += 1
+
+    for all_d in all_dates:
+        all_d[0] = json.dumps(all_d[0])
+
+    return render_to_response('sessions_started_per_day.html', {'all_dates': all_dates, 'dates': dates}, context_instance=RequestContext(request))
+
+
+
+def unique_user_sesh(request):
+    session = Session.objects.all()
+    dates = []
+    all_dates = []
+    for sesh in session:
+        nested = []
+        just_date = sesh.startDate.date()
+        str_date = sesh.startDate
+        strj_date = str_date.strftime('%Y,%-m,%d')
+        if strj_date not in dates:
+            count = 0
+            user_list = []
+            dates.append(strj_date)
+            nested.append(strj_date)
+            nested.append(count)
+            nested.append(user_list)
+        if nested:
+            all_dates.append(nested)
+
+    for all_d in all_dates:
+        for sesh in session:
+            just_date = sesh.startDate.date()
+            str_date = sesh.startDate
+            strj_date = str_date.strftime('%Y,%-m,%d')
+            if strj_date == all_d[0]:
+               if sesh.user not in all_d[2]:
+                    all_d[2].append(sesh.user)
+                    all_d[1] += 1
+
+    for all_d in all_dates:
+        all_d[0] = json.dumps(all_d[0])
+        all_d[2] = []
+
+    return render_to_response('unique_user_sesh.html', {'all_dates': all_dates, 'session': session}, context_instance=RequestContext(request))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
