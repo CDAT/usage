@@ -161,16 +161,13 @@ class LogEvent(models.Model):
     id = models.AutoField(primary_key=True, null=False, blank=False)
     source = models.ForeignKey(Source, null=False, blank=True)
     action = models.ForeignKey(Action, null=False, blank=True)
-    session = models.ForeignKey(Session,
-                                null=False,
-                                blank=False,
-                                related_name="events")
+    #session = models.ForeignKey(Session, null=True, blank=True, related_name="events")
     frequency = models.PositiveIntegerField()
 
     def __unicode__(self):
-        return "%s by User %s in Session %s" % (self.action.name,
-                                                self.session.user.hashed_username,
-                                                self.session.token)
+        return "%s by User %s in Session %s" % (self.action.name)
+                                              #  self.session.user.hashed_username,
+                                              #  self.session.token)
 
     class Meta:
         db_table = u'logevent'

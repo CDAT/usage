@@ -113,7 +113,7 @@ def retrieve_session(data, request):
         session.machine = machine
         session.netInfo = netInfo_obj
         session.startDate = datetime.now()
-        session.lastDate = session.startDate
+        session.lastDate = datetime.now()
         session.token = generate_session_token()
         session.expire_date = datetime.now() + timedelta(days=1)
         session.save()
@@ -150,8 +150,8 @@ def log_event(request, returnLogObject=False):
         except Session.DoesNotExist:
             return HttpResponseBadRequest("No matching session")
     
-    session.lastDate = datetime.now()
-    session.save()
+    #session.lastDate = datetime.now()
+    #session.save()
 
     source = request.POST["source"]
     source_version = request.POST["source_version"]
@@ -174,7 +174,7 @@ def log_event(request, returnLogObject=False):
         action_obj.save()
 
     log = LogEvent()
-    log.session = session
+    #log.session = session
     log.source = source_obj
     log.action = action_obj
     log.frequency = 1
@@ -183,8 +183,8 @@ def log_event(request, returnLogObject=False):
     if returnLogObject:
         return log
     else:
-        if "token" not in request.POST:
-            return JsonResponse({"token": session.token.hex})
+        #if "token" not in request.POST:
+        #    return JsonResponse({"token": session.token.hex})
         return HttpResponse()
 
 
