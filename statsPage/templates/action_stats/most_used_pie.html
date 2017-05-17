@@ -25,23 +25,18 @@
 
   /* Load the Visualization API and the piechart package. */
   google.load('visualization', '1.0', {'packages':['corechart']});
-
   /* Set a callback to run when the Google Visualization API is loaded. */
   google.setOnLoadCallback(drawChart);
   var cool_data = {{all_names|safe}};
-
   function drawChart() {
 
     var outer_len = cool_data.length;
     var inner_len = cool_data[0].length;
     var outer_array = [];
-    var i;
-    var j;
-    for(i = 0; i < outer_len; i++)
-    {
+    var i, j;
+    for(i = 0; i < outer_len; i++){
         var inner_array = [];
-        for(j = 0; j < inner_len; j++)
-        {
+        for(j = 0; j < inner_len; j++){
             inner_array.push(cool_data[i][j]);
         }
         outer_array.push(inner_array);

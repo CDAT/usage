@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+
+{% block title %}
+    {% if user.is_authenticated %}
+        It appears that you are already logged in
+    {% else %}
+        Login to see the UV-CDAT Analytics 
+    {% endif %}
+{% endblock title %}
+
 {% block content %}
 {% load static %}
 <!-- http://bootsnipp.com/snippets/featured/login-and-register-tabbed-form -->
@@ -15,19 +24,19 @@
     <head>
         <title>Log-in</title>
     </head-->
-<div class="container">
+<!--div class="container">
   <div class="row">
     <div class="jumbotron">
         <center>
-          {% if user.is_authenticated %}
+          % if user.is_authenticated %}
             <h2>It appears that you are already logged in.</h2>
-          {% else %}
+          % else %}
             <h2>Login to see the stored analytics.</h2>
-          {% endif %}
+          % endif %}
         </center>
     </div>
   </div>
-</div>
+</div-->
   <center>
     <!--body-->
         {% if error_message %}<p><strong><font color="#ff0000">{{ error_message }}</font></strong></p>{% endif %}

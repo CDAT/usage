@@ -21,12 +21,15 @@ urlpatterns = patterns('statsPage.views',
     url(r'^bar_sesh/$','bar_sesh'),
     url(r'^most_used_pie/$','most_used_pie'),
     url(r'^table/$','table'),
+    url(r'^nested_chart/$','nested_chart'),
 
     url(r'^sessions_started_per_day', 'sessions_started_per_day'),
     url(r'^unique_user_sesh', 'unique_user_sesh'),
 
     url(r'^k_bro/$','k_bro'),
-    url(r'^nested_chart/$','nested_chart'),
+    url(r'^testing_d3/$','testing_d3'),
+    url(r'^hierarchical/$','hierarchical'),
+    url(r'^pre_made/$','pre_made'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),

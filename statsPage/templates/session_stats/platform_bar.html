@@ -4,12 +4,14 @@
 <!-- https://bost.ocks.org/mike/bar/ this is helpful too -->
 <!-- https://bl.ocks.org -->
 
+{% block title %}Bar Graph of the Various Platforms{% endblock title %}
+
 {% block content %}
 {% load staticfiles %}
 <link href="{% static 'css/session_stats/platform_bar.css' %}" rel="stylesheet">
 <script type="text/javascript" src="{% static 'js/session_stats/platform_bar.js' %}"></script>
 
-<div class="container">
+<!--div class="container">
     <div id="feature-carousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="item active">
@@ -20,7 +22,7 @@
             </div>
         </div>
      </div>
-</div>
+</div-->
 
 <br>
 <div class="small_chart">

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Pie chart of session start dates by month.{% endblock title %}
+
 {% block content %}
 {% load staticfiles %}
 <link href="{% static 'css/time_stats/months_graph.css' %}" rel="stylesheet">
@@ -14,7 +16,7 @@
 <!-- this tutorial is important https://www.dashingd3js.com/d3js-axes -->
 <!-- http://d3pie.org/#generator-misc -->
 
-<div class="container">
+<!--div class="container">
     <div id="feature-carousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="item active">
@@ -25,9 +27,7 @@
             </div>
         </div>
      </div>
-</div>
-
-<br>
+</div-->
 
 <span id="months">{{months}}</span><br>
 <span id="monthdata">{{monthdata}}</span><br>
@@ -40,29 +40,5 @@
         </center>
     </div>
 </div>
-
-
-<!--br>
-<svg width="50" height="50">
-   <polyline fill="none" stroke="blue" stroke-width="2"
-     points="05,30
-             15,30
-             15,20
-             25,20
-             25,10
-             35,10" />
- </svg>
-<br><br-->
-<!--% for line in lineData %}
-    { line }}
-    % for l in line %}
-        { l }} : 
-    % endfor %}
-    <br>
-% endfor %}
-<br-->
-<!--svg width="50" height="50">
-  <line x1="5" y1="5" x2="40" y2="40" stroke="gray" stroke-width="5"  />
-</svg-->
 
 {% endblock content %}

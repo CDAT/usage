@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
+{% block title %}UV-CDAT Users Per Country{% endblock title %}
+
 {% block content %}
 {% load staticfiles %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="http://www.google.com/jsapi"></script>
 <script type="text/javascript" src="{% static 'js/global_stats/new_stats.js' %}"></script>
 
-<div class="container">
+<!--div class="container">
     <div id="feature-carousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="item active">
@@ -17,7 +19,7 @@
             </div>
         </div>
      </div>
-</div>
+</div-->
 
 <div class="container">
     <center>

@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
+{% block title %}UV-CDAT Analytics Help Page{% endblock title %}
+
 {% block content %}
 {% load staticfiles %}
 <link href="{% static 'css/help/help.css' %}" rel="stylesheet">
 
-<div class="container">
+<!--div class="container">
     <div id="feature-carousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="item active">
@@ -12,11 +14,23 @@
             </div>
         </div>
     </div>
-</div>
+</div-->
 
-<br>
 <div class="container">
-    <center><p id="help_page">Please contact our support team at <!--span id="help_email"--><a href="mailto:uv-cdat-support@llnl.gov">uvcdat-support@llnl.gov</a><!--/span--> if you have any questions, concerns, or comments.</p></center>
+    <center>
+        <p id="help_page">
+            Please contact our support team at 
+            <!--span id="help_email"-->
+                <a href="mailto:uv-cdat-support@llnl.gov">uvcdat-support@llnl.gov</a>
+            <!--/span--> 
+            if you have any questions, concerns, or comments.<!--/p></center>
+            <center-->
+            <br>
+            You can also visit the UV-CDAT Support Page at 
+            <a href="https://uvcdat.llnl.gov/contact.html">https://uvcdat.llnl.gov/contact.html</a> 
+            for other support resources.
+        </p>
+    </center>
 </div>
         
 

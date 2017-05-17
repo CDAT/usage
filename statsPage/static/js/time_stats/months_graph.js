@@ -37,7 +37,6 @@ $(document).ready(function() {
     }
 //});
 
-
 //$(document).ready(function() {
     var pie = new d3pie("pieChart", {
         /*"header": {
@@ -71,62 +70,62 @@ $(document).ready(function() {
                 {
                     "label": "January, " + total[0][1] + " active users",
                     "value": total[0][1],
-                    "color": "#c0dfd9"
+                    "color": "#f25329"
                 },
                 {
                     "label": "February, " + total[1][1] + " active users",
                     "value": total[1][1],
-                    "color": "#e9ece5"
+                    "color": "#ffc840"
                 },
                 {
                     "label": "March, " + total[2][1] + " active users",
                     "value": total[2][1],
-                    "color": "#b3c2bf"
+                    "color": "#0a356a"
                 },
                 {
                     "label": "April, " + total[3][1] + " active users",
                     "value": total[3][1],
-                    "color": "#3b3a36"
+                    "color": "#cc3e72"
                 },
                 {
                     "label": "May, " + total[4][1] + " active users",
                     "value": total[4][1],
-                    "color": "#edd9c0"
+                    "color": "#b29a76"
                 },
                 {
                     "label": "June, " + total[5][1] + " active users",
                     "value": total[5][1],
-                    "color": "#c9d8c5"
+                    "color": "#b6c894"
                 },
                 {
                     "label": "July, " + total[6][1] + " active users",
                     "value": total[6][1],
-                    "color": "#a8b6bf"
+                    "color": "#eec6e0"
                 },
                 {
                     "label": "August, " + total[7][1] + " active users",
                     "value": total[7][1],
-                    "color": "#7d4627"
+                    "color": "#827773"
                 },
                 {
                     "label": "September, " + total[8][1] + " active users",
                     "value": total[8][1],
-                    "color": "#e8edf3"
+                    "color": "#9871a8"
                 },
                 {
                     "label": "October, " + total[9][1] + " active users",
                     "value": total[9][1],
-                    "color": "#e6cf8b"
+                    "color": "#7eccbe"
                 },
                 {
                     "label": "November, " + total[10][1] + " active users",
                     "value": total[10][1],
-                    "color": "#b56969"
+                    "color": "#f25329"
                 },
                 {
                     "label": "December, " + total[11][1] + " active users",
                     "value": total[11][1],
-                    "color": "#22264b"
+                    "color": "#ffc840"
                 }
             ]
         },

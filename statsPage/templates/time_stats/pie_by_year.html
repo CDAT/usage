@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Pie chart of session start dates by year.{% endblock title %}
+
 {% block content %}
 {% load staticfiles %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -19,9 +21,9 @@
   </ul>
 </div>
 
-
-
+<center>
 <div id="piechart" style="width: 1000px; height: 1000px;"></div>
+</center>
 
 <script type="text/javascript">
 function loadpiechart(thiso, year){
