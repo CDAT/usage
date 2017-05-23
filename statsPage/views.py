@@ -39,6 +39,7 @@ from six import string_types
 import time
 from urllib import urlopen
 # from django.conf.settings import PROJECT_ROOT
+import collections
 
 
 if not settings.configured:
@@ -930,12 +931,6 @@ def nested_chart(request):
             if "." not in name:
                admire.append(name) 
 
-        for ad in admire:
-           down = []
-           for act in act_names:
-               if act in ad:
-                    pass
-
         yeah = []
         chillin = copy.deepcopy(all_names)
         for ad in admire:
@@ -978,7 +973,6 @@ def nested_chart(request):
             learn = []
             count = 0
             for previous, item, nxt in previous_and_next(elegance[1]):
-                # print "Item is now --> ", item, " ;; next is --> ", nxt, " ;; previous is --> ", previous
                 if isinstance(item, (int, long)):
                     count += item
                     if nxt is None:
@@ -1502,37 +1496,17 @@ def unique_user_sesh(request):
 
 def testing_d3(request):
     if request.user.is_authenticated():
-        # # bridge_to_hawaii = 'https://raw.githubusercontent.com/mledoze/countries/master/countries.json'
-        # # slick = json.loads(urlopen(bridge_to_hawaii).read())
-        # load_this = 'statsPage/static/countries.json'
-        # slick = json.loads(load_this)
-        # # json_data = open(load_this)
-        # # data1 = json.load(json_data)
-        # # data2 = json.dumps(json_data)
-        # # json_data.close()
-        # data2 = json.dumps(load_this)
-        PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-        file_ = open(os.path.join(PROJECT_ROOT, 'countries.json'))
-        data1 = json.load(file_)
-        data2 = json.dumps(data1)
-
-        return render_to_response('testing/testing_d3.html', {'data1': data1, 'data2': data2, 'file_': file_}, context_instance=RequestContext(request))
+        return render_to_response('testing/testing_d3.html', {}, context_instance=RequestContext(request))
     else:
         return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
+
 
 def hierarchical(request):
     if request.user.is_authenticated():
-        PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-        file_ = open(os.path.join(PROJECT_ROOT, 'flare.json'))
-        data1 = json.load(file_)
-        # data2 = json.dumps(data1)
-        data2 = "ey"
-        path = os.path.join(PROJECT_ROOT, 'flare.json')
-        print path
-        print path
-        return render_to_response('testing/hierarchical.html', {'PROJECT_ROOT': PROJECT_ROOT, 'path': path, 'data1': data1, 'data2': data2, 'file_': file_}, context_instance=RequestContext(request))
+        return render_to_response('testing/hierarchical.html', {}, context_instance=RequestContext(request))
     else:
         return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
+
 
 def pre_made(request):
     if request.user.is_authenticated():
@@ -1540,4 +1514,199 @@ def pre_made(request):
     else:
         return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
 
+
+def nested_d3(request):
+    if request.user.is_authenticated():
+        actions = Action.objects.all()
+        act_names = []
+        for act in actions:
+            if 'Error' not in act.name:
+                if ' ' in act.name:
+                    name = act.name
+                    new_name = name.split()
+                    act_names.append(new_name[0])
+                if ' ' not in act.name:
+                    act_names.append(act.name)
+
+        admire = []
+        # s = {}
+        o_list = []
+        for name in act_names:
+            if "." in name:
+                wee = name.partition('.')
+                admire.append(wee[0])
+                # s = collections.OrderedDict()
+                s = {}
+                inner = wee[2].partition('.')
+                if "." in wee[2]:
+                    away = wee[2].partition('.')
+                    # ant = collections.OrderedDict()
+                    ant = {}
+                    if '.' in away[2]:
+                        art = away[2].partition('.')
+                        # side = collections.OrderedDict()
+                        side = {}
+                        side[art[0]] = art[2]
+                        ant[away[0]] = side
+                        s[wee[0]] = ant
+                        # print art
+                    else:
+                        ant[away[0]] = away[2]
+                        s[wee[0]] = ant
+                else:    
+                    s[wee[0]] = wee[2]
+                o_list.append(s)
+            if "." not in name:
+                admire.append(name)
+                # o_list.append(name)
+            
+        first_l = []
+        for name in act_names:
+            # first_d = {}
+            first_d = collections.OrderedDict()
+            second_l = []
+            third_l = []
+            if "." in name:
+                part_name = name.partition('.')
+                first_d["key"] = part_name[0]
+                if "." in part_name[2]:
+                    # second_d = {}
+                    second_d = collections.OrderedDict()
+                    nested_name = part_name[2].partition('.')
+                    second_d["key"] = nested_name[0]
+                    if "." in nested_name[2]:
+                        # third_d = {}
+                        # fourth_d = {}
+                        third_d = collections.OrderedDict()
+                        fourth_d = collections.OrderedDict()
+                        fourth_l = []
+                        snested_name = nested_name[2].partition('.')
+                        third_d["key"] = snested_name[0]
+                        # third_d["value"] = snested_name[2]
+                        fourth_d["key"] = snested_name[2]
+                        fourth_d["values"] = 0
+                        fourth_l.append(fourth_d)
+                        third_d["values"] = fourth_l
+                        third_l.append(third_d)
+                        second_d["values"] = third_l
+                        second_l.append(second_d)
+                        first_d["values"] = second_l
+                        first_l.append(first_d)
+                    else:
+                        second_d["values"] = nested_name[2]
+                        second_l.append(second_d)
+                else:
+                    # afirst = {}
+                      afirst = collections.OrderedDict()
+                      af_list = []
+                      afirst["key"] = part_name[2]
+                      # first_d["lalavalue"] = part_name[2]
+                      afirst["values"] = 0
+                      af_list.append(afirst)
+                      first_d["values"] = af_list
+                      first_l.append(first_d)
+            else:
+                first_d["key"] = name
+                first_d["value"] = 0
+                first_l.append(first_d)
+
+        eighth_l = []
+        im_empty = 'empty'
+        dontchange = 0
+        total = 0
+        check = []
+        first_check = 0
+        for l in first_l:
+            for k, v in l.iteritems():
+                if type(v) is unicode:
+                    if v not in check:
+                        check.append(v)
+                        total = 0
+                if type(v) is list:
+                    for time in v:
+                        for f_k, f_v in time.iteritems():
+                            if type(f_v) is list:
+                                for i in f_v:
+                                    for s_k, s_v in i.iteritems():
+                                        if type(s_v) is list:
+                                            for o in s_v:
+                                                # im_empty = 'empty'
+                                                for i_k, i_v in o.iteritems():
+                                                    if i_v not in eighth_l:
+                                                        if type(i_v) is unicode:
+                                                            eighth_l.append(i_v)
+                                                    if i_v in eighth_l:
+                                                        if type(i_v) is unicode:
+                                                            if dontchange == 0:
+                                                                im_empty = i_v
+                                                                dontchange = 1
+                                                    if type(i_v) is int:
+                                                        if im_empty in eighth_l:
+                                                            total += 1
+                                                            # i_v += 1
+                                                            i_v = total
+                                                            o.update({i_k: i_v})
+
+
+
+        for l in first_l:
+            for k, v in l.iteritems():
+                if type(v) is list:
+                    for time in v:
+                        pass
+                        # print time
+                        # for f_k, f_v in time.iteritems():
+                        #     if type(f_v) is list:
+                        #         for i in f_v:
+                        #             for s_k, s_v in i.iteritems():
+                        #                 if type(s_v) is list:
+                        #                     for o in s_v:
+                        #                         for i_k, i_v in o.iteritems():
+                        #                             if type(i_v) is unicode:
+                        #                                 print i_v
+
+        # all_vals = collections.OrderedDict()
+        # all_list = []
+        # all_vals.update({"key": "usage"})
+        # all_vals.update({"values": first_l})
+        # all_list.append(all_vals)
+
+        d = {}
+        for ad in admire:
+            if ad not in d:
+                d[ad] = 1
+            else:
+                d[ad] += 1
+
+        time = collections.OrderedDict()
+        la_vals = []
+        for key, value in d.iteritems():
+            okay = collections.OrderedDict()
+            okay["key"] = key
+            okay["value"] = value
+            la_vals.append(okay) 
+
+        time.update({"key":"usage"})
+        time.update({"values":la_vals})
+        breathe = []
+        breathe.append(time)
+        
+        jsonData = json.dumps(d)
+        outer = {}
+        inner_vals = []
+        inner_vals.append(jsonData)
+        outer.update({'values':inner_vals})
+        outer.update({'key':'usage'})
+        outer_list = []
+        outer_list.append(outer)
+        new_jsonData = json.dumps(outer_list)
+        with open('statsPage/static/jsondata.json', 'w') as f:
+            json.dump(breathe, f)
+
+        with open('statsPage/static/testing.json', 'w') as f:
+            json.dump(first_l, f)
+
+        return render_to_response('testing/nested_d3.html', {'first_l': first_l, 'o_list': o_list}, context_instance=RequestContext(request))
+    else:
+        return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
 

@@ -30,6 +30,7 @@ urlpatterns = patterns('statsPage.views',
     url(r'^testing_d3/$','testing_d3'),
     url(r'^hierarchical/$','hierarchical'),
     url(r'^pre_made/$','pre_made'),
+    url(r'^nested_d3/$','nested_d3'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),

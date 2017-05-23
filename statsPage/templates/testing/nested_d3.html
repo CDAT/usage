@@ -1,80 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome to the D3 Testing page{% endblock title %}
+{% block title %}Welcome to the Nested D3 Testing page{% endblock title %}
 
 {% block content %}
 {% load staticfiles %}
 
-{{data2}}
-<!DOCTYPE html>
-<!--
-Generic treemap, based on http://bost.ocks.org/mike/treemap/
-
--->
 <html>
 <head>
-<meta charset="utf-8">
-<title>Zoomable treemap template</title>
-<style>
-
-#chart {
-  background: #fff;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.title {
-    font-weight: bold;
-    font-size: 24px;
-    text-align: center;
-    margin-top: 6px;
-    margin-bottom: 6px;
-}
-text {
-  pointer-events: none;
-}
-
-.grandparent text {
-  font-weight: bold;
-}
-
-rect {
-  fill: none;
-  stroke: #fff;
-}
-
-rect.parent,
-.grandparent rect {
-  stroke-width: 2px;
-}
-
-rect.parent {
-    pointer-events: none;
-}
-
-.grandparent rect {
-  fill: orange;
-}
-
-.grandparent:hover rect {
-  fill: #ee9700;
-}
-
-.children rect.parent,
-.grandparent rect {
-  cursor: pointer;
-}
-
-.children rect.parent {
-  fill: #bbb;
-  fill-opacity: .5;
-}
-
-.children:hover rect.child {
-  fill: #bbb;
-}
-
-</style>
+<title>Nested D3 Testing Page</title>
 </head>
+
+{% for fl in first_l %}
+    {{fl}}<br>
+{% endfor %}
+
+<!--% for k,l in las.items %}
+    { for p in l %}
+        {p}}<br>
+    % endfor %}
+% endfor %}-->
+
+<br><br>
+<!--% for o in o_list %}
+    % for key, value in o.items %}
+        {key}} &rarr; {value}} 
+        % if not value.vars %}
+            % for k, v in value.items %}
+                {k}} &rarr; {v}} &darr;
+                % if not v.vars %}
+                    % for llave, val in v.items %}
+                        {llave}} &rarr; {val}}<br>
+                    % endfor %}
+                % endif %}
+            % endfor %}
+        % endif %}
+    % endfor %}
+% endfor %}-->
 
 <body>
 <div id="chart"></div>
@@ -83,8 +44,6 @@ rect.parent {
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
-
-var countries = {{data2|safe}};
 
 window.addEventListener('message', function(e) {
     var opts = e.data.opts,
@@ -198,6 +157,7 @@ function main(o, data) {
   // of sibling was laid out in 1×1, we must rescale to fit using absolute
   // coordinates. This lets us use a viewport to zoom.
   function layout(d) {
+    //console.log(d);
     if (d._children) {
       treemap.nodes({_children: d._children});
       d._children.forEach(function(c) {
@@ -303,9 +263,9 @@ function main(o, data) {
 
   function text(text) {
     text.selectAll("tspan")
-        .attr("x", function(d) { return x(d.x) + 6; })
-    text.attr("x", function(d) { return x(d.x) + 6; })
-        .attr("y", function(d) { return y(d.y) + 6; })
+        .attr("x", function(d) { /*console.log(x);*/return x(d.x) + 6; })
+    text.attr("x", function(d) { /*console.log(x);*/return x(d.x) + 6; })
+        .attr("y", function(d) { /*console.log(y);*/return y(d.y) + 6; })
         .style("opacity", function(d) { return this.getComputedTextLength() < x(d.x + d.dx) - x(d.x) ? 1 : 0; });
   }
 
@@ -329,13 +289,16 @@ function main(o, data) {
   }
 }
 
-var countries_file = "/static/" + "countries.json";
+//var countries_file = "/static/" + "countries.json";
+//var countries_file = "/static/" + "jsondata.json";
+var countries_file = "/static/" + "testing.json";
+//var countries_file = "/static/" + "doesthis.json";
 if (window.location.hash === "") {
     //d3.json("countries.json", function(err, res) {
     d3.json(countries_file, function(err, res) {
         if (!err) {
-            console.log(res);
-            var data = d3.nest().key(function(d) { return d.region; }).key(function(d) { return d.subregion; }).entries(res);
+            //console.log(res);
+            var data = d3.nest().key(function(d) { /*console.log(d);*/return d.region; }).key(function(d) { /*console.log(d);*/return d.subregion; }).entries(res);
             main({title: "World Population"}, {key: "World", values: data});
         }
     });
@@ -344,8 +307,5 @@ if (window.location.hash === "") {
 </script>
 </body>
 </html>
-
-
-
 
 {% endblock content %}
