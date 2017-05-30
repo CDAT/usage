@@ -4,38 +4,12 @@
 
 {% block content %}
 {% load staticfiles %}
+<link href="{% static 'css/testing/nested_d3.css' %}" rel="stylesheet">
 
 <html>
 <head>
 <title>Nested D3 Testing Page</title>
 </head>
-
-{% for fl in first_l %}
-    {{fl}}<br>
-{% endfor %}
-
-<!--% for k,l in las.items %}
-    { for p in l %}
-        {p}}<br>
-    % endfor %}
-% endfor %}-->
-
-<br><br>
-<!--% for o in o_list %}
-    % for key, value in o.items %}
-        {key}} &rarr; {value}} 
-        % if not value.vars %}
-            % for k, v in value.items %}
-                {k}} &rarr; {v}} &darr;
-                % if not v.vars %}
-                    % for llave, val in v.items %}
-                        {llave}} &rarr; {val}}<br>
-                    % endfor %}
-                % endif %}
-            % endfor %}
-        % endif %}
-    % endfor %}
-% endfor %}-->
 
 <body>
 <div id="chart"></div>
@@ -124,7 +98,6 @@ function main(o, data) {
   initialize(root);
   accumulate(root);
   layout(root);
-  console.log(root);
   display(root);
 
   if (window.parent !== window) {
@@ -157,7 +130,6 @@ function main(o, data) {
   // of sibling was laid out in 1×1, we must rescale to fit using absolute
   // coordinates. This lets us use a viewport to zoom.
   function layout(d) {
-    //console.log(d);
     if (d._children) {
       treemap.nodes({_children: d._children});
       d._children.forEach(function(c) {
@@ -171,6 +143,9 @@ function main(o, data) {
     }
   }
 
+  var count = 0;
+  var que = 0;
+//if(que < 3){
   function display(d) {
     grandparent
         .datum(d.parent)
@@ -178,6 +153,10 @@ function main(o, data) {
       .select("text")
         .text(name(d));
 
+    console.log("here's keys for d: " + Object.keys(d));
+    console.log("here's values for d: " + Object.values(d));
+    //console.log("here's depth for d: " + Object.keys(depth));
+    console.log("here's depth value for d: " + Object.values(d)[6]);
     var g1 = svg.insert("g", ".grandparent")
         .datum(d)
         .attr("class", "depth");
@@ -185,8 +164,10 @@ function main(o, data) {
     var g = g1.selectAll("g")
         .data(d._children)
       .enter().append("g");
+    //console.log("here's g: " + g[0]);
 
     g.filter(function(d) { return d._children; })
+    //g.filter(function(d) { console.log((d._children).length); return d._children; })
         .classed("children", true)
         .on("click", transition);
 
@@ -222,13 +203,22 @@ function main(o, data) {
     g.selectAll("rect")
         .style("fill", function(d) { return color(d.key); });
 
+    //var que = 0;
+  //if(que < 3){
     function transition(d) {
       if (transitioning || !d) return;
       transitioning = true;
+      que += 1;
+      //console.log("the total of que: " + que);
+      if(que < 3){
+        //console.log("que is less than 3: " + que);
+      }
 
       var g2 = display(d),
-          t1 = g1.transition().duration(750),
-          t2 = g2.transition().duration(750);
+          t1 = g1.transition().duration(1000),
+          t2 = g2.transition().duration(1000);
+          //t1 = g1.transition().duration(750),
+          //t2 = g2.transition().duration(750);
 
       // Update the domain only after entering new elements.
       x.domain([d.x, d.x + d.dx]);
@@ -237,8 +227,17 @@ function main(o, data) {
       // Enable anti-aliasing during the transition.
       svg.style("shape-rendering", null);
 
+      //var count = 0;
       // Draw child nodes on top of parent nodes.
-      svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
+      svg.selectAll(".depth").sort(function(a, b) { 
+            count += 1;
+            //console.log("here's your count: " + count);
+            //var c = a.depth - b.depth; 
+            //console.log("a.depth: " + a.depth); 
+            //console.log("b.depth: " + b.depth); 
+            //console.log("a.depth-b.depth: " + c); 
+            return a.depth - b.depth; 
+      });
 
       // Fade-in entering text.
       g2.selectAll("text").style("fill-opacity", 0);
@@ -257,15 +256,17 @@ function main(o, data) {
         transitioning = false;
       });
     }
+//}
 
     return g;
   }
+//}
 
   function text(text) {
     text.selectAll("tspan")
-        .attr("x", function(d) { /*console.log(x);*/return x(d.x) + 6; })
-    text.attr("x", function(d) { /*console.log(x);*/return x(d.x) + 6; })
-        .attr("y", function(d) { /*console.log(y);*/return y(d.y) + 6; })
+        .attr("x", function(d) { return x(d.x) + 6; })
+    text.attr("x", function(d) { return x(d.x) + 6; })
+        .attr("y", function(d) { return y(d.y) + 6; })
         .style("opacity", function(d) { return this.getComputedTextLength() < x(d.x + d.dx) - x(d.x) ? 1 : 0; });
   }
 
@@ -283,6 +284,8 @@ function main(o, data) {
   }
 
   function name(d) {
+    /*console.log("d.parent value: " + d.parent);
+    console.log("d.key value: " + d.key);*/
     return d.parent
         ? name(d.parent) + " / " + d.key + " (" + formatNumber(d.value) + ")"
         : d.key + " (" + formatNumber(d.value) + ")";
@@ -297,9 +300,13 @@ if (window.location.hash === "") {
     //d3.json("countries.json", function(err, res) {
     d3.json(countries_file, function(err, res) {
         if (!err) {
-            //console.log(res);
-            var data = d3.nest().key(function(d) { /*console.log(d);*/return d.region; }).key(function(d) { /*console.log(d);*/return d.subregion; }).entries(res);
-            main({title: "World Population"}, {key: "World", values: data});
+            var data = d3.nest()
+                .key(function(d) { return d.key; })
+                .key(function(d) { return d.main_function; })
+                .key(function(d) { return d.subfunction; })
+                .key(function(d) { return d.super_sub; })
+                .entries(res);
+            main({title: "<h4>Actions Of UV-CDAT</h4>"}, {key: "Usage", values: data});
         }
     });
 }

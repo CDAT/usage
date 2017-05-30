@@ -1560,6 +1560,7 @@ def nested_d3(request):
                 admire.append(name)
                 # o_list.append(name)
             
+
         first_l = []
         for name in act_names:
             # first_d = {}
@@ -1607,15 +1608,21 @@ def nested_d3(request):
                       first_l.append(first_d)
             else:
                 first_d["key"] = name
-                first_d["value"] = 0
+                first_d["value"] = 1
+                # first_d["value"] = 0
                 first_l.append(first_d)
 
         eighth_l = []
+        fourth_l = []
         im_empty = 'empty'
+        s_empty = 'empty'
         dontchange = 0
+        s_change = 0
         total = 0
+        s_total = 0
         check = []
         first_check = 0
+        s_check = []
         for l in first_l:
             for k, v in l.iteritems():
                 if type(v) is unicode:
@@ -1625,6 +1632,18 @@ def nested_d3(request):
                 if type(v) is list:
                     for time in v:
                         for f_k, f_v in time.iteritems():
+                            if type(f_v) is int:
+                                if s_empty in s_check:
+                                    s_total += 1
+                                    f_v = s_total
+                                    time.update({f_k: f_v})
+                            if type(f_v) is unicode:
+                                if f_v not in s_check:
+                                    if s_change == 0:
+                                        s_empty = f_v
+                                        s_change = 1
+                                    s_check.append(f_v)
+                                    s_total = 0
                             if type(f_v) is list:
                                 for i in f_v:
                                     for s_k, s_v in i.iteritems():
@@ -1642,34 +1661,174 @@ def nested_d3(request):
                                                                 dontchange = 1
                                                     if type(i_v) is int:
                                                         if im_empty in eighth_l:
-                                                            total += 1
+                                                            total += 0
+                                                            #total += 1
                                                             # i_v += 1
                                                             i_v = total
                                                             o.update({i_k: i_v})
 
+        # for l in first_l:
+        #     for k, v in l.iteritems():
+        #         if type(v) is list:
+        #             for time in v:
+        #                 for f_k, f_v in time.iteritems():
+        #                     if type(f_v) is list:
+        #                         for i in f_v:
+        #                             for s_k, s_v in i.iteritems():
+        #                                 if type(s_v) is list:
+        #                                     for o in s_v:
+        #                                         for i_k, i_v in o.iteritems():
+        #                                             if type(i_v) is unicode:
+        #                                                 print i_v
 
-
+        outer_l = []
+        wee = 0
         for l in first_l:
+            # outer = {}
+            outer = collections.OrderedDict()
             for k, v in l.iteritems():
+                # outer = {}
+                if type(v) is int:
+                    outer["super_sub"] = "no super_sub"
+                    outer["subfunction"] = "no subfunction"
+                    outer["value"] = v
+                    outer_l.append(outer)
+                    wee = 1
+                if wee == 1:
+                    outer["main_function"] = "no function"
+                    wee = 0
+                if type(v) is unicode:
+                    # print v
+                    outer["key"] = v
+                    # outer["main_function"] = v
                 if type(v) is list:
                     for time in v:
-                        pass
-                        # print time
-                        # for f_k, f_v in time.iteritems():
-                        #     if type(f_v) is list:
-                        #         for i in f_v:
-                        #             for s_k, s_v in i.iteritems():
-                        #                 if type(s_v) is list:
-                        #                     for o in s_v:
-                        #                         for i_k, i_v in o.iteritems():
-                        #                             if type(i_v) is unicode:
-                        #                                 print i_v
+                        for f_k, f_v in time.iteritems():
+                            if type(f_v) is int:
+                                outer["super_sub"] = "no super_sub"
+                                outer["subfunction"] = "no subfunction"
+                                outer["value"] = f_v
+                                outer_l.append(outer)
+                            if type(f_v) is unicode:
+                                outer["main_function"] = f_v
+                                # outer["key"] = f_v
+                            if type(f_v) is list:
+                                for i in f_v:
+                                    for s_k, s_v in i.iteritems():
+                                        if type(s_v) is unicode:
+                                            outer["subfunction"] = s_v
+                                            outer["value"] = 1
+                                            outer_l.append(outer)
+                                        if type(s_v) is list:
+                                            for y in s_v:
+                                                for y_k, y_v in y.iteritems():
+                                                    if type(y_v) is unicode:
+                                                        outer["super_sub"] = y_v
+                            
 
-        # all_vals = collections.OrderedDict()
-        # all_list = []
-        # all_vals.update({"key": "usage"})
-        # all_vals.update({"values": first_l})
-        # all_list.append(all_vals)
+        prev = collections.OrderedDict()
+        i = 0
+        count = 0
+        for out in outer_l:
+            if i == 1:
+                prev = copy.deepcopy(out)
+            i += 1
+            if i == 2:
+                i = 0
+            # print "printing new for loop part"
+            # print prev
+            # print out
+            if prev == out:
+                # print "they match"
+                count += 1
+                # print "printing count: " 
+                # print count
+            if prev != out:
+                count = 0
+            # print "OUT I SAY"
+            for key, value in out.iteritems():
+                pass
+                # print key
+                # print value
+                           
+
+        equal_count = 0
+        added = 0
+        new_dict = []
+        for previous, item, nxt in previous_and_next(outer_l):
+            # print "                                    "
+            # print "Item is now", item, "next is", nxt, "previous is", previous
+            if (previous != None) and (nxt != None):
+                # if (previous == item) or (nxt == item):
+                if (previous == item) or (nxt == item):
+                    if previous == item:
+                        if added == 0:
+                            new_dict.append(previous)
+                            added = 1
+                        equal_count += 1
+                        # print "previous is equal to item"
+                    elif nxt == item:
+                        if added == 0:
+                            new_dict.append(nxt)
+                            added = 1
+                        equal_count += 1
+                        # print "nxt is equal to item"
+                    # print previous
+                    # print item
+                    # print nxt
+                    # print equal_count
+                # if (previous != item) and (nxt != item):
+                if previous != nxt:
+                    # print "HAAALLLOOO"
+                    # print previous
+                    # print item
+                    # print nxt
+                    equal_count = 0 
+                    added = 0
+            
+
+        # print  {v['subfunction']:v for v in outer_l}.values()
+        # print new_dict
+
+        new_list = []
+        new_list = copy.deepcopy(outer_l)
+        unique_docs = [] 
+        sawn = []
+        seen = ()
+        for new in new_list:
+            if(new['key'], new['main_function'], new['subfunction'], new['super_sub']) in seen:
+                continue
+            unique_docs.append(new)
+            sawn.append((new['key'], new['main_function'], new['subfunction'], new['super_sub']))
+
+
+        print unique_docs
+
+        # for out in outer_l:
+        #     if out not in new_list:
+        #         new_list.append(out)
+        #     elif out in new_list:
+        #         for new in new_list:
+        #             if new == out:
+        #                 print "WE MADE ITH EREEEEE"
+        #                 print(new==out)
+        #                 la_val = new["value"]
+        #                 la_val += 1
+        #                 # out["value"] += la_val
+        #                 new.update({"value": la_val})
+
+        # print new_list
+
+        ugh = collections.OrderedDict()
+        la_que = []
+        ugh.update({"key": "usage"})
+        ugh.update({"values": outer_l})
+        la_que.append(ugh)
+
+        j = 0
+        for l in outer_l:
+            # print j
+            j += 1
 
         d = {}
         for ad in admire:
@@ -1704,7 +1863,7 @@ def nested_d3(request):
             json.dump(breathe, f)
 
         with open('statsPage/static/testing.json', 'w') as f:
-            json.dump(first_l, f)
+            json.dump(outer_l, f)
 
         return render_to_response('testing/nested_d3.html', {'first_l': first_l, 'o_list': o_list}, context_instance=RequestContext(request))
     else:
