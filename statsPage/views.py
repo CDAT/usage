@@ -1516,18 +1516,23 @@ def pre_made(request):
 
 
 def nested_d3(request):
+    error_c = 0
     if request.user.is_authenticated():
         actions = Action.objects.all()
         act_names = []
         for act in actions:
-            if 'Error' not in act.name:
-                if ' ' in act.name:
-                    name = act.name
-                    new_name = name.split()
-                    act_names.append(new_name[0])
-                if ' ' not in act.name:
-                    act_names.append(act.name)
+            # if 'Error' not in act.name:
+              if 'Error' in act.name:
+                error_c += 1
+              if ' ' in act.name:
+                  name = act.name
+                  new_name = name.split()
+                  act_names.append(new_name[0])
+              if ' ' not in act.name:
+                  act_names.append(act.name)
 
+        print "printing error count"
+        print error_c
         admire = []
         # s = {}
         o_list = []
@@ -1608,8 +1613,8 @@ def nested_d3(request):
                       first_l.append(first_d)
             else:
                 first_d["key"] = name
-                first_d["value"] = 1
-                # first_d["value"] = 0
+                # first_d["value"] = 1
+                first_d["value"] = 0
                 first_l.append(first_d)
 
         eighth_l = []
@@ -1735,89 +1740,54 @@ def nested_d3(request):
             i += 1
             if i == 2:
                 i = 0
-            # print "printing new for loop part"
-            # print prev
-            # print out
             if prev == out:
-                # print "they match"
                 count += 1
-                # print "printing count: " 
-                # print count
             if prev != out:
                 count = 0
-            # print "OUT I SAY"
             for key, value in out.iteritems():
                 pass
-                # print key
-                # print value
                            
 
         equal_count = 0
         added = 0
         new_dict = []
         for previous, item, nxt in previous_and_next(outer_l):
-            # print "                                    "
-            # print "Item is now", item, "next is", nxt, "previous is", previous
             if (previous != None) and (nxt != None):
-                # if (previous == item) or (nxt == item):
                 if (previous == item) or (nxt == item):
                     if previous == item:
                         if added == 0:
                             new_dict.append(previous)
                             added = 1
                         equal_count += 1
-                        # print "previous is equal to item"
                     elif nxt == item:
                         if added == 0:
                             new_dict.append(nxt)
                             added = 1
                         equal_count += 1
-                        # print "nxt is equal to item"
-                    # print previous
-                    # print item
-                    # print nxt
-                    # print equal_count
-                # if (previous != item) and (nxt != item):
                 if previous != nxt:
-                    # print "HAAALLLOOO"
-                    # print previous
-                    # print item
-                    # print nxt
                     equal_count = 0 
                     added = 0
             
-
-        # print  {v['subfunction']:v for v in outer_l}.values()
-        # print new_dict
-
         new_list = []
         new_list = copy.deepcopy(outer_l)
         unique_docs = [] 
         sawn = []
-        seen = ()
         for new in new_list:
-            if(new['key'], new['main_function'], new['subfunction'], new['super_sub']) in seen:
-                continue
-            unique_docs.append(new)
-            sawn.append((new['key'], new['main_function'], new['subfunction'], new['super_sub']))
+            if(new['key'], new['main_function'], new['subfunction'], new['super_sub']) in sawn:
+               for un in unique_docs:
+                    if (un['key'] == new['key']) and (un['main_function'] == new['main_function']) and (un['subfunction'] == new['subfunction']) and (un['super_sub'] == new['super_sub']):
+                        la_val = un['value']
+                        la_val += 1
+                        un.update({'value': la_val})
+            # if(new['key'], new['main_function'], new['subfunction'], new['super_sub']) in seen:
+            #     continue
+            elif(new['key'], new['main_function'], new['subfunction'], new['super_sub']) not in sawn:
+                seen = (new['key'], new['main_function'], new['subfunction'], new['super_sub'])
+                unique_docs.append(new)
+                sawn.append(seen)
 
 
         print unique_docs
-
-        # for out in outer_l:
-        #     if out not in new_list:
-        #         new_list.append(out)
-        #     elif out in new_list:
-        #         for new in new_list:
-        #             if new == out:
-        #                 print "WE MADE ITH EREEEEE"
-        #                 print(new==out)
-        #                 la_val = new["value"]
-        #                 la_val += 1
-        #                 # out["value"] += la_val
-        #                 new.update({"value": la_val})
-
-        # print new_list
 
         ugh = collections.OrderedDict()
         la_que = []
@@ -1827,7 +1797,6 @@ def nested_d3(request):
 
         j = 0
         for l in outer_l:
-            # print j
             j += 1
 
         d = {}
@@ -1863,9 +1832,10 @@ def nested_d3(request):
             json.dump(breathe, f)
 
         with open('statsPage/static/testing.json', 'w') as f:
-            json.dump(outer_l, f)
+            json.dump(new_list, f)
+        # json.dump(outer_l, f)
 
-        return render_to_response('testing/nested_d3.html', {'first_l': first_l, 'o_list': o_list}, context_instance=RequestContext(request))
+        return render_to_response('testing/nested_d3.html', {'new_list': new_list, 'first_l': first_l, 'o_list': o_list}, context_instance=RequestContext(request))
     else:
         return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
 

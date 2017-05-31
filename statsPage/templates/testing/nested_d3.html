@@ -32,7 +32,7 @@ var defaults = {
     format: ",d",
     title: "",
     width: 960,
-    height: 500
+    height: 960
 };
 
 function main(o, data) {
@@ -154,9 +154,9 @@ function main(o, data) {
         .text(name(d));
 
     console.log("here's keys for d: " + Object.keys(d));
-    console.log("here's values for d: " + Object.values(d));
+    //console.log("here's values for d: " + Object.values(d));
     //console.log("here's depth for d: " + Object.keys(depth));
-    console.log("here's depth value for d: " + Object.values(d)[6]);
+    //console.log("here's depth value for d: " + Object.values(d)[6]);
     var g1 = svg.insert("g", ".grandparent")
         .datum(d)
         .attr("class", "depth");
@@ -164,10 +164,10 @@ function main(o, data) {
     var g = g1.selectAll("g")
         .data(d._children)
       .enter().append("g");
-    //console.log("here's g: " + g[0]);
+    //console.log("here's g: " + g);
 
-    g.filter(function(d) { return d._children; })
     //g.filter(function(d) { console.log((d._children).length); return d._children; })
+    g.filter(function(d) { return d._children; })
         .classed("children", true)
         .on("click", transition);
 
@@ -193,6 +193,8 @@ function main(o, data) {
         .attr("class", "ptext")
         .attr("dy", ".75em")
 
+    console.log(t);
+
     t.append("tspan")
         .text(function(d) { return d.key; });
     t.append("tspan")
@@ -203,9 +205,23 @@ function main(o, data) {
     g.selectAll("rect")
         .style("fill", function(d) { return color(d.key); });
 
+    //noTransitionList = ["get", "climatology", "departure"];
+    var noTransitionList = ["get", "climatology", "departures", "no super_sub", "no function"]
+
+    //if d.key is in noTransitionList; return from function without doing anything
     //var que = 0;
   //if(que < 3){
     function transition(d) {
+      console.log("fire transition")
+      console.log("d.:", d )
+
+      for(var i=0; i < noTransitionList.length; i++){
+        if(d.key == noTransitionList[i]){
+            return;
+        }
+      }
+
+
       if (transitioning || !d) return;
       transitioning = true;
       que += 1;
@@ -220,6 +236,7 @@ function main(o, data) {
           //t1 = g1.transition().duration(750),
           //t2 = g2.transition().duration(750);
 
+      console.log(g2);
       // Update the domain only after entering new elements.
       x.domain([d.x, d.x + d.dx]);
       y.domain([d.y, d.y + d.dy]);
@@ -233,7 +250,7 @@ function main(o, data) {
             count += 1;
             //console.log("here's your count: " + count);
             //var c = a.depth - b.depth; 
-            //console.log("a.depth: " + a.depth); 
+            console.log("a.depth: " + a.depth); 
             //console.log("b.depth: " + b.depth); 
             //console.log("a.depth-b.depth: " + c); 
             return a.depth - b.depth; 
@@ -307,6 +324,7 @@ if (window.location.hash === "") {
                 .key(function(d) { return d.super_sub; })
                 .entries(res);
             main({title: "<h4>Actions Of UV-CDAT</h4>"}, {key: "Usage", values: data});
+            console.log("data in callback:", data)
         }
     });
 }
