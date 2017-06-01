@@ -1613,8 +1613,8 @@ def nested_d3(request):
                       first_l.append(first_d)
             else:
                 first_d["key"] = name
-                # first_d["value"] = 1
-                first_d["value"] = 0
+                first_d["value"] = 1
+                # first_d["value"] = 0
                 first_l.append(first_d)
 
         eighth_l = []
@@ -1667,7 +1667,7 @@ def nested_d3(request):
                                                     if type(i_v) is int:
                                                         if im_empty in eighth_l:
                                                             total += 0
-                                                            #total += 1
+                                                            # total += 1
                                                             # i_v += 1
                                                             i_v = total
                                                             o.update({i_k: i_v})
@@ -1703,7 +1703,6 @@ def nested_d3(request):
                     outer["main_function"] = "no function"
                     wee = 0
                 if type(v) is unicode:
-                    # print v
                     outer["key"] = v
                     # outer["main_function"] = v
                 if type(v) is list:
@@ -1731,23 +1730,6 @@ def nested_d3(request):
                                                         outer["super_sub"] = y_v
                             
 
-        prev = collections.OrderedDict()
-        i = 0
-        count = 0
-        for out in outer_l:
-            if i == 1:
-                prev = copy.deepcopy(out)
-            i += 1
-            if i == 2:
-                i = 0
-            if prev == out:
-                count += 1
-            if prev != out:
-                count = 0
-            for key, value in out.iteritems():
-                pass
-                           
-
         equal_count = 0
         added = 0
         new_dict = []
@@ -1770,6 +1752,9 @@ def nested_d3(request):
             
         new_list = []
         new_list = copy.deepcopy(outer_l)
+        for new in new_list:
+            print new['key']
+
         unique_docs = [] 
         sawn = []
         for new in new_list:
@@ -1779,15 +1764,23 @@ def nested_d3(request):
                         la_val = un['value']
                         la_val += 1
                         un.update({'value': la_val})
-            # if(new['key'], new['main_function'], new['subfunction'], new['super_sub']) in seen:
-            #     continue
             elif(new['key'], new['main_function'], new['subfunction'], new['super_sub']) not in sawn:
                 seen = (new['key'], new['main_function'], new['subfunction'], new['super_sub'])
                 unique_docs.append(new)
                 sawn.append(seen)
 
 
-        print unique_docs
+        no_names = []
+        for saw in unique_docs:
+            if saw['main_function'] == 'no function':
+               if (saw['key'] != 'genutil') and (saw['key'] != 'cdutil'):
+                   no_names.append(saw['key']) 
+            elif (saw['subfunction'] == 'no subfunction') and (saw['main_function'] != 'no function'):
+               no_names.append(saw['main_function']) 
+            elif (saw['super_sub'] == 'no super_sub') and (saw['main_function'] != 'no function') and (saw['subfunction'] != 'no subfunction'):
+               no_names.append(saw['subfunction']) 
+            elif (saw['super_sub'] != 'no super_sub') and (saw['main_function'] != 'no function') and (saw['subfunction'] != 'no subfunction'):
+               no_names.append(saw['super_sub']) 
 
         ugh = collections.OrderedDict()
         la_que = []
@@ -1833,9 +1826,9 @@ def nested_d3(request):
 
         with open('statsPage/static/testing.json', 'w') as f:
             json.dump(new_list, f)
-        # json.dump(outer_l, f)
 
-        return render_to_response('testing/nested_d3.html', {'new_list': new_list, 'first_l': first_l, 'o_list': o_list}, context_instance=RequestContext(request))
+        no_names = json.dumps(no_names)
+        return render_to_response('testing/nested_d3.html', {'no_names': no_names, 'new_list': new_list, 'first_l': first_l, 'o_list': o_list}, context_instance=RequestContext(request))
     else:
         return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
 
