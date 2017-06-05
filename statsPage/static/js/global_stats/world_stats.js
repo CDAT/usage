@@ -63,6 +63,7 @@ function get_regions(){
             tmp[k].style.display = 'block';
         }
     } 
+
 }
 
 
@@ -107,17 +108,18 @@ function add_vals(what){
     //console.log(what.value);
     for(var k=0; k < what.length; k++){
         if(what.options[k].selected){
-            console.log(what[k].value);
+            //console.log(what[k].value);
         }
     }
     for(var g=0; g < tooshay.length; g++){
         tooshay[g].style.display = 'block';
     }
+    console.log(what.value);
 }
 
 $(function() {  
     $('#waypoints_regions').on('hidden.bs.select', function (e) {
-      alert("what a stressful meeting");
+      alert("heyyyy");
     });
 });
 
@@ -147,24 +149,5 @@ $('#selectpicker-container').on('hide.bs.dropdown', function () {
   style: 'btn-info',
   size: 4
 });*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
