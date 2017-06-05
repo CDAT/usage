@@ -19,10 +19,6 @@ function loadpiechart(thiso){
     var nov = 0;
     var dec = 0;
 
-    /*for(var j = 0; j < all_data.length; j+=2) {
-        all_it.push(all_data[j];
-    } */   
-
     for(var i = 0; i < okay.length; i++) {
        if(okay[i] == 1){
             jan += 1; 
@@ -61,8 +57,6 @@ function loadpiechart(thiso){
             dec += 1;
        }
     }
-
-    //alert("this stuff: " + sept + " " + oct + " " + nov + " " + dec);
 
     var data = google.visualization.arrayToDataTable([
       ['Month', 'Number of Sessions'],

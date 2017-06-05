@@ -21,9 +21,7 @@ def show_login(request):
                 # login was successful
                 login(request, user)
                 redirect_addr = _sanitize_redirect(request.POST.get('redir', ''))
-                # redirect_addr = 'http://%s/%s' % (request.get_host(), redirect_addr)
                 redirect_addr = 'http://%s/%s' % (request.get_host(), redirect_addr + "stats/")
-                print redirect_addr
                 return HttpResponseRedirect(redirect_addr)
             else:
                 return render_to_response('login_form.html', {

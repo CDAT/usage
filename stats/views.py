@@ -280,18 +280,3 @@ def _censor_ip(ip):
     m = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3})', ip)
     return m.group(1) + ".0"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

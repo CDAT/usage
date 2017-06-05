@@ -543,7 +543,8 @@ def geo_stats(request):
         context = {}
         context['data'] = {'Python': 52.9, 'Jython': 1.6, 'Iron Python': 27.7}
         context['line_data'] = list(enumerate(range(1, 20)))
-        return render_to_response('global_stats/geo_stats.html', { 'array': json.dumps(array), 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
+        # return render_to_response('global_stats/geo_stats.html', { 'array': json.dumps(array), 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
+        return render_to_response('global_stats/d3_geo_stats.html', { 'array': json.dumps(array), 'forreal': forreal, 'countries': countries, 'passthis': passthis, 'bruh' : bruh, 'total': total, 'data': context['data'], 'line_data': context['line_data'] }, context_instance = RequestContext(request))
     else:
         return render_to_response('showlog.html', {}, context_instance = RequestContext(request))
 
@@ -1821,10 +1822,7 @@ def nested_d3(request):
         outer_list = []
         outer_list.append(outer)
         new_jsonData = json.dumps(outer_list)
-        with open('statsPage/static/jsondata.json', 'w') as f:
-            json.dump(breathe, f)
-
-        with open('statsPage/static/testing.json', 'w') as f:
+        with open('statsPage/static/nested_d3.json', 'w') as f:
             json.dump(new_list, f)
 
         no_names = json.dumps(no_names)

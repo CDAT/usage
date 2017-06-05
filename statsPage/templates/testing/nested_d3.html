@@ -283,12 +283,8 @@ function main(o, data) {
   }
 }
 
-//var countries_file = "/static/" + "countries.json";
-//var countries_file = "/static/" + "jsondata.json";
-var countries_file = "/static/" + "testing.json";
-//var countries_file = "/static/" + "doesthis.json";
+var countries_file = "/static/" + "nested_d3.json";
 if (window.location.hash === "") {
-    //d3.json("countries.json", function(err, res) {
     d3.json(countries_file, function(err, res) {
         if (!err) {
             var data = d3.nest()

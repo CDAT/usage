@@ -104,11 +104,8 @@ function get_cities(){
 
 function add_vals(what){
     var tooshay = document.getElementsByClassName(what.value);
-    //alert(what.selectedIndex);
-    //console.log(what.value);
     for(var k=0; k < what.length; k++){
         if(what.options[k].selected){
-            //console.log(what[k].value);
         }
     }
     for(var g=0; g < tooshay.length; g++){
@@ -119,7 +116,6 @@ function add_vals(what){
 
 $(function() {  
     $('#waypoints_regions').on('hidden.bs.select', function (e) {
-      alert("heyyyy");
     });
 });
 
