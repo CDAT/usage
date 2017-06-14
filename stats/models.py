@@ -165,9 +165,7 @@ class LogEvent(models.Model):
     frequency = models.PositiveIntegerField()
 
     def __unicode__(self):
-        return "%s by User %s in Session %s" % (self.action.name)
-                                              #  self.session.user.hashed_username,
-                                              #  self.session.token)
+        return "%s action" % self.action.name
 
     class Meta:
         db_table = u'logevent'
