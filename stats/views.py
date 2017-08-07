@@ -52,21 +52,16 @@ if hasattr(socket, 'setdefaulttimeout'):
 
 def retrieve_session(data, request):
     try:
-        thiss = request.environ
-        hashed_hostname = request.GET.get('hashed_hostname', '')
-        hashed_username = thiss["USER"]
+        hashed_hostname = data['hashed_hostname']
+        hashed_username = data['hashed_username']
         sesh_key = data
-        details = request.META.get('HTTP_USER_AGENT', '')
-        hello = details.partition(' ')
-        browser = hello[0].partition('/')
-        platform = browser[0]
-        platform_version = browser[2]
+        platform = data['platform']
+        platform_version = data['platform_version']
     except KeyError:
         return None
 
     machine = get_or_make_machine(platform, platform_version, hashed_hostname)
     user = get_or_make_user(hashed_username)
-
     uncensored_ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
 
     if uncensored_ip == '0.0.0.0' or uncensored_ip == '127.0.0.1':
@@ -155,10 +150,13 @@ def log_event(request, returnLogObject=False):
 
     source = request.POST["source"]
     source_version = request.POST["source_version"]
-
+    print "source = ", source
+    print "source_version = ", source_version
     try:
         source_obj = Source.objects.get(name=source, version=source_version)
+        print "found a source"
     except Source.DoesNotExist:
+        print "building a source"
         source_obj = Source()
         source_obj.name = source
         source_obj.version = source_version
