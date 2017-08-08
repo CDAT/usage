@@ -150,13 +150,9 @@ def log_event(request, returnLogObject=False):
 
     source = request.POST["source"]
     source_version = request.POST["source_version"]
-    print "source = ", source
-    print "source_version = ", source_version
     try:
         source_obj = Source.objects.get(name=source, version=source_version)
-        print "found a source"
     except Source.DoesNotExist:
-        print "building a source"
         source_obj = Source()
         source_obj.name = source
         source_obj.version = source_version
