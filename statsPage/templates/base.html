@@ -1,47 +1,153 @@
+{% load staticfiles %}
+<head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
 
-<!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
 
-<nav class="navbar navbar-default">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.2/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.2/css/bootstrap-select.min.css" type="text/css"/>
+
+<!--script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css" type="text/css"/-->
+
+<!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script-->
+
+<link href="{% static 'css/base/footer.css' %}" rel="stylesheet">
+<link href="{% static 'css/base/social.css' %}" rel="stylesheet">
+
+<script type="text/javascript" src="{% static 'js/base/social.js' %}"></script>
+</head>
+<!-- http://stackoverflow.com/questions/14720464/django-project-base-template -->
+<!-- http://bootsnipp.com/snippets/featured/social-buttons-for-bootstrap -->
+<!-- http://lipis.github.io/bootstrap-social/ -->
+
+<nav role="navigation" class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <ul class="nav navbar-nav">
-                {% if user.is_authenticated %}
-                    <li><a href="/">Home</a></li>
-
-                    <li><a href="{% url 'statsPage.views.show_error_log' %}">Errors</a></li>
-                    <li><a href="{% url 'stats.views.log_event' %}">Add log</a></li>
-
-                    <li><a href="{% url 'statsPage.views.show_debug' %}">Debug</a></li>
-                    <li><a href="{% url 'statsPage.views.show_debug_error' %}">Debug Error</a></li>
-
-                    <li><a href="{% url 'admin:stats_user_changelist' %}">User Stats</a></li>
-                    <li><a href="{% url 'admin:stats_source_changelist' %}">Source Stats</a></li>
-                    <li><a href="{% url 'admin:stats_machine_changelist' %}">Machine Stats</a></li>
-                    <li><a href="{% url 'admin:stats_logevent_changelist' %}">Changelist Stats</a></li>
-                    <li><a href="{% url 'admin:stats_error_changelist' %}">Error Stats</a></li>
-                    <li><a href="{% url 'admin:stats_action_changelist' %}">Action Stats</a></li>
-
-                    <li><a href="{% url 'admin:sites_site_changelist' %}">Sites</a></li>
-
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                {% else %}
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/login">Login</a></li>
-                {% endif %}
-           </ul>
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle nav</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand"><Brand</a>
         </div>
-    </div>
-</nav>
+        <!--div class="navbar-header"-->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            {% if user.is_authenticated %}<!--or current_path == '/stats/platform_bar/' %}-->
+            <ul class="nav navbar-nav">
+                    <li class="active"><a href="/stats">Home</a></li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Global Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/world_stats/">World Stats</a></li>
+                           <li><a href="/stats/geo_stats/">Geo Stats</a></li>
+                           <li><a href="/stats/table/">Table Stats</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Time Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/all_years_pie/">All Years Stats</a></li>
+                           <li><a href="/stats/pie_by_year/">By Year Stats</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Session Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <li><a href="/stats/platform_bar/">Platform Stats</a></li>
+                           <!--li><a href="/stats/calendar_data/">Duration Stats</a></li-->
+                           <li><a href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
+                           <li><a href="/stats/sessions_started_per_day/">Session Starts Per Day</a></li>
+                           <li><a href="/stats/unique_user_sesh/">Unique User Sesh</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Function Stats<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu">
+                           <!--li><a href="/stats/most_used_pie/">Action Stats</a></li-->
+                           <li><a href="/stats/nested_chart/">Most Used Actions</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Testing Page<b class="caret"></b></a>
+                        <ul role="menu" class="dropdown-menu"-->
+                           <li><a href="/stats/testing/">Testing Page</a></li>
+                           <li><a href="/stats/testing_d3/">Testing D3 Page</a></li>
+                           <li><a href="/stats/hierarchical/">Hierarchical D3 Page</a></li>
+                           <li><a href="/stats/pre_made/">Pre Made D3 Page</a></li>
+                           <li><a href="/stats/nested_d3/">Nested D3 Page</a></li>
+                           <!--li><a href="/stats/k_bro/">K Bro Page</a></li-->
+                           <!--li><a href="/stats/sessions_started_per_day/">Session Starts Per Day</a></li>
+                           <li><a href="/stats/unique_user_sesh/">Unique User Sesh</a></li-->
+                        </ul>
+                    </li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/logout/">Logout</a></li>
+            </ul>
+            <!--ul class="nav navbar-nav navbar-right">
+                <li><a href="/log/take_survey/">Survey</a></li>
+                <-li><a href="/stats/survey/">Survey</a></li->
+            </ul-->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/stats/help/">Help</a></li>
+            </ul>
+            {% else %}
+
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="/stats">Home</a></li>
+            </ul>
+            <!--ul class="nav navbar-nav navbar-right">
+                <li><a href="/log/doesthis/">Survey</a></li>
+                <-li><a href="/stats/survey/">Survey</a></li->
+            </ul-->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/stats/help/">Help</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/login">Login</a></li>
+            </ul>
+            {% endif %}
+        </div>
+   </div>
+</nav> 
+
+<div class="jumbotron">
+    <h1>&nbsp;{% block title %}{% endblock title %} ヽ(´▽`)/</h1>
+    <span><h2>&nbsp; ۹⌤_⌤۹ &nbsp; ヽ(^。^)丿 &nbsp; ٩(^ᴗ^)۶ &nbsp; (ٛɲ˃ ˑ̣̮ ˂ٛɳ) &nbsp; (*^▽^*) &nbsp; (⌯⌅⌄⌅) &nbsp; (^-^*)/ &nbsp; (o˘◡˘o) &nbsp; (ꐦ ´͈ ᗨ `͈ ) &nbsp;</h2></span>
+</div>
+ 
 
 <div class="container">
     {% block content %}
-
-
-
-
     {% endblock content %}
+</div>
+
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+
+ <div class="navbar navbar-default navbar-fixed-bottom">
+    <!--{% if request.get_full_path != "/stats/" %}-->
+        <a href="https://uvcdat.llnl.gov/index.html">
+            <img class="pull-left" id="footer_img" src="https://uvcdat.llnl.gov/images/uvcdat.png"></img>
+        </a>&nbsp;
+        <!--a href="https://github.com/UV-CDAT/uvcdat" role="button" class="btn btn-default fa fa-github"></a-->
+        <a href="https://github.com/UV-CDAT/uvcdat" class="btn btn-social-icon btn-lg btn-github"><i class="fa fa-github"></i></a>
+    <!--{% endif %}-->
 </div>

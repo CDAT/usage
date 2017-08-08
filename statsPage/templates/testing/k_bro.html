@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load staticfiles %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+{% for lala in end_s %}
+    {{ lala }} <br>
+{% endfor %}
+
+
+<html>
+  <head>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+          var dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('string', 'Country');
+          // Use custom HTML content for the domain tooltip.
+          dataTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+          dataTable.addColumn('number', 'Gold');
+          dataTable.addColumn('number', 'Silver');
+          dataTable.addColumn('number', 'Bronze');
+
+          dataTable.addRows([
+            ['USA', createCustomHTMLContent('https://upload.wikimedia.org/wikipedia/commons/2/28/Flag_of_the_USA.svg', 46, 29, 29), 46, 29, 29],
+            ['China', createCustomHTMLContent('https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_the_People%27s_Republic_of_China.svg', 38, 27, 23), 38, 27, 23],
+            ['UK', createCustomHTMLContent('https://upload.wikimedia.org/wikipedia/commons/a/ae/Flag_of_the_United_Kingdom.svg', 29, 17, 19), 29, 17, 19]
+          ]);
+
+          var options = {
+            title: 'London Olympics Medals',
+            colors: ['#FFD700', '#C0C0C0', '#8C7853'],
+            // This line makes the entire category's tooltip active.
+            focusTarget: 'category',
+            // Use an HTML tooltip.
+            tooltip: { isHtml: true }
+          };
+
+          // Create and draw the visualization.
+          new google.visualization.ColumnChart(document.getElementById('custom_html_content_div')).draw(dataTable, options);
+        }
+
+        function createCustomHTMLContent(flagURL, totalGold, totalSilver, totalBronze) {
+          return '<div style="padding:5px 5px 5px 5px;">' +
+              '<img src="' + flagURL + '" style="width:75px;height:50px"><br/>' +
+              '<table class="medals_layout">' + '<tr>' +
+              '<td><img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Gold_medal.svg" style="width:25px;height:25px"/></td>' +
+              '<td><b>' + totalGold + '</b></td>' + '</tr>' + '<tr>' +
+              '<td><img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Silver_medal.svg" style="width:25px;height:25px"/></td>' +
+              '<td><b>' + totalSilver + '</b></td>' + '</tr>' + '<tr>' +
+              '<td><img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Bronze_medal.svg" style="width:25px;height:25px"/></td>' +
+              '<td><b>' + totalBronze + '</b></td>' + '</tr>' + '</table>' + '</div>';
+        }
+
+
+            </script>
+          </head>
+          <body>
+            <!-- The next line rotates HTML tooltips by 30 degrees clockwise. -->
+            <style>div.google-visualization-tooltip { transform: rotate(30deg); }</style>
+            <div id="custom_html_content_div" style="width: 400px; height: 400px;"></div>
+          </body>
+        </html>
+
+{% endblock %}
+
+

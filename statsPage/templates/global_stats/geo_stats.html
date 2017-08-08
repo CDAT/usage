@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}UV-CDAT Users Per Country{% endblock title %}
+
+{% block content %}
+{% load staticfiles %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{% static 'js/global_stats/new_stats.js' %}"></script>
+
+<div class="container">
+    <center>
+        <div id="regions_div" style="width: 1000px; height: 900px;"></div>
+    </center>
+</div>
+
+
+<script type="text/javascript">
+google.charts.load('current', {'packages':['geochart']});
+google.charts.setOnLoadCallback(drawRegionsMap);
+
+function drawRegionsMap() {
+
+    var django = {{total|safe}};
+    var overall = new Array();
+    var first = 1;
+    var country = 0;
+    var hits = 1;
+    var k = 0;
+    while(k<1){
+        var othis = new Array();
+        othis.push("Country", "Hits");
+        overall.push(othis);
+        k = 1
+    }
+
+    for(var i = 0; i < django.length; i++) {
+        var cube = django[i];
+        var othis = new Array();
+        othis.push(django[i][country], django[i][hits]);
+        overall.push(othis);
+    }
+
+    var data = google.visualization.arrayToDataTable(overall);
+    var options = {
+            legend: {
+                textStyle: {
+                    color: '#b56969',
+                    fontSize: 16
+                }         
+            },
+            magnifyingGlass: {
+                enable: true,
+                zoomFactor: 5.0
+            },
+            colors: '#b56969',
+            tooltip: {
+               textStyle: {
+                    color: '#22264b'
+                },
+                showColorCode: true,
+                trigger: 'focus', 
+            }, 
+        };
+
+    var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+        chart.draw(data, options);
+}
+</script>
+
+
+{% endblock content %}

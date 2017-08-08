@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Bar Chart of the Session Durations{% endblock title %}
+
+{% block content %}
+{% load staticfiles %}
+<!-- https://developers.google.com/chart/interactive/docs/gallery/timeline -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!--https://developers.google.com/chart/interactive/docs/reference#DataTable-->
+<!-- your life is now complete https://developers.google.com/chart/interactive/docs/reference#DataTable -->
+<!-- in the above link, go to the API Summary, Methods link under DataTable Class -->
+
+<!--% for key, values in all_seshs.items %}
+    {key}}  values}} <br>
+% endfor %}-->
+
+<!--button onclick="plot_bars({all_seshs}})">Plot bar</button>
+<br-->
+    <div style="height: 1000px;" id="chart_div"></div>
+      
+<script>
+
+    var la_data = {{all_seshs|safe}};
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawBasic);
+
+    function drawBasic() {
+
+           var data = google.visualization.arrayToDataTable([
+             ['Time duration', 'Number of sessions', { role: 'style' }],
+             ['One Minute', la_data.one_min, '#f25329'],            // RGB value
+             ['One Hour', la_data.one_hour, '#ffc840'],            // English color name
+             ['Half day', la_data.half_day, '#5ca2f9'],
+             ['One day', la_data.one_day, '#de377c'],
+             ['One week', la_data.one_week, '#b29a76'],
+             ['Few weeks', la_data.few_weeks, '#b6c894'],
+             ['One month', la_data.one_month, '#eec6e0'],
+             ['Two months', la_data.two_month, '#827773'],
+             ['Three months plus', la_data.three_plus, '#9871a8'],
+          ]);
+
+          var options = {
+            title: 'Session duration and how many times a duration that long was achieved by users',
+            hAxis: {
+            },
+            vAxis: {
+            }
+          };
+
+          var chart = new google.visualization.ColumnChart(
+            document.getElementById('chart_div'));
+
+          chart.draw(data, options);
+        }
+
+</script>
+
+{% endblock content %}
+

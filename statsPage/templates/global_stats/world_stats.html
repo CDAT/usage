@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}UV-CDAT Users Dendogram{% endblock title %}
+
+{% block content %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'js/global_stats/world_stats.js' %}"></script>
+<!-- this helps for learning: http://app.rawgraphs.io -->
+<!-- this to: http://rawgraphs.io -->
+<!-- http://d3-generator.com -->
+<!-- this helps for multiple select search http://codepen.io/Rio517/pen/NPLbpP/ -->
+
+<script type="text/javascript">
+var truth, reg_truth, all_it, la_region;
+function hide_regions(elegance) {
+    la_region = elegance;
+    var fantastic = document.getElementsByClassName('hide_regions' + elegance);
+    if(reg_truth != 1){
+        for(var i = 0; i != fantastic.length; ++i){
+            fantastic[i].style.visibility = "visible"; 
+            reg_truth=1;
+        }
+    }
+    else if(reg_truth == 1){
+        for(var i = 0; i != fantastic.length; ++i){
+            fantastic[i].style.visibility = "hidden"; 
+            reg_truth=0;
+        }
+    }
+}
+
+function should_hide(abundant) {
+    all_it = abundant;
+    var brightness = document.getElementsByClassName('hide_cities' + abundant);
+    if(truth != 1){
+        for(var i = 0; i != brightness.length; ++i){
+            brightness[i].style.visibility = "visible"; 
+            truth=1;
+        }
+    }
+    else if(truth == 1){
+        for(var i = 0; i != brightness.length; ++i){
+            brightness[i].style.visibility = "hidden"; 
+            truth=0;
+        }
+    }
+}
+
+$(document).ready(function() {
+    $('.initlaclass').hide()
+    $('.cranberries').hide()
+    $('.huge_regions').on('click', function(){
+        $('.hide_regions' + la_region).show()
+    });
+    $('.big_cities').on('click', function(){
+        $('.hide_cities' + all_it).show()
+    });
+   
+$('#selectpicker-container').on('hide.bs.dropdown', function () {
+    alert('hide.bs.dropdown');
+})
+    /*$('#waypoints_regions').on('hide.bs.select', function (e) {
+      alert("what a stressful meeting");
+    });*/
+    /*$('#waypoints_regions').on('change',function(){
+        alert("changed");
+    });*/
+    /*var whatdafuqman = [];
+    //var contents = $(document.getElementById('waypoints_regions'));
+    var contents = $('#waypoints_regions')[0];
+    //alert(contents.length);
+    $.each(contents, function( index, value){
+        console.log(index + ' : ' + value);
+    });
+    var tired = [];
+    $.each(".regionz option:selected"), function(){
+        tired.push($(this).val());
+    };
+    console.log("tiiiiiiired");
+    console.log(tired);*/
+});
+
+</script>
+
+<button class="btn btn-default" onclick="show_regions()">Show/Hide all regions&nbsp;&nbsp;&nbsp;</button>
+<button class="btn btn-default" onclick="show_countries()">Show/Hide all countries</button>
+<button class="btn btn-default" onclick="show_cities()">Show/Hide all cities&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button><br><br>
+
+<!--div id="selectpicker-container">
+     <select class="selectpicker" multiple="true"  data-done-button="true"  data-live-search="true">
+        <option>Mustard</option>
+        <option>Ketchup</option>
+        <option>Relish</option>
+    </select>
+</div>
+<br-->
+
+<!--select class="selectpicker regionz" multiple id="waypoints_regions" style="height: 10%;" data-live-search="true" onchange="if (this.selectedIndex) add_vals(this);"-->
+<!--select class="selectpicker" multiple id="waypoints_regions" style="height: 10%;" data-live-search="true"-->
+<select class="selectpicker" multiple id="waypoints_regions" style="height: 10%;" data-live-search="true" onchange="add_vals(this);">
+    <option value="0"></option>
+    {% for bet in checked %}
+      <option value="regions{{bet.1}}" data-tokens="{{bet.0}}">{{bet.0}} &rarr; regions{{bet.1}}</option>
+    {% endfor %}
+</select><br>
+<button class="btn btn-default" onclick="get_regions()">Select Regions</button><br><br>
+
+<select class="selectpicker" multiple id="waypoints_countries" style="height: 10%;" data-live-search="true">
+    {% for bet in checked %}
+        {% for each in bet.2 %}
+           <!--option class="regions{{bet.1}} cranberries" value="countries{each.2}}" data-tokens="{{each.0}}">{{each.0}} , regions{{bet.1}}</option-->
+           <option class="regions{{bet.1}} cranberries" value="countries{{each.2}}" data-tokens="{{each.0}}">{{each.0}} &rarr; regions{{bet.1}}</option>
+           <!--option value="countries{{each.2}}" data-tokens="{{each.0}}">{{each.0}}</option-->
+        {% endfor %}
+    {% endfor %}
+</select><br>
+<button class="btn btn-default" onclick="get_countries()">Select Countries</button><br><br>
+
+<select class="selectpicker" multiple id="waypoints_cities" style="height: 10%;" data-live-search="true">
+    {% for bet in checked %}
+        {% for each in bet.2 %}
+          {% for city in each.3 %}
+              <option value="cities{{city.1}}" data-tokens="{{city.0}}">{{city.0}}</option>
+          {% endfor %}
+        {% endfor %}
+    {% endfor %}
+</select><br>
+<button class="btn btn-default" onclick="get_cities()">Select Cities</button><br><br>
+<br><br>
+<div class="container">
+    <center>
+        <svg width="1000" height="1500" xmlns="http://www.w3.org/2000/svg" version="1.1">
+            <g transform="translate(40,0)">
+                <g class="node" transform="translate(0,750)">
+                    <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                    <text dx="-8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: end;"></text>
+                </g>
+                {% for bet in checked %}
+                    <path class="link toggle_regions regions{{bet.1}}" d="M0,750C230,750 230,{{bet.1}} 230,{{bet.1}}" style="fill: none; stroke: rgb({{bet.3}}, {{bet.4}}, {{bet.5}}); stroke-width: 1px;"></path>
+                    <g class="huge_regions toggle_regions regions{{bet.1}}" onclick='hide_regions("{{bet.1}}")' class="node" transform="translate(230,{{bet.1}})">
+                        <circle r="7.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                        <text dx="8" dy="3" style="font-size: 12px; font-family: Arial, Helvetica; text-anchor: start;">{{bet.0}}, {{bet.6}}</text>
+                    </g>
+                    {% for each in bet.2 %}
+                        <path class="hide_regions{{bet.1}} initlaclass toggle_countries countries{{each.2}}" class="link" d="M230,{{bet.1}}C243.875,{{bet.1}} 343.75,{{each.2}} 458,{{each.2}}" style="fill: none; stroke: rgb({{bet.3}}, {{bet.4}}, {{bet.5}}); stroke-width: 1px;"></path>
+                        <g class="hide_regions{{bet.1}} initlaclass toggle_countries countries{{each.2}}" class="node" transform="translate(458, {{each.2}})">
+                            <circle class="big_cities hide_regions{{bet.1}}" onclick='should_hide("{{each.2}}")' r="{{each.8}}" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                            <text dx="8" dy="3" style="font-size: 12px; font-family: Arial, Helvetica; text-anchor: start;">{{each.0}}, {{each.1}}</text>
+                        </g>
+                        {% for city in each.3 %}
+                            <path class="hide_cities{{each.2}} initlaclass hide_regions{{bet.1}} toggle_cities cities{{city.1}}" class="link" d="M458.75,{{each.2}}C515.625,{{city.1}} 515.625,{{city.1}} 687.5,{{city.1}}" style="fill: none; stroke: rgb({{bet.3}}, {{bet.4}}, {{bet.5}}); stroke-width: 1px;"></path>
+                            <g class="hide_cities{{each.2}} initlaclass hide_regions{{bet.1}} toggle_cities cities{{city.1}}" class="node" transform="translate(687.5,{{city.1}})">
+                                <circle r="4.5" style="fill: rgb(238, 238, 238); stroke: rgb(153, 153, 153); stroke-width: 1px;"></circle>
+                                <text dx="8" dy="3" style="font-size: 11px; font-family: Arial, Helvetica; text-anchor: start;">{{city.0}}, {{city.2}}</text>
+                            </g>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+            </g>
+        </svg>
+    </center>
+</div>
+
+{% endblock content %}
+
+
