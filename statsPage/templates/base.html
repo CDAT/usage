@@ -44,57 +44,42 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
             {% if user.is_authenticated %}<!--or current_path == '/stats/platform_bar/' %}-->
             <ul class="nav navbar-nav">
-                    <li class="active"><a href="/stats">Home</a></li>
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Global Stats<b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu">
-                           <li><a href="/stats/world_stats/">World Stats</a></li>
-                           <li><a href="/stats/geo_stats/">Geo Stats</a></li>
-                           <li><a href="/stats/table/">Table Stats</a></li>
-                        </ul>
-                    </li>
+                <li class="active"><a href="/stats">Home</a></li>
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">Global Stats<b class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu">
+                        <li><a href="/stats/world_stats/">World Stats</a></li>
+                        <li><a href="/stats/geo_stats/">Geo Stats</a></li>
+                        <li><a href="/stats/table/">Table Stats</a></li>
+                    </ul>
+                </li>
 
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Time Stats<b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu">
-                           <li><a href="/stats/all_years_pie/">All Years Stats</a></li>
-                           <li><a href="/stats/pie_by_year/">By Year Stats</a></li>
-                        </ul>
-                    </li>
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">Time Stats<b class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu">
+                        <li><a href="/stats/all_years_pie/">All Years Stats</a></li>
+                        <li><a href="/stats/pie_by_year/">By Year Stats</a></li>
+                    </ul>
+                </li>
 
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Session Stats<b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu">
-                           <li><a href="/stats/platform_bar/">Platform Stats</a></li>
-                           <!--li><a href="/stats/calendar_data/">Duration Stats</a></li-->
-                           <li><a href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
-                           <li><a href="/stats/sessions_started_per_day/">Session Starts Per Day</a></li>
-                           <li><a href="/stats/unique_user_sesh/">Unique User Sesh</a></li>
-                        </ul>
-                    </li>
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">Session Stats<b class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu">
+                        <li><a href="/stats/platform_bar/">Platform Stats</a></li>
+                        <!--li><a href="/stats/calendar_data/">Duration Stats</a></li-->
+                        <li><a href="/stats/bar_sesh/">Bar Chart Dur Stats</a></li>
+                        <li><a href="/stats/sessions_started_per_day/">Session Starts Per Day</a></li>
+                        <li><a href="/stats/unique_user_sesh/">Unique User Sesh</a></li>
+                    </ul>
+                </li>
 
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Function Stats<b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu">
-                           <!--li><a href="/stats/most_used_pie/">Action Stats</a></li-->
-                           <li><a href="/stats/nested_chart/">Most Used Actions</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Testing Page<b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu"-->
-                           <li><a href="/stats/testing/">Testing Page</a></li>
-                           <li><a href="/stats/testing_d3/">Testing D3 Page</a></li>
-                           <li><a href="/stats/hierarchical/">Hierarchical D3 Page</a></li>
-                           <li><a href="/stats/pre_made/">Pre Made D3 Page</a></li>
-                           <li><a href="/stats/nested_d3/">Nested D3 Page</a></li>
-                           <!--li><a href="/stats/k_bro/">K Bro Page</a></li-->
-                           <!--li><a href="/stats/sessions_started_per_day/">Session Starts Per Day</a></li>
-                           <li><a href="/stats/unique_user_sesh/">Unique User Sesh</a></li-->
-                        </ul>
-                    </li>
-
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">Function Stats<b class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu">
+                        <!--li><a href="/stats/most_used_pie/">Action Stats</a></li-->
+                        <li><a href="/stats/nested_chart/">Most Used Actions</a></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/logout/">Logout</a></li>
@@ -127,8 +112,7 @@
 </nav> 
 
 <div class="jumbotron">
-    <h1>&nbsp;{% block title %}{% endblock title %} ヽ(´▽`)/</h1>
-    <span><h2>&nbsp; ۹⌤_⌤۹ &nbsp; ヽ(^。^)丿 &nbsp; ٩(^ᴗ^)۶ &nbsp; (ٛɲ˃ ˑ̣̮ ˂ٛɳ) &nbsp; (*^▽^*) &nbsp; (⌯⌅⌄⌅) &nbsp; (^-^*)/ &nbsp; (o˘◡˘o) &nbsp; (ꐦ ´͈ ᗨ `͈ ) &nbsp;</h2></span>
+    <h1>&nbsp;{% block title %}{% endblock title %}</h1>
 </div>
  
 

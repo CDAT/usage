@@ -10,7 +10,6 @@ urlpatterns = patterns('statsPage.views',
     # /
     url(r'^$','show_log'),
     url(r'^help/$','help'),
-    url(r'^survey/$','survey'),
     url(r'^platform_bar/$','platform_bar'),
     url(r'^all_years_pie/$','all_years_pie'),
     url(r'^world_stats/$','world_stats'),
@@ -22,15 +21,8 @@ urlpatterns = patterns('statsPage.views',
     url(r'^most_used_pie/$','most_used_pie'),
     url(r'^table/$','table'),
     url(r'^nested_chart/$','nested_chart'),
-
     url(r'^sessions_started_per_day', 'sessions_started_per_day'),
     url(r'^unique_user_sesh', 'unique_user_sesh'),
-
-    url(r'^k_bro/$','k_bro'),
-    url(r'^testing_d3/$','testing_d3'),
-    url(r'^hierarchical/$','hierarchical'),
-    url(r'^pre_made/$','pre_made'),
-    url(r'^nested_d3/$','nested_d3'),
 
     # /log/errors
     url(r'^errors/$','show_error_log'),
