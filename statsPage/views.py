@@ -1673,20 +1673,6 @@ def nested_d3(request):
                                                             i_v = total
                                                             o.update({i_k: i_v})
 
-        # for l in first_l:
-        #     for k, v in l.iteritems():
-        #         if type(v) is list:
-        #             for time in v:
-        #                 for f_k, f_v in time.iteritems():
-        #                     if type(f_v) is list:
-        #                         for i in f_v:
-        #                             for s_k, s_v in i.iteritems():
-        #                                 if type(s_v) is list:
-        #                                     for o in s_v:
-        #                                         for i_k, i_v in o.iteritems():
-        #                                             if type(i_v) is unicode:
-        #                                                 print i_v
-
         outer_l = []
         wee = 0
         for l in first_l:
