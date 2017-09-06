@@ -15,7 +15,6 @@ css/
 passwd.txt
 scripts/
 env/
-/static
 db.sqlite3
 migrations
 .idea/
