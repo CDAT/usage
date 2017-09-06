@@ -10,11 +10,11 @@ GeoIP.tar.gz
 *.komodoproject
 *.db
 *.log
-admin/
-css/
 passwd.txt
 scripts/
 env/
 db.sqlite3
 migrations
 .idea/
+.DS_Store
+static/.DS_Store
