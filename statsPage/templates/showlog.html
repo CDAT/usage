@@ -5,6 +5,7 @@
 {% block content %}
 {% load staticfiles %}
 <link href="{% static 'css/base/slideshow.css' %}" rel="stylesheet">
+<link href="{% static 'css/base/stats_home.css' %}" rel="stylesheet">
 <script type="text/javascript" src="{% static 'js/base/carousel_js.css' %}"></script>
 <!DOCTYPE html>
 <html>
@@ -31,29 +32,29 @@
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/all_years_pie/"><img class="sl_img" src="http://i.imgur.com/vxVPsId.png" alt=""></a>
+                                    <a href="/stats/all_years_pie/"><img class="sl_img" src="{% static 'all_years_pie.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/table/"><img class="sl_img" src="http://i.imgur.com/m33OMCZ.png" alt=""></a>
+                                    <a href="/stats/table/"><img class="sl_img" src="{% static 'stats_table.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/nested_chart/"><img class="sl_img" src="http://i.imgur.com/bKtMyCn.png" alt=""></a>
+                                    <a href="/stats/nested_chart/"><img class="sl_img" src="{% static 'nested_chart.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/sessions_started_per_day/"><img class="sl_img" src="http://i.imgur.com/J6SyvNj.png" alt=""></a>
-                                </div>
+                                    <a href="/stats/sessions_started_per_day/"><img class="sl_img" src="{% static 'sessions_started_per_day.png' %}" alt=""></a>
+                                </div> 
                             </div>
                         </li>
                     </ul>
@@ -63,28 +64,28 @@
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/geo_stats/"><img class="sl_img" src="http://i.imgur.com/9sFc3lb.png" alt=""></a>
+                                    <a href="/stats/geo_stats/"><img class="sl_img" src="{% static 'geo_stats.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/world_stats/"><img class="sl_img" src="http://i.imgur.com/1Lin8cS.png" alt=""></a>
+                                    <a href="/stats/world_stats/"><img class="sl_img" src="{% static 'world_stats.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/bar_sesh/"><img class="sl_img" src="http://i.imgur.com/KGrX28U.png" alt=""></a>
+                                    <a href="/stats/bar_sesh/"><img class="sl_img" src="{% static 'bar_sesh.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/platform_bar/"><img class="sl_img" src="http://i.imgur.com/bPm0n8U.png" alt=""></a>
+                                    <a href="/stats/platform_bar/"><img class="sl_img" src="{% static 'platform_bar.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
@@ -95,28 +96,21 @@
                         <li class="col-sm-3">   
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/pie_by_year/"><img class="sl_img" src="http://i.imgur.com/7GyRFzb.png" alt=""></a>
+                                    <a href="/stats/pie_by_year/"><img class="sl_img" src="{% static 'pie_by_year.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/nested_chart/"><img class="sl_img" src="http://i.imgur.com/HnpGRiK.png" alt=""></a>
+                                    <a href="/stats/nested_chart/"><img class="sl_img" src="{% static 'nested_chart_2.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
                         <li class="col-sm-3">
                             <div class="fff">
                                 <div class="thumbnail">
-                                    <a href="/stats/sessions_started_per_day/"><img class="sl_img" src="http://i.imgur.com/lHH8l9j.png" alt=""></a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="col-sm-3">
-                            <div class="fff">
-                                <div class="thumbnail">
-                                    <a href="/stats/pre_made/"><img class="sl_img" src="http://i.imgur.com/66KTHOP.png" alt=""></a>
+                                    <a href="/stats/sessions_started_per_day/"><img class="sl_img" src="{% static 'actions_pie.png' %}" alt=""></a>
                                 </div>
                             </div>
                         </li>
