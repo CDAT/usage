@@ -27,7 +27,7 @@ pygeoip==0.3.2
 pyparsing==2.2.0
 python-dateutil==2.6.0
 pytz==2017.2
-requests==2.18.4
+requests==2.20.0
 reverse-geocoder==1.5.1
 scipy==0.19.1
 six==1.10.0
